@@ -1,5 +1,5 @@
-# GradleTest
-Minecraft Datapack Generator Using OpenAI API
+# Anomalous Implements 
+## Minecraft Datapack Generator Using OpenAI API
 
 Generates the a randomized, themed, Minecraft datapack directory in the downloads folder. 
 
