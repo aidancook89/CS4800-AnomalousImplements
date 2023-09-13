@@ -3,9 +3,21 @@ package gradle_test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+
+
 public class App {
     public String namespace = "aidp";
-    public Path template = Paths.get("src/main/java/gradle_test/template");
+    public Path template = Paths.get("src/template_files");
 
     public Path rootDir;
     public Path packmcmetaFile;
@@ -46,6 +58,30 @@ public class App {
         Structure.copyContents(template.resolve("tick.mcfunction"), tickmcfunctionFile); 
         Structure.copyContents(template.resolve("load.json"), loadjsonFile); 
         Structure.copyContents(template.resolve("tick.json"), tickjsonFile); 
+
+        JsonObject loadDataJSON = readJsonFromFile(loadjsonFile.toString());
+        loadDataJSON.addProperty("testkey", "testvalue");
+        writeJsonToFile(loadjsonFile.toString(), loadDataJSON);
+    }
+
+    // Function to read JSON data from a file
+    private static JsonObject readJsonFromFile(String filePath) {
+        try (Reader reader = new FileReader(filePath)) {
+            return JsonParser.parseReader(reader).getAsJsonObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // Function to write JSON data to a file
+    private static void writeJsonToFile(String filePath, JsonObject jsonData) {
+        try (Writer writer = new FileWriter(filePath)) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(jsonData, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
