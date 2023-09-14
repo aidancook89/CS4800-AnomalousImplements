@@ -35,11 +35,10 @@ public class Structure {
             return;
         }
 
-
         try {
             // Create a FileWriter object to write to the file (you can pass 'true' for append mode)
             String filePath = file.toString(); 
-            FileWriter fileWriter = new FileWriter(filePath, false);
+            FileWriter fileWriter = new FileWriter(filePath, true);
 
             // Wrap the FileWriter in a BufferedWriter for better performance
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);

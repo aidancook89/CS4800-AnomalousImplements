@@ -1,1 +1,1 @@
-effect give @a speed 1 2 true
+effect give @a speed 1 0 true

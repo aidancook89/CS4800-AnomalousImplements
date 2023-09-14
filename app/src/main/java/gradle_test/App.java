@@ -16,6 +16,8 @@ public class App {
     public static Path minecraftDir;
     public static Path minecraftLootTablesDir;
     public static Path minecraftLootTablesEntitiesDir;
+
+    public static Path minecraftTagsDir;
     public static Path minecraftFunctionsDir;
     public static Path loadjsonFile;
     public static Path tickjsonFile;
@@ -39,17 +41,18 @@ public class App {
         dataDir = Structure.newDir(rootDir, "data", false);
 
         minecraftDir = Structure.newDir(dataDir, "minecraft", false);
+        minecraftTagsDir = Structure.newDir(minecraftDir, "tags", false);
         minecraftLootTablesDir = Structure.newDir(minecraftDir, "loot_tables", false);
         minecraftLootTablesEntitiesDir = Structure.newDir(minecraftLootTablesDir, "entities", false);
 
-        minecraftFunctionsDir = Structure.newDir(minecraftDir, "functions", false);
+        minecraftFunctionsDir = Structure.newDir(minecraftTagsDir, "functions", false);
         loadjsonFile = Structure.newDir(minecraftFunctionsDir, "load.json", true);
         tickjsonFile = Structure.newDir(minecraftFunctionsDir, "tick.json", true);
 
         namespaceDir = Structure.newDir(dataDir, namespace, false);
-        namespaceAdvancementsDir = Structure.newDir(namespaceDir, "advancements", false);
-        namespaceLootTablesDir = Structure.newDir(namespaceDir, "loot_tables", false);
-        namespaceTagsDir = Structure.newDir(namespaceDir, "tags", false);
+        //namespaceAdvancementsDir = Structure.newDir(namespaceDir, "advancements", false);
+        //namespaceLootTablesDir = Structure.newDir(namespaceDir, "loot_tables", false);
+        //namespaceTagsDir = Structure.newDir(namespaceDir, "tags", false);
 
         namespaceFunctionsDir = Structure.newDir(namespaceDir, "functions", false);
         loadmcfunctionFile = Structure.newDir(namespaceFunctionsDir, "load.mcfunction", true);
@@ -61,8 +64,12 @@ public class App {
         Structure.copyContents(template.resolve("load.json"), loadjsonFile); 
         Structure.copyContents(template.resolve("tick.json"), tickjsonFile); 
 
-        Item test = new Item("stick", "Stick of Death");
-        test.lore = "This is test lore";
+        Item testItem = new Item("stick");
+        testItem.updateName("Test name", "red", true, true, false, false, false);
+        testItem.updateLore("Test lore", "red", false, true, false, false, false);
+        testItem.buildTag();
+
+        Structure.writeTo(loadmcfunctionFile, "\n" + testItem.getGiveCommand());
     }
 
     public static void main(String[] args) {

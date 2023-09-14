@@ -20,9 +20,8 @@ import java.io.Writer;
 public class Item {
     public String tag;
     public String type;
-	public String giveCommand;
 
-    public int customModelData;
+    public int customModelData = 1;
 
     public String name = "default";
     public String nameColor = "white"; // Can be hex code
@@ -47,11 +46,32 @@ public class Item {
     public String attributeModifiers = "";
 
 
-    public Item(String type, String name) {
+    public Item(String type) {
 		this.type = type;
+    }
+
+	public void updateName(String name, String color, boolean bold, boolean italic, boolean underlined, boolean strikethrough, boolean obfuscated) {
 		this.name = name;
-        
-        String nameAppend = String.format(
+		nameColor = color;
+		nameBold = bold;
+		nameItalic = italic;
+		nameUnderlined = underlined;
+		nameStrikethrough = strikethrough;
+		nameObfuscated = obfuscated;
+	}
+
+	public void updateLore(String lore, String color, boolean bold, boolean italic, boolean underlined, boolean strikethrough, boolean obfuscated) {
+		this.lore = lore;
+		loreColor = color;
+		loreBold = bold;
+		loreItalic = italic;
+		loreUnderlined = underlined;
+		loreStrikethrough = strikethrough;
+		loreObfuscated = obfuscated;
+	}
+
+	public void buildTag() {
+		String nameAppend = String.format(
             "{Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":%b,\"italic\":%b,\"underlined\":%b,\"strikethrough\":%b,\"obfuscated\":%b}',", 
             name, nameColor, nameBold, nameItalic, nameUnderlined, nameStrikethrough, nameObfuscated    
         );
@@ -64,9 +84,12 @@ public class Item {
         String attributeModifiersAppend = String.format("AttributeModifiers:[]} 1", attributeModifiers);
 
         tag = "{display:" + nameAppend + loreAppend + customModelDataAppend + enchantmensAppend + attributeModifiersAppend;
-		giveCommand = "/give @a " + type + tag; 
-		System.out.println(giveCommand);
-    }
+	}
+
+	public String getGiveCommand() {
+		buildTag();
+		return "give @a " + type + tag; 
+	} 
 
     /* 
     {id:"minecraft:protection",lvl:1s}
