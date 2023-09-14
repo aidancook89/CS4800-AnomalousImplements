@@ -40,8 +40,7 @@ public class App {
 
         minecraftDir = Structure.newDir(dataDir, "minecraft", false);
         minecraftLootTablesDir = Structure.newDir(minecraftDir, "loot_tables", false);
-        minecraftLootTablesEntitiesDir = Structure.newDir(minecraftLootTablesEntitiesDir, "entities", false);
-        minecraftLootTablesEntitiesDir = Structure.newDir(minecraftLootTablesEntitiesDir, "entities", false);
+        minecraftLootTablesEntitiesDir = Structure.newDir(minecraftLootTablesDir, "entities", false);
 
         minecraftFunctionsDir = Structure.newDir(minecraftDir, "functions", false);
         loadjsonFile = Structure.newDir(minecraftFunctionsDir, "load.json", true);
@@ -61,6 +60,9 @@ public class App {
         Structure.copyContents(template.resolve("tick.mcfunction"), tickmcfunctionFile); 
         Structure.copyContents(template.resolve("load.json"), loadjsonFile); 
         Structure.copyContents(template.resolve("tick.json"), tickjsonFile); 
+
+        Item test = new Item("stick", "Stick of Death");
+        test.lore = "This is test lore";
     }
 
     public static void main(String[] args) {
