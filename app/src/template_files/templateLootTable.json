@@ -1,0 +1,25 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:stick",
+          "functions": [
+            {
+              "function": "set_nbt",
+              "tag": "{display:{Name:'{\"text\":\"Staff of Flight\",\"color\":\"white\",\"bold\":true,\"italic\":true}',Lore:['{\"text\":\"A staff that enables short range flight.\",\"italic\":true}']},CustomModelData:1,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}"
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.5
+        }
+      ]
+    }
+  ]
+}
