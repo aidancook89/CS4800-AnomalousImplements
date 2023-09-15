@@ -71,6 +71,7 @@ public class App {
         testItem.updateLore("Although stone, this sword is a powerful additional to any players toolkit.", "white", false, true, false, false, false);
         testItem.addEnchantment("sharpness", 7);
         testItem.addEnchantment("knockback", 5);
+        testItem.addPotionEffect(new int[] {0,1}, "jump", 4, true);
         testItem.buildTag();
 
         Structure.writeTo(loadmcfunctionFile, "\n" + testItem.getGiveCommand());

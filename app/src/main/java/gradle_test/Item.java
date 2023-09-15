@@ -80,15 +80,27 @@ public class Item {
 			enchantment, level));
 	}
 
-	public void addAttributeModifier(String effect, int amount, boolean showParticles) {
-		String newPotion = String.format(
-			"execute as @a[nbt={Inventory:[{Slot:0b,tag:{CustomModelData:%d}}]}] run effect give @s minecraft:%s 1 %d %b",
-			customModelData, effect, amount, showParticles);
-		potionEffectList.add(newPotion);
+	public void addPotionEffect(int[] slots, String effect, int amount, boolean showParticles) {
+		for (int i = 0; i < slots.length; i++) {
+			String potionCommand = String.format(
+				"execute as @a[nbt={Inventory:[{Slot:%db,tag:{CustomModelData:%d}}]}] run effect give @s minecraft:%s 1 %d %b",
+				slots[i], customModelData, effect, amount, showParticles);
+			
+			potionEffectList.add(potionCommand);
+		}
+
+		/*
+		 * main hand: 0
+		 * off hand: 1
+		 * boots: 100
+		 * leggings: 101
+		 * chestplate: 102
+		 * helmet: 103
+		 * inventory slots: 9-35
+		 */
 	}
 
-	public void addAttributeModifier(String modifier, int amount) {
-	}
+	public void addAttributeModifier(String modifier, int amount) {}
 
 	public static String listToString(ArrayList<String> arrayList) {
 		String output = "[";
