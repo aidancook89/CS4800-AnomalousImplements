@@ -1,21 +1,6 @@
 package gradle_test;
 
-import gradle_test.Structure;
-import gradle_test.App;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.util.ArrayList;
 
 public class Item {
     public String tag;
@@ -39,12 +24,8 @@ public class Item {
     public boolean loreStrikethrough = false;
     public boolean loreObfuscated = false;
 
-    public String[] enchantmentsArray;
-    public String enchantments = "";
-
-    public String attributeModifiersArray;
-    public String attributeModifiers = "";
-
+    public ArrayList<String> enchantmentsList = new ArrayList<String>();
+    public ArrayList<String> attributeModifiersList = new ArrayList<String>();
 
     public Item(String type) {
 		this.type = type;
@@ -80,8 +61,8 @@ public class Item {
             lore, loreColor, loreBold, loreItalic, loreUnderlined, loreStrikethrough, nameObfuscated 
         );
         String customModelDataAppend = String.format("CustomModelData:%d,", customModelData);
-        String enchantmensAppend = String.format("Enchantments:[%s],", enchantments);
-        String attributeModifiersAppend = String.format("AttributeModifiers:[]} 1", attributeModifiers);
+        String enchantmensAppend = String.format("Enchantments:%s,", listToString(enchantmentsList));
+        String attributeModifiersAppend = String.format("AttributeModifiers:%s} 1", listToString(attributeModifiersList));
 
         tag = "{display:" + nameAppend + loreAppend + customModelDataAppend + enchantmensAppend + attributeModifiersAppend;
 	}
@@ -90,6 +71,24 @@ public class Item {
 		buildTag();
 		return "give @a " + type + tag; 
 	} 
+
+	public void addEnchantment(String enchantment, int level) {
+		enchantmentsList.add("{id:\"minecraft:"+enchantment+"\",lvl:"+level+"s}");
+	}
+
+	public void addAttributeModifier(String modifier, int amount, int slot) {
+		
+	}
+
+	public static String listToString(ArrayList<String> arrayList) {
+		String output = "[";
+		for (String element : arrayList) {
+			output += element + ",";	
+		}
+    if (output.length() > 1) output = output.substring(0, output.length()-1) + "]";
+    else output += "]";
+		return output;
+	}
 
     /* 
     {id:"minecraft:protection",lvl:1s}

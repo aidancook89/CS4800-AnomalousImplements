@@ -4,6 +4,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 
+
+
 public class App {
     public static String namespace = "aidp";
     public static Path template = Paths.get("src/template_files");
@@ -64,9 +66,11 @@ public class App {
         Structure.copyContents(template.resolve("load.json"), loadjsonFile); 
         Structure.copyContents(template.resolve("tick.json"), tickjsonFile); 
 
-        Item testItem = new Item("stick");
-        testItem.updateName("Test name", "red", true, true, false, false, false);
-        testItem.updateLore("Test lore", "red", false, true, false, false, false);
+        Item testItem = new Item("stone_sword");
+        testItem.updateName("Sword of Stone", "dark_blue", true, true, false, false, false);
+        testItem.updateLore("Although stone, this sword is a powerful additional to any players toolkit.", "white", false, true, false, false, false);
+        testItem.addEnchantment("sharpness", 1);
+        testItem.addEnchantment("knockback", 5);
         testItem.buildTag();
 
         Structure.writeTo(loadmcfunctionFile, "\n" + testItem.getGiveCommand());
