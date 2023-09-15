@@ -88,18 +88,26 @@ public class Item {
 			
 			potionEffectList.add(potionCommand);
 		}
-
-		/*
-		 * main hand: 0
-		 * off hand: 1
-		 * boots: 100
-		 * leggings: 101
-		 * chestplate: 102
-		 * helmet: 103
-		 * inventory slots: 9-35
-		 */
 	}
 
+    public String getPotionEffectString() {
+        String output = String.format("############ %s:%s ############\n", type, name);
+        for (int i = 0; i < potionEffectList.size(); i++) {
+            output += potionEffectList.get(i) + "\n";
+        }
+        return output + "\n";
+    }
+    /*
+    * main hand: 0
+    * off hand: 1
+    * boots: 100
+    * leggings: 101
+    * chestplate: 102
+    * helmet: 103
+    * inventory slots: 9-35
+    */
+
+    
 	public void addAttributeModifier(String modifier, int amount) {}
 
 	public static String listToString(ArrayList<String> arrayList) {
