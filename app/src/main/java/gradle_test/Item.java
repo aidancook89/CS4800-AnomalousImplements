@@ -6,10 +6,10 @@ public class Item {
     public String tag;
     public String type;
 
-    public int customModelData = 1;
+    public int customModelData;
 
     public String name = "default";
-    public String nameColor = "white"; // Can be hex code
+    public String nameColor = "white"; 
     public boolean nameBold = false;
     public boolean nameItalic = false;
     public boolean nameUnderlined = false;
@@ -26,9 +26,11 @@ public class Item {
 
     public ArrayList<String> enchantmentsList = new ArrayList<String>();
     public ArrayList<String> attributeModifiersList = new ArrayList<String>();
+    public ArrayList<String> potionEffectList = new ArrayList<String>();
 
-    public Item(String type) {
+    public Item(String type, int customModelData) {
 		this.type = type;
+		this.customModelData = customModelData;
     }
 
 	public void updateName(String name, String color, boolean bold, boolean italic, boolean underlined, boolean strikethrough, boolean obfuscated) {
@@ -73,11 +75,19 @@ public class Item {
 	} 
 
 	public void addEnchantment(String enchantment, int level) {
-		enchantmentsList.add("{id:\"minecraft:"+enchantment+"\",lvl:"+level+"s}");
+		enchantmentsList.add(String.format(
+			"{id:\"minecraft:%s\",lvl:%ds}", 
+			enchantment, level));
 	}
 
-	public void addAttributeModifier(String modifier, int amount, int slot) {
-		
+	public void addAttributeModifier(String effect, int amount, boolean showParticles) {
+		String newPotion = String.format(
+			"execute as @a[nbt={Inventory:[{Slot:0b,tag:{CustomModelData:%d}}]}] run effect give @s minecraft:%s 1 %d %b",
+			customModelData, effect, amount, showParticles);
+		potionEffectList.add(newPotion);
+	}
+
+	public void addAttributeModifier(String modifier, int amount) {
 	}
 
 	public static String listToString(ArrayList<String> arrayList) {
@@ -85,8 +95,8 @@ public class Item {
 		for (String element : arrayList) {
 			output += element + ",";	
 		}
-    if (output.length() > 1) output = output.substring(0, output.length()-1) + "]";
-    else output += "]";
+		if (output.length() > 1) output = output.substring(0, output.length()-1) + "]";
+		else output += "]";
 		return output;
 	}
 

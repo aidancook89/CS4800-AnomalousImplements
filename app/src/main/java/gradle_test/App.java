@@ -66,10 +66,10 @@ public class App {
         Structure.copyContents(template.resolve("load.json"), loadjsonFile); 
         Structure.copyContents(template.resolve("tick.json"), tickjsonFile); 
 
-        Item testItem = new Item("stone_sword");
+        Item testItem = new Item("stone_sword", 1);
         testItem.updateName("Sword of Stone", "dark_blue", true, true, false, false, false);
         testItem.updateLore("Although stone, this sword is a powerful additional to any players toolkit.", "white", false, true, false, false, false);
-        testItem.addEnchantment("sharpness", 1);
+        testItem.addEnchantment("sharpness", 7);
         testItem.addEnchantment("knockback", 5);
         testItem.buildTag();
 
