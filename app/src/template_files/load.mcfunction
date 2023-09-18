@@ -1,1 +1,1 @@
-tellraw @a {"text":"Welcome to this test datapack!"}
+tellraw @a {"text":"Data Pack loaded."}

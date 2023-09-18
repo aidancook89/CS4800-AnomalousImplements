@@ -1,5 +1,6 @@
 {
     "values": [
-        "aidp:tick"
+        "aidp:tick",
+        "aidp:item_tick"
     ]
 }

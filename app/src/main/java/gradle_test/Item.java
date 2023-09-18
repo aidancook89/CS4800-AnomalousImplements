@@ -55,12 +55,16 @@ public class Item {
 
 	public void buildTag() {
 		String nameAppend = String.format(
-            "{Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":%b,\"italic\":%b,\"underlined\":%b,\"strikethrough\":%b,\"obfuscated\":%b}',", 
-            name, nameColor, nameBold, nameItalic, nameUnderlined, nameStrikethrough, nameObfuscated    
+            "{Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":%b,\"italic\":%b," +
+            "\"underlined\":%b,\"strikethrough\":%b,\"obfuscated\":%b}',", 
+            name, nameColor, nameBold, nameItalic, 
+            nameUnderlined, nameStrikethrough, nameObfuscated    
         );
         String loreAppend = String.format(
-            "Lore:['{\"text\":\"%s\",\"color\":\"%s\",\"bold\":%b,\"italic\":%b,\"underlined\":%b,\"strikethrough\":%b,\"obfuscated\":%b}']},",
-            lore, loreColor, loreBold, loreItalic, loreUnderlined, loreStrikethrough, nameObfuscated 
+            "Lore:['{\"text\":\"%s\",\"color\":\"%s\",\"bold\":%b,\"italic\":%b," +
+            "\"underlined\":%b,\"strikethrough\":%b,\"obfuscated\":%b}']},",
+            lore, loreColor, loreBold, loreItalic, 
+            loreUnderlined, loreStrikethrough, nameObfuscated 
         );
         String customModelDataAppend = String.format("CustomModelData:%d,", customModelData);
         String enchantmensAppend = String.format("Enchantments:%s,", listToString(enchantmentsList));
@@ -80,22 +84,20 @@ public class Item {
 			enchantment, level));
 	}
 
-	public void addPotionEffect(int[] slots, String effect, int amount, boolean showParticles) {
-		for (int i = 0; i < slots.length; i++) {
-			String potionCommand = String.format(
-				"execute as @a[nbt={Inventory:[{Slot:%db,tag:{CustomModelData:%d}}]}] run effect give @s minecraft:%s 1 %d %b",
-				slots[i], customModelData, effect, amount, showParticles);
-			
-			potionEffectList.add(potionCommand);
-		}
+	public void addPotionEffect(String effect, int amount, boolean showParticles) {
+        String potionCommand = String.format(
+            "execute as @a[nbt={SelectedItem:{tag:{CustomModelData:%d}}}] run effect give @s minecraft:%s 1 %d %b",
+            customModelData, effect, amount, showParticles);
+        potionEffectList.add(potionCommand);
 	}
 
     public String getPotionEffectString() {
-        String output = String.format("############ %s:%s ############\n", type, name);
+        String output = String.format("############ %s:%s:%d ############\n", 
+            type, name, customModelData);
         for (int i = 0; i < potionEffectList.size(); i++) {
             output += potionEffectList.get(i) + "\n";
         }
-        return output + "\n";
+        return output;
     }
     /*
     * main hand: 0

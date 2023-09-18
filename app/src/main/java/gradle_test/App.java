@@ -33,6 +33,7 @@ public class App {
     public static Path namespaceFunctionsDir;
     public static Path loadmcfunctionFile;
     public static Path tickmcfunctionFile;
+    public static Path itemtickmcfunctionFile;
 
     public App() {
         Path userHome = Paths.get(System.getProperty("user.home"));
@@ -59,6 +60,7 @@ public class App {
         namespaceFunctionsDir = Structure.newDir(namespaceDir, "functions", false);
         loadmcfunctionFile = Structure.newDir(namespaceFunctionsDir, "load.mcfunction", true);
         tickmcfunctionFile = Structure.newDir(namespaceFunctionsDir, "tick.mcfunction", true);
+        itemtickmcfunctionFile = Structure.newDir(namespaceFunctionsDir, "item_tick.mcfunction", true);
 
         Structure.copyContents(template.resolve("pack.mcmeta"), packmcmetaFile); 
         Structure.copyContents(template.resolve("load.mcfunction"), loadmcfunctionFile); 
@@ -66,17 +68,7 @@ public class App {
         Structure.copyContents(template.resolve("load.json"), loadjsonFile); 
         Structure.copyContents(template.resolve("tick.json"), tickjsonFile); 
 
-        Item testItem = new Item("stone_sword", 0);
-        testItem.updateName("Sword of Stone", "dark_blue", true, true, false, false, false);
-        testItem.updateLore("Although stone, this sword is a powerful additional to any players toolkit.", "white", false, true, false, false, false);
-        testItem.addEnchantment("sharpness", 7);
-        testItem.addEnchantment("knockback", 5);
-        testItem.addPotionEffect(new int[] {0,1}, "jump", 3, true);
-        testItem.addPotionEffect(new int[] {0,1}, "speed", 2, true);
-        testItem.buildTag();
-        System.out.println(testItem.getPotionEffectString());
-
-        Structure.writeTo(loadmcfunctionFile, "\n" + testItem.getGiveCommand());
+        ItemBuilder item = new ItemBuilder("sword", "fire", 1);
     }
 
     public static void main(String[] args) {
