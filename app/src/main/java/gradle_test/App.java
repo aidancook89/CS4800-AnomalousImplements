@@ -41,6 +41,7 @@ public class App {
     public static Path f_tickmcfunction;
     public static Path f_item_tickmcfunction;
     public static Path f_sword0mcfunction;
+    public static Path f_deal_damagemcfunction;
 
     public App() {
         Path userHome = Paths.get(System.getProperty("user.home"));
@@ -68,6 +69,9 @@ public class App {
         //namespaceTagsDir = Structure.newDir(d_ns, "tags", false);
 
         d_ns_functions = Structure.newDir(d_ns, "functions", false);
+
+        f_deal_damagemcfunction = Structure.newDir(d_ns_functions, "deal_damage.mcfunction", true);
+        Structure.copyContents(template.resolve("deal_damage.mcfunction"), f_deal_damagemcfunction); 
 
         f_loadmcfunction = Structure.newDir(d_ns_functions, "load.mcfunction", true);
         Structure.copyContents(template.resolve("load.mcfunction"), f_loadmcfunction); 

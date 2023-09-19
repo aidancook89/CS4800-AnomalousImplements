@@ -12,15 +12,15 @@ import com.google.gson.JsonParser;
 
 
 public class RequestHandler {
-	private static String apiKey = "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";
-  	private static String apiUrl = "https://api.openai.com/v1/chat/completions";
-    private static String model = "gpt-3.5-turbo";
-    private static HttpClient httpClient = HttpClient.newHttpClient();
+	private String apiKey = "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";
+  	private String apiUrl = "https://api.openai.com/v1/chat/completions";
+    private String model = "gpt-3.5-turbo";
+    private HttpClient httpClient = HttpClient.newHttpClient();
 
-    private static String request = "";
-    private static String responseBody = "";
-    private static int statusCode = 0;
-    private static String content = "";
+    private String request = "";
+    private String responseBody = "";
+    private int statusCode = 0;
+    private String content = "";
 
 	public RequestHandler(String request) {
 		this.request = request;
@@ -47,22 +47,21 @@ public class RequestHandler {
 	    }).join();
 	}
 
-	public static String getResponse() {
+	public String getResponse() {
 		return responseBody;
 	}	
 
-	public static int getStatusCode() {
+	public int getStatusCode() {
 		return statusCode;
 	}	
 
-	public static String getRequest() {
+	public String getRequest() {
 		return request;
 	}	
 
-	public static String getContent(int choiceIndex) {
-		JsonParser jsonParser = new JsonParser();
-		JsonObject jsonObject = jsonParser.parse(responseBody).getAsJsonObject();
-		String content = jsonObject
+	public String getContent(int choiceIndex) {
+		JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
+		content = jsonObject
             .getAsJsonArray("choices")
             .get(choiceIndex) // Access the first choice
             .getAsJsonObject()

@@ -4,14 +4,13 @@ public class ItemBuilder {
 
 
     public ItemBuilder(String type, String theme, int rarity) {
-
         Item testItem = new Item("stone_sword", 0);
-        testItem.updateName("Sword of Flight", "dark_blue", true, true, false, false, false);
-        testItem.updateLore("Although stone, this sword is a powerful additional to any players toolkit.", "white", false, true, false, false, false);
-        testItem.addEnchantment("sharpness", 1);
+        testItem.updateName("Test Sword", "white", true, true, false, false, false);
+        testItem.updateLore("Test Lore", "dark_red", false, true, false, false, false);
         testItem.addEnchantment("knockback", 1);
-        testItem.addPotionEffect("speed", 1, true);
-        testItem.addPotionEffect("jump_boost", 1, true);
+        testItem.addEnchantment("unbreaking", 1);
+        testItem.addPotionEffect("speed", 0, true);
+        testItem.addPotionEffect("jump_boost", 0, true);
         testItem.buildTag();
         //System.out.println(testItem.getPotionEffectString());
 

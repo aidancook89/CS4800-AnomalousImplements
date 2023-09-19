@@ -145,10 +145,10 @@ public class Item {
     // POTION EFFECTS
     //////////////////////////////// 
 
-	public void addPotionEffect(String effect, int amount, boolean showParticles) {
+	public void addPotionEffect(String effect, int amount, boolean hideParticles) {
         String potionCommand = String.format(
             "execute as @a[nbt={SelectedItem:{tag:{CustomModelData:%d}}}] run effect give @s minecraft:%s 1 %d %b",
-            customModelData, effect, amount, showParticles);
+            customModelData, effect, amount, hideParticles);
         //execute as @a[nbt={Inventory:[{id:"minecraft:leather_leggings",Slot:101b}]}] run effect give @s minecraft:jump_boost 1 3 true
         potionEffectList.add(potionCommand);
 	}
