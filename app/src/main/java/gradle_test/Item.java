@@ -8,7 +8,7 @@ public class Item {
 
     public int customModelData;
 
-    public String name = "default";
+    public String nameText = "default";
     public String nameColor = "white"; 
     public boolean nameBold = false;
     public boolean nameItalic = false;
@@ -16,7 +16,7 @@ public class Item {
     public boolean nameStrikethrough = false;
     public boolean nameObfuscated = false;
 
-    public String lore = "default";
+    public String loreText = "default";
     public String loreColor = "white";
     public boolean loreBold = false;
     public boolean loreItalic = false;
@@ -34,7 +34,7 @@ public class Item {
     }
 
 	public void updateName(String name, String color, boolean bold, boolean italic, boolean underlined, boolean strikethrough, boolean obfuscated) {
-		this.name = name;
+		this.nameText = name;
 		nameColor = color;
 		nameBold = bold;
 		nameItalic = italic;
@@ -44,7 +44,7 @@ public class Item {
 	}
 
 	public void updateLore(String lore, String color, boolean bold, boolean italic, boolean underlined, boolean strikethrough, boolean obfuscated) {
-		this.lore = lore;
+		this.loreText = lore;
 		loreColor = color;
 		loreBold = bold;
 		loreItalic = italic;
@@ -54,28 +54,41 @@ public class Item {
 	}
 
 	public void buildTag() {
-		String nameAppend = String.format(
-            "{Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":%b,\"italic\":%b," +
-            "\"underlined\":%b,\"strikethrough\":%b,\"obfuscated\":%b}',", 
-            name, nameColor, nameBold, nameItalic, 
-            nameUnderlined, nameStrikethrough, nameObfuscated    
-        );
-        String loreAppend = String.format(
-            "Lore:['{\"text\":\"%s\",\"color\":\"%s\",\"bold\":%b,\"italic\":%b," +
-            "\"underlined\":%b,\"strikethrough\":%b,\"obfuscated\":%b}']},",
-            lore, loreColor, loreBold, loreItalic, 
-            loreUnderlined, loreStrikethrough, nameObfuscated 
-        );
-        String customModelDataAppend = String.format("CustomModelData:%d,", customModelData);
-        String enchantmensAppend = String.format("Enchantments:%s,", listToString(enchantmentsList));
-        String attributeModifiersAppend = String.format("AttributeModifiers:%s} 1", listToString(attributeModifiersList));
+        tag = "{display:{";
 
-        tag = "{display:" + nameAppend + loreAppend + customModelDataAppend + enchantmensAppend + attributeModifiersAppend;
+        String nameAppend = String.format("Name:['{\"text\":\"%s\",\"color\":\"%s\"", nameText, nameColor);
+        if (nameBold) nameAppend += String.format(",\"bold\":%b", nameBold);
+        if (nameItalic) nameAppend += String.format(",\"italic\":%b", nameItalic);
+        if (nameUnderlined) nameAppend += String.format(",\"underline\":%b", nameUnderlined);
+        if (nameStrikethrough) nameAppend += String.format(",\"strikethrough\":%b", nameStrikethrough);
+        if (nameObfuscated) nameAppend += String.format(",\"obfuscated\":%b", nameObfuscated);
+        nameAppend += "}']";
+        tag += nameAppend + ",";
+
+        String loreAppend = String.format("Lore:['{\"text\":\"%s\",\"color\":\"%s\"", loreText, loreColor);
+        if (loreBold) loreAppend += String.format(",\"bold\":%b", loreBold);
+        if (loreItalic) loreAppend += String.format(",\"italic\":%b", loreItalic);
+        if (loreUnderlined) loreAppend += String.format(",\"underline\":%b", loreUnderlined);
+        if (loreStrikethrough) loreAppend += String.format(",\"strikethrough\":%b", loreStrikethrough);
+        if (loreObfuscated) loreAppend += String.format(",\"obfuscated\":%b", loreObfuscated);
+        loreAppend += "}']";
+        tag += loreAppend + "},";
+
+        if (enchantmentsList.size() > 0) {
+            tag += String.format("Enchantments:%s,", listToString(enchantmentsList));
+        }
+
+        if (attributeModifiersList.size() > 0) {
+            tag += String.format("AttributeModifiers:%s,", listToString(attributeModifiersList));
+        }
+
+        tag += String.format("CustomModelData:%d,", customModelData);
+        tag += "custom_item:1" + "}";
 	}
 
 	public String getGiveCommand() {
 		buildTag();
-		return "give @a " + type + tag; 
+		return "give @a " + type + tag + " 1"; 
 	} 
 
 	public void addEnchantment(String enchantment, int level) {
@@ -94,7 +107,7 @@ public class Item {
 
     public String getPotionEffectString() {
         String output = String.format("############ %s:%s:%d ############\n", 
-            type, name, customModelData);
+            type, nameText, customModelData);
         for (int i = 0; i < potionEffectList.size(); i++) {
             output += potionEffectList.get(i) + "\n";
         }
@@ -106,7 +119,6 @@ public class Item {
     * leggings: 101
     * chestplate: 102
     * helmet: 103
-    * inventory slots: 9-35
     */
 
     

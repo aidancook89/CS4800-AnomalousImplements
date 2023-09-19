@@ -26,13 +26,21 @@ public class App {
     public static Path d_ns_advancements;
     public static Path d_ns_advancements_deal_damage;
 
+    public static Path d_ns_predicates;
+    public static Path d_ns_predicates_holding_item;
+    public static Path d_ns_holding_item_s1;
+
     public static Path d_ns_tags;
     public static Path d_ns_loot_tables;
 
     public static Path d_ns_functions;
+    public static Path d_ns_functions_swords;
+    public static Path d_ns_functions_swords_sword1;
+
     public static Path f_loadmcfunction;
     public static Path f_tickmcfunction;
     public static Path f_item_tickmcfunction;
+    public static Path f_sword0mcfunction;
 
     public App() {
         Path userHome = Paths.get(System.getProperty("user.home"));
@@ -60,16 +68,29 @@ public class App {
         //namespaceTagsDir = Structure.newDir(d_ns, "tags", false);
 
         d_ns_functions = Structure.newDir(d_ns, "functions", false);
+
         f_loadmcfunction = Structure.newDir(d_ns_functions, "load.mcfunction", true);
         Structure.copyContents(template.resolve("load.mcfunction"), f_loadmcfunction); 
+
         f_tickmcfunction = Structure.newDir(d_ns_functions, "tick.mcfunction", true);
         Structure.copyContents(template.resolve("tick.mcfunction"), f_tickmcfunction); 
 
         f_item_tickmcfunction = Structure.newDir(d_ns_functions, "item_tick.mcfunction", true);
+        f_sword0mcfunction = Structure.newDir(d_ns_functions, "sword0.mcfunction", true);
+        Structure.copyContents(template.resolve("sword0.mcfunction"), f_sword0mcfunction); 
+
+        d_ns_functions_swords = Structure.newDir(d_ns_functions, "swords", false);
+        d_ns_functions_swords_sword1 = Structure.newDir(d_ns_functions_swords, "sword1.mcfunction", true);
+        Structure.copyContents(template.resolve("sword1.mcfunction"), d_ns_functions_swords_sword1); 
 
         d_ns_advancements = Structure.newDir(d_ns, "advancements", false);
         d_ns_advancements_deal_damage = Structure.newDir(d_ns_advancements, "deal_damage.json", true);
         Structure.copyContents(template.resolve("deal_damage.json"), d_ns_advancements_deal_damage); 
+
+        d_ns_predicates = Structure.newDir(d_ns, "predicates", false);
+        d_ns_predicates_holding_item = Structure.newDir(d_ns_predicates, "holding_item", false);
+        d_ns_holding_item_s1 = Structure.newDir(d_ns_predicates_holding_item, "custom_sword.json", true);
+        Structure.copyContents(template.resolve("custom_sword.json"), d_ns_holding_item_s1); 
 
         ItemBuilder item = new ItemBuilder("sword", "fire", 1);
     }

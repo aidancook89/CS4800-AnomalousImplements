@@ -10,8 +10,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 public class Structure {
-    public static Path newDir(Path parent, String dirName, Boolean isFile) {
-        Path path = parent.resolve(dirName);
+    public static Path newDir(Path parent, String name, Boolean isFile) {
+        Path path = parent.resolve(name);
         
         try {
             if (!Files.exists(path)) {
