@@ -17,9 +17,9 @@ public class ItemBuilder {
         System.out.println(testItem.getPotionEffectString());
 
         // GIVE ITEM ON LOAD
-        Structure.writeTo(App.loadmcfunctionFile, "\n" + testItem.getGiveCommand());
+        Structure.writeTo(App.f_loadmcfunction, "\n" + testItem.getGiveCommand());
 
         // ADD POTION EFFECTS TO item_tick
-        Structure.writeTo(App.itemtickmcfunctionFile, testItem.getPotionEffectString());
+        Structure.writeTo(App.f_item_tickmcfunction, testItem.getPotionEffectString());
     }
 }

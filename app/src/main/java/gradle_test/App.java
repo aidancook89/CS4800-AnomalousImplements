@@ -3,70 +3,73 @@ package gradle_test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-
-
-
 public class App {
     public static String namespace = "aidp";
     public static Path template = Paths.get("src/template_files");
-    public static Path downloadPath;
+    public static Path d_download;
 
-    public static Path rootDir;
-    public static Path packmcmetaFile;
-    public static Path dataDir;
+    public static Path d_root;
+    public static Path f_packmcmeta;
+    public static Path d_data;
 
-    public static Path minecraftDir;
-    public static Path minecraftLootTablesDir;
-    public static Path minecraftLootTablesEntitiesDir;
+    public static Path d_mc; // Minecraft
+    public static Path d_mc_loot_tables;
+    public static Path d_mc_loot_tables_entities;
 
-    public static Path minecraftTagsDir;
-    public static Path minecraftFunctionsDir;
-    public static Path loadjsonFile;
-    public static Path tickjsonFile;
+    public static Path d_mc_tags;
+    public static Path d_mc_functions;
+    public static Path f_loadjson;
+    public static Path f_tickjson;
 
-    public static Path namespaceDir;
+    public static Path d_ns; // Namespace
 
-    public static Path namespaceAdvancementsDir;
-    public static Path namespaceTagsDir;
-    public static Path namespaceLootTablesDir;
+    public static Path d_ns_advancements;
+    public static Path d_ns_advancements_deal_damage;
 
-    public static Path namespaceFunctionsDir;
-    public static Path loadmcfunctionFile;
-    public static Path tickmcfunctionFile;
-    public static Path itemtickmcfunctionFile;
+    public static Path d_ns_tags;
+    public static Path d_ns_loot_tables;
+
+    public static Path d_ns_functions;
+    public static Path f_loadmcfunction;
+    public static Path f_tickmcfunction;
+    public static Path f_item_tickmcfunction;
 
     public App() {
         Path userHome = Paths.get(System.getProperty("user.home"));
-        downloadPath = userHome.resolve("Downloads"); 
+        d_download = userHome.resolve("Downloads"); 
 
-        rootDir = Structure.newDir(downloadPath, namespace, false);
-        packmcmetaFile = Structure.newDir(rootDir, "pack.mcmeta", true);
-        dataDir = Structure.newDir(rootDir, "data", false);
+        d_root = Structure.newDir(d_download, namespace, false);
+        f_packmcmeta = Structure.newDir(d_root, "pack.mcmeta", true);
+        Structure.copyContents(template.resolve("pack.mcmeta"), f_packmcmeta); 
 
-        minecraftDir = Structure.newDir(dataDir, "minecraft", false);
-        minecraftTagsDir = Structure.newDir(minecraftDir, "tags", false);
-        minecraftLootTablesDir = Structure.newDir(minecraftDir, "loot_tables", false);
-        minecraftLootTablesEntitiesDir = Structure.newDir(minecraftLootTablesDir, "entities", false);
+        d_data = Structure.newDir(d_root, "data", false);
 
-        minecraftFunctionsDir = Structure.newDir(minecraftTagsDir, "functions", false);
-        loadjsonFile = Structure.newDir(minecraftFunctionsDir, "load.json", true);
-        tickjsonFile = Structure.newDir(minecraftFunctionsDir, "tick.json", true);
+        d_mc = Structure.newDir(d_data, "minecraft", false);
+        d_mc_tags = Structure.newDir(d_mc, "tags", false);
+        d_mc_loot_tables = Structure.newDir(d_mc, "loot_tables", false);
+        d_mc_loot_tables_entities = Structure.newDir(d_mc_loot_tables, "entities", false);
 
-        namespaceDir = Structure.newDir(dataDir, namespace, false);
-        //namespaceAdvancementsDir = Structure.newDir(namespaceDir, "advancements", false);
-        //namespaceLootTablesDir = Structure.newDir(namespaceDir, "loot_tables", false);
-        //namespaceTagsDir = Structure.newDir(namespaceDir, "tags", false);
+        d_mc_functions = Structure.newDir(d_mc_tags, "functions", false);
+        f_loadjson = Structure.newDir(d_mc_functions, "load.json", true);
+        Structure.copyContents(template.resolve("load.json"), f_loadjson); 
+        f_tickjson = Structure.newDir(d_mc_functions, "tick.json", true);
+        Structure.copyContents(template.resolve("tick.json"), f_tickjson); 
 
-        namespaceFunctionsDir = Structure.newDir(namespaceDir, "functions", false);
-        loadmcfunctionFile = Structure.newDir(namespaceFunctionsDir, "load.mcfunction", true);
-        tickmcfunctionFile = Structure.newDir(namespaceFunctionsDir, "tick.mcfunction", true);
-        itemtickmcfunctionFile = Structure.newDir(namespaceFunctionsDir, "item_tick.mcfunction", true);
+        d_ns = Structure.newDir(d_data, namespace, false);
+        //namespaceLootTablesDir = Structure.newDir(d_ns, "loot_tables", false);
+        //namespaceTagsDir = Structure.newDir(d_ns, "tags", false);
 
-        Structure.copyContents(template.resolve("pack.mcmeta"), packmcmetaFile); 
-        Structure.copyContents(template.resolve("load.mcfunction"), loadmcfunctionFile); 
-        Structure.copyContents(template.resolve("tick.mcfunction"), tickmcfunctionFile); 
-        Structure.copyContents(template.resolve("load.json"), loadjsonFile); 
-        Structure.copyContents(template.resolve("tick.json"), tickjsonFile); 
+        d_ns_functions = Structure.newDir(d_ns, "functions", false);
+        f_loadmcfunction = Structure.newDir(d_ns_functions, "load.mcfunction", true);
+        Structure.copyContents(template.resolve("load.mcfunction"), f_loadmcfunction); 
+        f_tickmcfunction = Structure.newDir(d_ns_functions, "tick.mcfunction", true);
+        Structure.copyContents(template.resolve("tick.mcfunction"), f_tickmcfunction); 
+
+        f_item_tickmcfunction = Structure.newDir(d_ns_functions, "item_tick.mcfunction", true);
+
+        d_ns_advancements = Structure.newDir(d_ns, "advancements", false);
+        d_ns_advancements_deal_damage = Structure.newDir(d_ns_advancements, "deal_damage.json", true);
+        Structure.copyContents(template.resolve("deal_damage.json"), d_ns_advancements_deal_damage); 
 
         ItemBuilder item = new ItemBuilder("sword", "fire", 1);
     }
@@ -74,27 +77,4 @@ public class App {
     public static void main(String[] args) {
         App test = new App();
     }
-
-
-    /* 
-    // Function to read JSON data from a file
-    private JsonObject readJsonFromFile(String filePath) {
-        try (Reader reader = new FileReader(filePath)) {
-            return JsonParser.parseReader(reader).getAsJsonObject();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // Function to write JSON data to a file
-    private void writeJsonToFile(String filePath, JsonObject jsonData) {
-        try (Writer writer = new FileWriter(filePath)) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(jsonData, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    */
 }
