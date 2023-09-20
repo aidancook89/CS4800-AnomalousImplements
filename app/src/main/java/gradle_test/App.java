@@ -97,6 +97,9 @@ public class App {
         Structure.copyContents(template.resolve("custom_sword.json"), d_ns_holding_item_s1); 
 
         ItemBuilder item = new ItemBuilder("sword", "fire", 1);
+
+        //NEED TO GET PATHING RIGHT
+        EntityBuilder entity = new EntityBuilder("skeleton", "");
     }
 
     public static void main(String[] args) {
