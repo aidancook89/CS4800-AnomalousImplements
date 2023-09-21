@@ -1,4 +1,4 @@
-package gradle_test;
+package aidp;
 
 import java.net.URI;
 import java.net.http.HttpClient;

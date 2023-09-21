@@ -1,4 +1,4 @@
-package gradle_test;
+package aidp;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

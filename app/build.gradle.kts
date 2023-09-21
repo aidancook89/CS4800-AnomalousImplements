@@ -37,7 +37,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass.set("gradle_test.App")
+    mainClass.set("aidp.App")
 }
 
 tasks.named<Test>("test") {

@@ -1,4 +1,4 @@
-package gradle_test;
+package aidp;
 
 public class ItemBuilder {
 
