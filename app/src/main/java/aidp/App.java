@@ -34,8 +34,8 @@ public class App {
     public static Path d_ns_loot_tables;
 
     public static Path d_ns_functions;
-    public static Path d_ns_functions_swords;
-    public static Path d_ns_functions_swords_sword1;
+    public static Path d_swords;
+    public static Path f_swords_sword1;
 
     public static Path f_loadmcfunction;
     public static Path f_tickmcfunction;
@@ -80,12 +80,10 @@ public class App {
         Structure.copyContents(template.resolve("tick.mcfunction"), f_tickmcfunction); 
 
         f_item_tickmcfunction = Structure.newDir(d_ns_functions, "item_tick.mcfunction", true);
-        f_sword0mcfunction = Structure.newDir(d_ns_functions, "sword0.mcfunction", true);
-        Structure.copyContents(template.resolve("sword0.mcfunction"), f_sword0mcfunction); 
 
-        d_ns_functions_swords = Structure.newDir(d_ns_functions, "swords", false);
-        d_ns_functions_swords_sword1 = Structure.newDir(d_ns_functions_swords, "sword1.mcfunction", true);
-        Structure.copyContents(template.resolve("sword1.mcfunction"), d_ns_functions_swords_sword1); 
+        d_swords = Structure.newDir(d_ns_functions, "swords", false);
+        f_swords_sword1 = Structure.newDir(d_swords, "sword1.mcfunction", true);
+        Structure.copyContents(template.resolve("sword1.mcfunction"), f_swords_sword1); 
 
         d_ns_advancements = Structure.newDir(d_ns, "advancements", false);
         d_ns_advancements_deal_damage = Structure.newDir(d_ns_advancements, "deal_damage.json", true);

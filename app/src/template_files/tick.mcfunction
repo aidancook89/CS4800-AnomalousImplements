@@ -1,1 +1,0 @@
-execute as @e[tag=hit_by_sword1_target] at @s run function aidp:sword0
