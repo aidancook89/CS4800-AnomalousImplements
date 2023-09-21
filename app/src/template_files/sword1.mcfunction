@@ -1,3 +1,6 @@
-say ran sword1.mcfunction
-particle flame ~ ~1 ~ 0 0 0 0.02 30 force
-effect give @s levitation 1 3 true
+# On Player
+particle flame ~ ~1 ~ 0 0 0 0.3 20 force
+
+# On Entity
+execute at @s run particle cloud ~ ~1 ~ 0 0 0 0.1 20 force
+effect give @s levitation 1 6 true

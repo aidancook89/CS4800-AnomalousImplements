@@ -4,7 +4,7 @@ public class ItemBuilder {
 
 
     public ItemBuilder(String type, String theme, int rarity) {
-        Item testItem = new Item("stone_sword", 0);
+        Item testItem = new Item("wooden_sword", 0);
         testItem.updateName("Test Sword", "white", true, true, false, false, false);
         testItem.updateLore("Test Lore", "dark_red", false, true, false, false, false);
         testItem.addEnchantment("knockback", 1);
