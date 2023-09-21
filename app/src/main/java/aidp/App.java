@@ -26,10 +26,6 @@ public class App {
     public static Path d_ns_advancements;
     public static Path d_ns_advancements_deal_damage;
 
-    public static Path d_ns_predicates;
-    public static Path d_ns_predicates_holding_item;
-    public static Path d_ns_holding_item_s1;
-
     public static Path d_ns_tags;
     public static Path d_ns_loot_tables;
 
@@ -89,15 +85,10 @@ public class App {
         d_ns_advancements_deal_damage = Structure.newDir(d_ns_advancements, "deal_damage.json", true);
         Structure.copyContents(template.resolve("deal_damage.json"), d_ns_advancements_deal_damage); 
 
-        d_ns_predicates = Structure.newDir(d_ns, "predicates", false);
-        d_ns_predicates_holding_item = Structure.newDir(d_ns_predicates, "holding_item", false);
-        d_ns_holding_item_s1 = Structure.newDir(d_ns_predicates_holding_item, "custom_sword.json", true);
-        Structure.copyContents(template.resolve("custom_sword.json"), d_ns_holding_item_s1); 
-
         ItemBuilder item = new ItemBuilder("sword", "fire", 1);
 
         //NEED TO GET PATHING RIGHT
-        EntityBuilder entity = new EntityBuilder("skeleton", "");
+        //EntityBuilder entity = new EntityBuilder("skeleton", "");
     }
 
     public static void main(String[] args) {
