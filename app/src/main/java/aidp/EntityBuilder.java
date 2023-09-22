@@ -10,6 +10,6 @@ public class EntityBuilder {
         testEntity.addPotionEffects(8, 2, -1, 1);
         testEntity.buildTag();
 
-        //Structure.writeTo(App.f_loadmcfunction, "\n" + testEntity.getSpawnCommand());
+        Structure.writeTo(App.f_loadmcfunction, "\n" + testEntity.getSpawnCommand(), true);
     }
 }

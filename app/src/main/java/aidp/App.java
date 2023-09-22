@@ -51,8 +51,8 @@ public class App {
 
         d_mc = Structure.newDir(d_data, "minecraft", false);
         d_mc_tags = Structure.newDir(d_mc, "tags", false);
-        d_mc_loot_tables = Structure.newDir(d_mc, "loot_tables", false);
-        d_mc_loot_tables_entities = Structure.newDir(d_mc_loot_tables, "entities", false);
+        //d_mc_loot_tables = Structure.newDir(d_mc, "loot_tables", false);
+        //d_mc_loot_tables_entities = Structure.newDir(d_mc_loot_tables, "entities", false);
 
         d_mc_functions = Structure.newDir(d_mc_tags, "functions", false);
         f_loadjson = Structure.newDir(d_mc_functions, "load.json", true);
@@ -76,17 +76,14 @@ public class App {
         Structure.copyContents(template.resolve("tick.mcfunction"), f_tickmcfunction); 
 
         f_item_tickmcfunction = Structure.newDir(d_ns_functions, "item_tick.mcfunction", true);
-
         d_swords = Structure.newDir(d_ns_functions, "swords", false);
-        f_swords_sword1 = Structure.newDir(d_swords, "sword1.mcfunction", true);
-        Structure.copyContents(template.resolve("sword1.mcfunction"), f_swords_sword1); 
 
         d_ns_advancements = Structure.newDir(d_ns, "advancements", false);
         d_ns_advancements_deal_damage = Structure.newDir(d_ns_advancements, "deal_damage.json", true);
         Structure.copyContents(template.resolve("deal_damage.json"), d_ns_advancements_deal_damage); 
 
         ItemBuilder item = new ItemBuilder("sword", "fire", 1);
-
+        
         //NEED TO GET PATHING RIGHT
         //EntityBuilder entity = new EntityBuilder("skeleton", "");
     }

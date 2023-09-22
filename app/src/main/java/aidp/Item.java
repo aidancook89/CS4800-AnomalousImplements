@@ -6,7 +6,8 @@ public class Item {
     public String tag;
     public String type;
 
-    public int customModelData;
+    public String dealDamageString = "";
+    public int customID = 0;
 
     public String nameText = "default";
     public String nameColor = "white"; 
@@ -24,13 +25,17 @@ public class Item {
     public boolean loreStrikethrough = false;
     public boolean loreObfuscated = false;
 
+    public String playerParticle = "";
+    public String entityParticle = "";
+
     public ArrayList<String> enchantmentsList = new ArrayList<String>();
     public ArrayList<String> attributeModifiersList = new ArrayList<String>();
-    public ArrayList<String> potionEffectList = new ArrayList<String>();
+    public ArrayList<String> playerPotionEffectList = new ArrayList<String>();
+    public ArrayList<String> entityPotionEffectList = new ArrayList<String>();
 
-    public Item(String type, int customModelData) {
+    public Item(String type, int customID) {
 		this.type = type;
-		this.customModelData = customModelData;
+		this.customID = customID;
     }
 
 	public String getGiveCommand() {
@@ -44,8 +49,8 @@ public class Item {
         tag += getLoreString() + "}";
         tag += getEnchantmentsString();
         tag += getAttributesString();
-        tag += String.format(",CustomModelData:%d", customModelData);
-        tag += ",custom_item:1" + "}";
+        tag += String.format(",CustomID:%d", customID);
+        tag += "}";
 	}
     
         
@@ -53,8 +58,7 @@ public class Item {
     ////////////////////////////////
     // NAME
     //////////////////////////////// 
-
-    public void updateName(String name, String color, boolean bold, boolean italic, boolean underlined, boolean strikethrough, boolean obfuscated) {
+    public void setName(String name, String color, boolean bold, boolean italic, boolean underlined, boolean strikethrough, boolean obfuscated) {
 		this.nameText = name;
 		nameColor = color;
 		nameBold = bold;
@@ -63,7 +67,6 @@ public class Item {
 		nameStrikethrough = strikethrough;
 		nameObfuscated = obfuscated;
 	}
-
 
     public String getNameString() {
         String output = String.format("Name:['{\"text\":\"%s\",\"color\":\"%s\"", nameText, nameColor);
@@ -81,8 +84,7 @@ public class Item {
     ////////////////////////////////
     // LORE
     //////////////////////////////// 
-
-    public void updateLore(String lore, String color, boolean bold, boolean italic, boolean underlined, boolean strikethrough, boolean obfuscated) {
+    public void setLore(String lore, String color, boolean bold, boolean italic, boolean underlined, boolean strikethrough, boolean obfuscated) {
 		this.loreText = lore;
 		loreColor = color;
 		loreBold = bold;
@@ -106,9 +108,27 @@ public class Item {
 
 
     ////////////////////////////////
+    // ATTACK
+    //////////////////////////////// 
+    public String getDealDamageString() {
+        return String.format("execute as @s[nbt={SelectedItem:{tag:{CustomID:%d}}}] run execute as @e[distance=..5,nbt={HurtTime:10s},tag=!am_the_attacker] run function aidp:swords/%s", customID, getAttackFunctionName());
+    }
+
+    public String getAttackFunctionName() {
+        return String.format("sword%s", customID);
+    }
+
+    public String getAttackFunctionString() {
+        return String.format("%s\n%s\n%s\n",
+            getEntityPotionEffectString(),
+            getEntityParticleString(),
+            getPlayerParticleString());
+    }
+
+
+    ////////////////////////////////
     // ENCHANTMENTS
     //////////////////////////////// 
-    
     public void addEnchantment(String enchantment, int level) {
 		enchantmentsList.add(String.format(
 			"{id:\"minecraft:%s\",lvl:%ds}", 
@@ -128,7 +148,6 @@ public class Item {
     ////////////////////////////////
     // ATTRIBUTES
     //////////////////////////////// 
-
     public void addAttributeModifier(String modifier, int amount) {}
  
     public String getAttributesString() {
@@ -142,32 +161,68 @@ public class Item {
 	
 
     ////////////////////////////////
-    // POTION EFFECTS
+    // HELD POTION EFFECTS
     //////////////////////////////// 
-
-	public void addPotionEffect(String effect, int amount, boolean hideParticles) {
+	public void addPlayerPotionEffect(String effect, int amount, boolean hideParticles) {
         String potionCommand = String.format(
-            "execute as @a[nbt={SelectedItem:{tag:{CustomModelData:%d}}}] run effect give @s minecraft:%s 1 %d %b",
-            customModelData, effect, amount, hideParticles);
-        //execute as @a[nbt={Inventory:[{id:"minecraft:leather_leggings",Slot:101b}]}] run effect give @s minecraft:jump_boost 1 3 true
-        potionEffectList.add(potionCommand);
+            "execute as @a[nbt={SelectedItem:{tag:{CustomID:%d}}}] run effect give @s minecraft:%s 1 %d %b",
+            customID, effect, amount, hideParticles);
+        playerPotionEffectList.add(potionCommand);
 	}
 
-    public String getPotionEffectString() {
+    public String getPlayerPotionEffectString() {
         String output = String.format("############ %s:%s:%d ############\n", 
-            type, nameText, customModelData);
-        for (int i = 0; i < potionEffectList.size(); i++) {
-            output += potionEffectList.get(i) + "\n";
+            type, nameText, customID);
+        for (int i = 0; i < playerPotionEffectList.size(); i++) {
+            output += playerPotionEffectList.get(i) + "\n";
         }
         return output;
     }
     
 
 
+    ////////////////////////////////
+    // ATTACK POTION EFFECTS
+    //////////////////////////////// 
+	public void addEntityPotionEffect(String effect, int amount, boolean hideParticles) {
+        String command = String.format("effect give @s %s 1 %d %b", effect, amount, hideParticles);
+        entityPotionEffectList.add(command);
+	}
+
+    public String getEntityPotionEffectString() {
+        String output = String.format("");
+        for (int i = 0; i < entityPotionEffectList.size(); i++) {
+            output += entityPotionEffectList.get(i) + "\n";
+        }
+        return output;
+    }
+
+
+
+	////////////////////////////////
+    // PARTICLES
+    //////////////////////////////// 
+    public void setPlayerParticle(String particle) {
+        playerParticle = particle; 
+    }
+
+    public String getPlayerParticleString() {
+        return String.format("particle %s ~ ~1 ~ 0 0 0 0.3 20 force", playerParticle);
+    }
+
+    public void setEntityParticle(String particle) {
+        entityParticle = particle; 
+    }
+
+    public String getEntityParticleString() {
+        return String.format("execute as @s run particle %s ~ ~1 ~ 0 0 0 0.3 20 force", entityParticle);
+    }
+
+
+
 	////////////////////////////////
     // HELPER FUNCTIONS
     //////////////////////////////// 
-
 	public static String listToString(ArrayList<String> arrayList) {
 		String output = "[";
 		for (String element : arrayList) {
@@ -237,4 +292,6 @@ Slots:
 {AttributeName:"generic.armor_toughness",Name:"generic.armor_toughness",Amount:1,Operation:2,UUID:[I;1853727647,-1374141926,-1240270752,1854574506]}
 {AttributeName:"generic.attack_speed",Name:"generic.attack_speed",Amount:1,Operation:2,UUID:[I;333910313,-860730335,-1454187290,-1632758482]}" 
 {AttributeName:"generic.luck",Name:"generic.luck",Amount:1,Operation:2,UUID:[I;555339872,202067683,-1188013754,-448789942]}
+ 
+
 */
