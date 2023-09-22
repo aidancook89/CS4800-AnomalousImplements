@@ -69,13 +69,13 @@ public class Item {
 	}
 
     public String getNameString() {
-        String output = String.format("Name:['{\"text\":\"%s\",\"color\":\"%s\"", nameText, nameColor);
+        String output = String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\"", nameText, nameColor);
         if (nameBold) output += String.format(",\"bold\":%b", nameBold);
         if (nameItalic) output += String.format(",\"italic\":%b", nameItalic);
         if (nameUnderlined) output += String.format(",\"underline\":%b", nameUnderlined);
         if (nameStrikethrough) output += String.format(",\"strikethrough\":%b", nameStrikethrough);
         if (nameObfuscated) output += String.format(",\"obfuscated\":%b", nameObfuscated);
-        output += "}']";
+        output += "}'";
         return output;
     }
 
