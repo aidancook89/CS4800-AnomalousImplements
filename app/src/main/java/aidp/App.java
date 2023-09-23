@@ -82,7 +82,7 @@ public class App {
         d_ns_advancements_deal_damage = Structure.newDir(d_ns_advancements, "deal_damage.json", true);
         Structure.copyContents(template.resolve("deal_damage.json"), d_ns_advancements_deal_damage); 
 
-        ItemBuilder item = new ItemBuilder("sword", "fire", 1);
+        SwordBuilder sword = new SwordBuilder("fire", 1);
         
         //NEED TO GET PATHING RIGHT
         //EntityBuilder entity = new EntityBuilder("skeleton", "");
