@@ -3,39 +3,37 @@ package aidp;
 import java.util.ArrayList;
 
 public class Sword {
-    public String tag;
-    public String type;
+    private String tag;
+    private String type;
 
-    public String dealDamageString = "";
-    public int customID = 0;
+    private int customID = 0;
 
-    public String nameText = "default";
-    public String nameColor = "white"; 
-    public boolean nameBold = false;
-    public boolean nameItalic = false;
-    public boolean nameUnderlined = false;
-    public boolean nameStrikethrough = false;
-    public boolean nameObfuscated = false;
+    private int rarity = 0;
+    private String[][] rarityLookup = new String[][] {
+        {"COMMON", "white"},
+        {"UNCOMMON", "green"},
+        {"RARE", "blue"},
+        {"EPIC", "purple"},
+        {"LEGENDARY", "gold"}
+    };
 
-    public String loreText = "default";
-    public String loreColor = "white";
-    public boolean loreBold = false;
-    public boolean loreItalic = false;
-    public boolean loreUnderlined = false;
-    public boolean loreStrikethrough = false;
-    public boolean loreObfuscated = false;
 
-    public String playerParticle = "";
-    public String entityParticle = "";
+    private String nameText = "default";
+    private String nameColor = "white"; 
+    private String loreText = "default";
 
-    public ArrayList<String> enchantmentsList = new ArrayList<String>();
-    public ArrayList<String> attributeModifiersList = new ArrayList<String>();
-    public ArrayList<String> playerPotionEffectList = new ArrayList<String>();
-    public ArrayList<String> entityPotionEffectList = new ArrayList<String>();
+    private String playerParticle = "";
+    private String entityParticle = "";
 
-    public Sword(String type, int customID) {
+    private ArrayList<String> enchantmentsList = new ArrayList<String>();
+    private ArrayList<String> attributeModifiersList = new ArrayList<String>();
+    private ArrayList<String> playerPotionEffectList = new ArrayList<String>();
+    private ArrayList<String> entityPotionEffectList = new ArrayList<String>();
+
+    public Sword(String type, int customID, int rarity) {
 		this.type = type;
 		this.customID = customID;
+        this.rarity = rarity;
     }
 
 	public String getGiveCommand() {
@@ -56,52 +54,28 @@ public class Sword {
         
 
     ////////////////////////////////
-    // NAME
+    // NAME AND LORE
     //////////////////////////////// 
-    public void setName(String name, String color, boolean bold, boolean italic, boolean underlined, boolean strikethrough, boolean obfuscated) {
+    public void setName(String name, String color) {
 		this.nameText = name;
 		nameColor = color;
-		nameBold = bold;
-		nameItalic = italic;
-		nameUnderlined = underlined;
-		nameStrikethrough = strikethrough;
-		nameObfuscated = obfuscated;
 	}
 
     public String getNameString() {
-        String output = String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\"", nameText, nameColor);
-        if (nameBold) output += String.format(",\"bold\":%b", nameBold);
-        if (nameItalic) output += String.format(",\"italic\":%b", nameItalic);
-        if (nameUnderlined) output += String.format(",\"underline\":%b", nameUnderlined);
-        if (nameStrikethrough) output += String.format(",\"strikethrough\":%b", nameStrikethrough);
-        if (nameObfuscated) output += String.format(",\"obfuscated\":%b", nameObfuscated);
-        output += "}'";
-        return output;
+        return String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":\"true\",\"italic\":\"false\"}'", nameText, nameColor);
     }
 
-	
-
-    ////////////////////////////////
-    // LORE
-    //////////////////////////////// 
-    public void setLore(String lore, String color, boolean bold, boolean italic, boolean underlined, boolean strikethrough, boolean obfuscated) {
+    public void setLore(String lore) {
 		this.loreText = lore;
-		loreColor = color;
-		loreBold = bold;
-		loreItalic = italic;
-		loreUnderlined = underlined;
-		loreStrikethrough = strikethrough;
-		loreObfuscated = obfuscated;
 	}
 
     public String getLoreString() {
-        String output = String.format("Lore:['{\"text\":\"%s\",\"color\":\"%s\"", loreText, loreColor);
-        if (loreBold) output += String.format(",\"bold\":%b", loreBold);
-        if (loreItalic) output += String.format(",\"italic\":%b", loreItalic);
-        if (loreUnderlined) output += String.format(",\"underline\":%b", loreUnderlined);
-        if (loreStrikethrough) output += String.format(",\"strikethrough\":%b", loreStrikethrough);
-        if (loreObfuscated) output += String.format(",\"obfuscated\":%b", loreObfuscated);
-        output += "}']";
+        String output = "Lore:[";
+        output += "'{\"text\":\"\"}',";
+        output += String.format("'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"true\",\"underlined\":\"true\"}',", rarityLookup[rarity][0], rarityLookup[rarity][1]); 
+        output += "'{\"text\":\"\"}',";
+        output += String.format("'{\"text\":\"%s\",\"color\":\"%s\"}'", loreText, "gray");
+        output += "]";
         return output;
     }
 

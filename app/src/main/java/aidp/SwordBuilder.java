@@ -3,12 +3,13 @@ package aidp;
 import java.nio.file.Path;
 
 public class SwordBuilder {
+
     private Sword sword; 
 
-    public SwordBuilder(String theme, int rarity) {
-        sword = new Sword("wooden_sword", 0);
-        sword.setName("Hello", "white", true, true, false, false, false);
-        sword.setLore("Test Lore", "dark_red", false, true, false, false, false);
+    public SwordBuilder(int id, int rarity, String theme) {
+        sword = new Sword("wooden_sword", id, rarity);
+        sword.setName("name", "white");
+        sword.setLore("lore");
         sword.addEnchantment("knockback", 1);
         sword.addEnchantment("unbreaking", 1);
         sword.addPlayerPotionEffect("speed", 0, true);
@@ -62,4 +63,4 @@ public class SwordBuilder {
 {AttributeName:"generic.luck",Name:"generic.luck",Amount:1,Operation:2,UUID:[I;555339872,202067683,-1188013754,-448789942]}
  
 
- */
+*/
