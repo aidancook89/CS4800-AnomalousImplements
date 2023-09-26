@@ -12,20 +12,23 @@ import com.google.gson.JsonParser;
 
 
 public class RequestHandler {
-	private String apiKey = "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";
-  	private String apiUrl = "https://api.openai.com/v1/chat/completions";
-    private String model = "gpt-3.5-turbo";
-    private HttpClient httpClient = HttpClient.newHttpClient();
+	private static String apiKey = "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";
+  	private static String apiUrl = "https://api.openai.com/v1/chat/completions";
+    private static String model = "gpt-3.5-turbo";
+    private static HttpClient httpClient = HttpClient.newHttpClient();
 
-    private String request = "";
-    private String responseBody = "";
-    private int statusCode = 0;
-    private String content = "";
+	private static int statusCode = 0;	
+	private static String responseBody = "";
 
-	public RequestHandler(String request) {
-		this.request = request;
-		String requestMessage = "{\"role\": \"system\", \"content\": \"" + request + "\"}"; 
-  		String requestBody = "{\"model\": \"" + model + "\", \"messages\": [" + requestMessage + "]}";
+	public static Request makeRequest(String system, String user, String assistant) {
+		String messagesArray = "[";
+		if (system != "") messagesArray += String.format("{\"role\": \"system\", \"content\": \"%s\"}", system);
+		if (user != "") messagesArray += String.format(",{\"role\": \"user\", \"content\": \"%s\"}", user); 
+		if (assistant != "") messagesArray += String.format(",{\"role\": \"assistant\", \"content\": \"%s\"}", assistant);
+		messagesArray += "]";
+			
+  		String requestBody = String.format("{\"model\": \"%s\", \"messages\": %s}",
+			model, messagesArray);
 		
   		HttpRequest httpRequest = HttpRequest.newBuilder()
 		   .uri(URI.create(apiUrl))
@@ -42,32 +45,8 @@ public class RequestHandler {
 	    responseFuture.thenAccept(response -> {
 	        statusCode = response.statusCode();
 	        responseBody = response.body();
-	        //System.out.println("Response Code: " + statusCode);
-	        //System.out.println("Response Body: " + responseBody);   	
 	    }).join();
-	}
 
-	public String getResponse() {
-		return responseBody;
-	}	
-
-	public int getStatusCode() {
-		return statusCode;
-	}	
-
-	public String getRequest() {
-		return request;
-	}	
-
-	public String getContent(int choiceIndex) {
-		JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
-		content = jsonObject
-            .getAsJsonArray("choices")
-            .get(choiceIndex) // Access the first choice
-            .getAsJsonObject()
-            .getAsJsonObject("message")
-            .get("content")
-            .getAsString();
-       return content;
+		return new Request(requestBody, responseBody, statusCode);
 	}
 }

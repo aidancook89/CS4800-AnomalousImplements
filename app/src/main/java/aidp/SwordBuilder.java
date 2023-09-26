@@ -5,8 +5,22 @@ import java.nio.file.Path;
 public class SwordBuilder {
 
     private Sword sword; 
+    private enum points {}    
+
+    /*
+     * wooden: 0
+     * stone: 5
+     * iron: 10
+     * gold: 5
+     * diamond: 20
+     * netherite: 40
+     */
 
     public SwordBuilder(int id, int rarity, String theme) {
+
+
+
+
         sword = new Sword("wooden_sword", id, rarity);
         sword.setName("name", "white");
         sword.setLore("lore");
@@ -14,7 +28,7 @@ public class SwordBuilder {
         sword.addEnchantment("unbreaking", 1);
         sword.addPlayerPotionEffect("speed", 0, true);
         sword.addPlayerPotionEffect("jump_boost", 0, true);
-        sword.addEntityPotionEffect("levitation", 5, true);
+        sword.addEntityPotionEffect("levitation", 1, 5, true);
         sword.setEntityParticle("cloud");
         sword.setPlayerParticle("flame");
         sword.buildTag();
@@ -40,17 +54,17 @@ public class SwordBuilder {
 
 /*
 
-{id:"minecraft:binding_curse",lvl:1s}
-{id:"minecraft:sharpness",lvl:1s}
+{id:"minecraft:binding_curse",lvl:1s} 2
+{id:"minecraft:sharpness",lvl:1s} -2 -4 -6 -8 -10
 {id:"minecraft:smite",lvl:1s}
 {id:"minecraft:bane_of_arthropods",lvl:1s}
 {id:"minecraft:knockback",lvl:1s}
 {id:"minecraft:fire_aspect",lvl:1s}
-{id:"minecraft:looting",lvl:1s}
-{id:"minecraft:sweeping",lvl:1s}
-{id:"minecraft:unbreaking",lvl:1s}
-{id:"minecraft:mending",lvl:1s}
-{id:"minecraft:vanishing_curse",lvl:1s}
+{id:"minecraft:looting",lvl:1s} -3 -6 -9
+{id:"minecraft:sweeping",lvl:1s} -
+{id:"minecraft:unbreaking",lvl:1s} -3 -6 -9
+{id:"minecraft:mending",lvl:1s} -15
+{id:"minecraft:vanishing_curse",lvl:1s} 5
     
 {AttributeName:"generic.max_health",Name:"generic.max_health",Amount:1,Operation:2,UUID:[I;-2048207306,2079277823,-1829575274,1514256703],Slot:"mainhand"}
 {AttributeName:"generic.follow_range",Name:"generic.follow_range",Amount:1,Operation:2,UUID:[I;-1071343243,-632797570,-1634786299,-992118208],Slot:"offhand"}

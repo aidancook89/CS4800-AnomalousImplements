@@ -158,8 +158,8 @@ public class Sword {
     ////////////////////////////////
     // ATTACK POTION EFFECTS
     //////////////////////////////// 
-	public void addEntityPotionEffect(String effect, int amount, boolean hideParticles) {
-        String command = String.format("effect give @s %s 1 %d %b", effect, amount, hideParticles);
+	public void addEntityPotionEffect(String effect, int length, int amount, boolean hideParticles) {
+        String command = String.format("effect give @s %s %d %d %b", effect, length, amount, hideParticles);
         entityPotionEffectList.add(command);
 	}
 
