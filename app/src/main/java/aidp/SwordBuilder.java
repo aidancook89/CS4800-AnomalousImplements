@@ -1,40 +1,47 @@
 package aidp;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import java.util.ArrayList;
+
 import java.nio.file.Path;
 
 public class SwordBuilder {
 
     private Sword sword; 
-    private enum points {}    
 
-    /*
-     * wooden: 0
-     * stone: 5
-     * iron: 10
-     * gold: 5
-     * diamond: 20
-     * netherite: 40
-     */
+    private String requestJson = "{"
+    + "name: <string>," 
+    + "color: <hexcode>," 
+    + "lore: <string>"
+    + "enchantments: [<unbreaking, knockback, sharpness, fire_aspect, looting>],"
+    + "player_effects: [<speed, slowness, jump_boost, levitation>]"
+    + "player_particles: [<cloud,flame,barrier,bubble,dust,enchant>]"
+    + "entity_effects: [<speed, slowness, jump_boost, levitation>]"
+    + "entity_particles: [<cloud,flame,barrier,bubble,dust,enchant>]"
+    + "} ";
+
+    private String restrictions = ""
+    + "enchantments: pick <= 2,"
+    + "player_effects: pick <= 2," 
+    + "player_particles: pick <= 2," 
+    + "entity_effects: pick <= 1,"
+    + "entity_particles: pick <= 2";
 
     public SwordBuilder(int id, int rarity, String theme) {
-
+         
         Request request = RequestHandler.makeRequest(
-            "Provide me with a JSON in the following format: " +
-            "{name: <string>, color: <hexcode>, lore: <string>, user_effects: <none,speed,slowness,jump_boost>, enchantments: <none,fire_aspect,unbreaking,sharpness>}", 
-            "Interesting sword with theme: %s", 
-            0.9);        
+            "Provide me with a JSON in the following format: " + requestJson + restrictions,
+            String.format("Interesting sword with theme: %s", theme), 
+            0.9
+        );        
         System.out.println(request.getContentString());
+        System.out.println(request.getAsArrayList("player_effects"));
 
         sword = new Sword("wooden_sword", id, rarity);
         sword.setName(request.getAsString("name"), request.getAsString("color"));
         sword.setLore(request.getAsString("lore"));
-        sword.addEnchantment("knockback", 1);
         sword.addEnchantment("unbreaking", 1);
-        sword.addPlayerPotionEffect("speed", 0, true);
-        sword.addPlayerPotionEffect("jump_boost", 0, true);
-        sword.addEntityPotionEffect("levitation", 1, 5, true);
+        addPlayerPotionEffect(sword, request.getAsArrayList("player_effects"));
+
         sword.setEntityParticle("cloud");
         sword.setPlayerParticle("flame");
         sword.buildTag();
@@ -51,6 +58,12 @@ public class SwordBuilder {
 
         // ADD POTION EFFECTS TO item_tick
         Structure.writeTo(App.f_item_tickmcfunction, sword.getPlayerPotionEffectString(), true);
+    }
+
+    public void addPlayerPotionEffect(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            sword.addPlayerPotionEffect(item, 0, false);
+        }
     }
 
     public Sword getSword() {
