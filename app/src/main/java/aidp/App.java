@@ -92,9 +92,6 @@ public class App {
         
         //NEED TO GET PATHING RIGHT
         //EntityBuilder entity = new EntityBuilder("skeleton", "");
-
-        Request request = RequestHandler.makeRequest("Give me a cool color", "", "");        
-        System.out.println(request.getResponse());
     }
 
     public static void main(String[] args) {

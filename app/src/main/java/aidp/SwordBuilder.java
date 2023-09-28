@@ -1,5 +1,7 @@
 package aidp;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.nio.file.Path;
 
 public class SwordBuilder {
@@ -18,12 +20,16 @@ public class SwordBuilder {
 
     public SwordBuilder(int id, int rarity, String theme) {
 
-
-
+        Request request = RequestHandler.makeRequest(
+            "Provide me with a JSON in the following format: " +
+            "{name: <string>, color: <hexcode>, lore: <string>, user_effects: <none,speed,slowness,jump_boost>, enchantments: <none,fire_aspect,unbreaking,sharpness>}", 
+            "Interesting sword with theme: %s", 
+            0.9);        
+        System.out.println(request.getContentString());
 
         sword = new Sword("wooden_sword", id, rarity);
-        sword.setName("name", "white");
-        sword.setLore("lore");
+        sword.setName(request.getAsString("name"), request.getAsString("color"));
+        sword.setLore(request.getAsString("lore"));
         sword.addEnchantment("knockback", 1);
         sword.addEnchantment("unbreaking", 1);
         sword.addPlayerPotionEffect("speed", 0, true);
