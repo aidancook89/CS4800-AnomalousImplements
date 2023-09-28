@@ -22,13 +22,12 @@ public class Sword {
     private String nameColor = "white"; 
     private String loreText = "default";
 
-    private String playerParticle = "";
-    private String entityParticle = "";
-
     private ArrayList<String> enchantmentsList = new ArrayList<String>();
     private ArrayList<String> attributeModifiersList = new ArrayList<String>();
     private ArrayList<String> playerPotionEffectList = new ArrayList<String>();
+    private ArrayList<String> playerParticleList = new ArrayList<String>();
     private ArrayList<String> entityPotionEffectList = new ArrayList<String>();
+    private ArrayList<String> entityParticleList = new ArrayList<String>();
 
     public Sword(String type, int customID, int rarity) {
 		this.type = type;
@@ -94,7 +93,7 @@ public class Sword {
 
     public String getAttackFunctionString() {
         return String.format("%s\n%s\n%s\n",
-            getEntityPotionEffectString(),
+            getEntityPotionString(),
             getEntityParticleString(),
             getPlayerParticleString());
     }
@@ -135,38 +134,33 @@ public class Sword {
 	
 
     ////////////////////////////////
-    // HELD POTION EFFECTS
+    // POTION EFFECTS
     //////////////////////////////// 
-	public void addPlayerPotionEffect(String effect, int amount, boolean hideParticles) {
+	public void addPlayerPotion(String effect, int length, int amount, boolean hideParticles) {
         String potionCommand = String.format(
-            "execute as @a[nbt={SelectedItem:{tag:{CustomID:%d}}}] run effect give @s minecraft:%s 1 %d %b",
-            customID, effect, amount, hideParticles);
+            "execute as @a[nbt={SelectedItem:{tag:{CustomID:%d}}}] run effect give @s minecraft:%s %d %d %b",
+            customID, effect, length, amount, hideParticles);
         playerPotionEffectList.add(potionCommand);
 	}
 
-    public String getPlayerPotionEffectString() {
+    public String getPlayerPotionString() {
         String output = String.format("############ %s:%s:%d ############\n", 
             type, nameText, customID);
-        for (int i = 0; i < playerPotionEffectList.size(); i++) {
-            output += playerPotionEffectList.get(i) + "\n";
+        for (String item : playerPotionEffectList) {
+            output += item + "\n";
         }
         return output;
     }
     
-
-
-    ////////////////////////////////
-    // ATTACK POTION EFFECTS
-    //////////////////////////////// 
-	public void addEntityPotionEffect(String effect, int length, int amount, boolean hideParticles) {
+    public void addEntityPotion(String effect, int length, int amount, boolean hideParticles) {
         String command = String.format("effect give @s %s %d %d %b", effect, length, amount, hideParticles);
         entityPotionEffectList.add(command);
 	}
 
-    public String getEntityPotionEffectString() {
-        String output = String.format("");
-        for (int i = 0; i < entityPotionEffectList.size(); i++) {
-            output += entityPotionEffectList.get(i) + "\n";
+    public String getEntityPotionString() {
+        String output = "";
+        for (String item : entityPotionEffectList) {
+            output += item + "\n";
         }
         return output;
     }
@@ -176,20 +170,30 @@ public class Sword {
 	////////////////////////////////
     // PARTICLES
     //////////////////////////////// 
-    public void setPlayerParticle(String particle) {
-        playerParticle = particle; 
+    public void addPlayerParticle(String particle) {
+        String command = String.format("particle %s ~ ~1 ~ 0 0 0 0.3 20 force", particle);
+        playerParticleList.add(command);
     }
 
     public String getPlayerParticleString() {
-        return String.format("particle %s ~ ~1 ~ 0 0 0 0.3 20 force", playerParticle);
+        String output = "";
+        for (String item : playerParticleList) {
+            output += item + "\n";
+        }
+        return output;
     }
 
-    public void setEntityParticle(String particle) {
-        entityParticle = particle; 
+    public void addEntityParticle(String particle) {
+        String command = String.format("execute as @s run particle %s ~ ~1 ~ 0 0 0 0.3 20 force", particle);
+        playerParticleList.add(command);
     }
 
     public String getEntityParticleString() {
-        return String.format("execute as @s run particle %s ~ ~1 ~ 0 0 0 0.3 20 force", entityParticle);
+        String output = "";
+        for (String item : entityParticleList) {
+            output += item + "\n";
+        }
+        return output;
     }
 
 

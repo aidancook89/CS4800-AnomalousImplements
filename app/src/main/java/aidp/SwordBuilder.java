@@ -27,44 +27,82 @@ public class SwordBuilder {
     + "entity_particles: pick <= 2";
 
     public SwordBuilder(int id, int rarity, String theme) {
-         
+        
+        ////////////////////////////////
+        // CREATE ITEM
+        ////////////////////////////////
+
+        // Make request
         Request request = RequestHandler.makeRequest(
             "Provide me with a JSON in the following format: " + requestJson + restrictions,
             String.format("Interesting sword with theme: %s", theme), 
             0.9
         );        
         System.out.println(request.getContentString());
-        System.out.println(request.getAsArrayList("player_effects"));
 
+        // Create new sword and add attributes
         sword = new Sword("wooden_sword", id, rarity);
         sword.setName(request.getAsString("name"), request.getAsString("color"));
         sword.setLore(request.getAsString("lore"));
-        sword.addEnchantment("unbreaking", 1);
-        addPlayerPotionEffect(sword, request.getAsArrayList("player_effects"));
+        addEnchantment(sword, request.getAsArrayList("enchantments"));
+        addPlayerPotion(sword, request.getAsArrayList("player_effects"));
+        addPlayerParticle(sword, request.getAsArrayList("player_particles"));
+        addEntityPotion(sword, request.getAsArrayList("entity_effects"));
+        addEntityParticle(sword, request.getAsArrayList("entity_particles"));
 
-        sword.setEntityParticle("cloud");
-        sword.setPlayerParticle("flame");
+
+
+        ////////////////////////////////
+        // BUILD ITEM
+        ////////////////////////////////
+
+        // Build item tag
         sword.buildTag();
 
-        // ADD ITEM TO DEAL DAMAGE
+        // Add item to deal damage
         Structure.writeToLine(App.f_deal_damagemcfunction, sword.getDealDamageString(), 2);
 
-        // CREATE DAMAGE FUNCTION
+        // Create attack function 
         Path attackFunction = Structure.newDir(App.d_swords, sword.getAttackFunctionName() + ".mcfunction", true);
         Structure.writeTo(attackFunction, sword.getAttackFunctionString(), true);
+    
+        // Add potion effects for player
+        Structure.writeTo(App.f_item_tickmcfunction, sword.getPlayerPotionString(), true);
 
-        // GIVE ITEM ON LOAD
+        // Add give command on load
         Structure.writeTo(App.f_loadmcfunction, "\n" + sword.getGiveCommand(), true);
-
-        // ADD POTION EFFECTS TO item_tick
-        Structure.writeTo(App.f_item_tickmcfunction, sword.getPlayerPotionEffectString(), true);
     }
 
-    public void addPlayerPotionEffect(Sword sword, ArrayList<String> list) {
+    public void addEnchantment(Sword sword, ArrayList<String> list) {
         for (String item : list) {
-            sword.addPlayerPotionEffect(item, 0, false);
+            sword.addEnchantment(item, 1);
         }
     }
+
+    public void addPlayerPotion(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            sword.addPlayerPotion(item, 1, 0, true);
+        }
+    }
+
+    public void addPlayerParticle(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            sword.addPlayerParticle(item);
+        }
+    }
+
+    public void addEntityPotion(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            sword.addEntityPotion(item, 1, 0, false);
+        }
+    }
+ 
+    public void addEntityParticle(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            sword.addEntityParticle(item);
+        }
+    }
+ 
 
     public Sword getSword() {
         return sword;
