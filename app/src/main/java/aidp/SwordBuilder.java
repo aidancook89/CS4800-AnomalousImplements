@@ -46,8 +46,9 @@ public class SwordBuilder {
 
         // Create new sword and add attributes
         Sword sword = new Sword("wooden_sword", id, rarity);
-        sword.setName(request.getAsString("name"), request.getAsString("color"));
+        sword.setName(request.getAsString("name"),request.getAsString("color"));
         sword.setLore(request.getAsString("lore"));
+
         addEnchantments(sword, request.getAsArrayList("enchantments"));
         addHeldEffects(sword, request.getAsArrayList("held_effects"));
         addAttackEffects(sword, request.getAsArrayList("attack_effects"));
@@ -82,11 +83,15 @@ public class SwordBuilder {
             getAttributesString(sword), sword.getId());
 	}
 
+    // REQUIRED: ADD PARSING TO VERIFY THAT THERE ARE NO CHARACTERS THAT BREAK FORMATING FOR MCFUNCTION (', ", maybe more...)
     public static String getNameString(Sword sword) {
         return String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":\"true\",\"italic\":\"false\"}'", 
-            sword.getName(), sword.getColor());
+            sword.getName().replace("'", "\'"), 
+            sword.getColor()
+        );
     }
 
+    // REQUIRED: ADD FUNCTIONALITY TO ADD "NEWLINES" INTO LORE
     public static String getLoreString(Sword sword) {
         return String.format("Lore:['{\"text\":\"\"}'," +
         "'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"true\",\"underlined\":\"true\"}'," +
@@ -135,7 +140,7 @@ public class SwordBuilder {
             sword.getAttributes().add(new Attribute(item,0.1,1,"mainhand"));
         }
     }
- 
+    
     public static String getAttributesString(Sword sword) {
         if (sword.getAttributes().size() == 0) return "";
         return ",AttributeModifiers:" + sword.getAttributes();
@@ -288,9 +293,11 @@ class Attribute {
         uuid = new Random().nextLong() % 10000000000L;
     }
 
+    //REQUIRED: NOT FUNCTIONING
     public String toString() {
         return String.format("{AttributeName:\"generic.%s\",Name:\"generic.%s\"," +
-        "Amount:%f,Operation:%d,UUID:[I;%010d,111111111,2222222222,3333333333],Slot:\"%s\"}",
+        "Amount:%f,Operation:%d,UUID:[I;469651195,-1054259622,-1995201699,-859124615],Slot:\"%s\"}",
+        //"Amount:%f,Operation:%d,UUID:[I;%010d,111111111,2222222222,3333333333],Slot:\"%s\"}",
         name, name, amount, operation, uuid, slot);
     }
 }
