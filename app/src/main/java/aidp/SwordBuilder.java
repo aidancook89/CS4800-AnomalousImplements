@@ -6,31 +6,33 @@ import java.nio.file.Path;
 
 public class SwordBuilder {
 
-    private Sword sword; 
+    private static String[][] rarityLookup = new String[][] {
+        {"COMMON", "white"},
+        {"UNCOMMON", "green"},
+        {"RARE", "blue"},
+        {"EPIC", "purple"},
+        {"LEGENDARY", "gold"}
+    };
 
-    private String requestJson = "{"
+    private static String requestJson = "{"
     + "name: <string>," 
     + "color: <hexcode>," 
     + "lore: <string>"
-    + "enchantments: [<unbreaking, knockback, sharpness, fire_aspect, looting>],"
-    + "player_effects: [<speed, slowness, jump_boost, levitation>]"
-    + "player_particles: [<cloud,flame,barrier,bubble,dust,enchant>]"
-    + "entity_effects: [<speed, slowness, jump_boost, levitation>]"
-    + "entity_particles: [<cloud,flame,barrier,bubble,dust,enchant>]"
+    + "enchantments: [<unbreaking,knockback,sharpness,fire_aspect,looting>],"
+    + "held_effects: [<speed,slowness,jump_boost,levitation>]"
+    + "held_particles: [<cloud,flame,barrier,bubble,enchant>]"
+    + "attack_effects: [<speed,slowness,jump_boost,levitation>]"
+    + "attack_particles: [<cloud,flame,bubble,enchant>]"
     + "} ";
 
-    private String restrictions = ""
-    + "enchantments: pick <= 2,"
-    + "player_effects: pick <= 2," 
-    + "player_particles: pick <= 2," 
-    + "entity_effects: pick <= 1,"
-    + "entity_particles: pick <= 2";
+    private static String restrictions = ""
+    + "enchantments: length <= 2,"
+    + "player_effects: length <= 2," 
+    + "player_particles: length <= 2," 
+    + "entity_effects: length <= 2,"
+    + "entity_particles: length <= 2";
 
-    public SwordBuilder(int id, int rarity, String theme) {
-        
-        ////////////////////////////////
-        // CREATE ITEM
-        ////////////////////////////////
+    public static Sword newSword(int id, int rarity, String theme) {
 
         // Make request
         Request request = RequestHandler.makeRequest(
@@ -41,73 +43,213 @@ public class SwordBuilder {
         System.out.println(request.getContentString());
 
         // Create new sword and add attributes
-        sword = new Sword("wooden_sword", id, rarity);
+        Sword sword = new Sword("wooden_sword", id, rarity);
         sword.setName(request.getAsString("name"), request.getAsString("color"));
         sword.setLore(request.getAsString("lore"));
-        addEnchantment(sword, request.getAsArrayList("enchantments"));
-        addPlayerPotion(sword, request.getAsArrayList("player_effects"));
-        addPlayerParticle(sword, request.getAsArrayList("player_particles"));
-        addEntityPotion(sword, request.getAsArrayList("entity_effects"));
-        addEntityParticle(sword, request.getAsArrayList("entity_particles"));
-
-
-
-        ////////////////////////////////
-        // BUILD ITEM
-        ////////////////////////////////
-
-        // Build item tag
-        sword.buildTag();
+        addEnchantments(sword, request.getAsArrayList("enchantments"));
+        addHeldEffects(sword, request.getAsArrayList("held_effects"));
+        addAttackEffects(sword, request.getAsArrayList("attack_effects"));
+        addHeldParticles(sword, request.getAsArrayList("held_particles"));
+        addAttackParticles(sword, request.getAsArrayList("attack_particles"));
 
         // Add item to deal damage
-        Structure.writeToLine(App.f_deal_damagemcfunction, sword.getDealDamageString(), 2);
-
+        Structure.writeToLine(App.f_deal_damagemcfunction, getDealDamageString(sword), 2);
+         
         // Create attack function 
-        Path attackFunction = Structure.newDir(App.d_swords, sword.getAttackFunctionName() + ".mcfunction", true);
-        Structure.writeTo(attackFunction, sword.getAttackFunctionString(), true);
+        Path attackFunction = Structure.newDir(App.d_swords, String.format("sword%d.mcfunction", sword.getId()), true);
+        Structure.writeTo(attackFunction, getAttackFunctionString(sword), true);
     
         // Add potion effects for player
-        Structure.writeTo(App.f_item_tickmcfunction, sword.getPlayerPotionString(), true);
+        Structure.writeTo(App.f_item_tickmcfunction, getHeldEffectsString(sword), true);
 
         // Add give command on load
-        Structure.writeTo(App.f_loadmcfunction, "\n" + sword.getGiveCommand(), true);
-    }
+        Structure.writeTo(App.f_loadmcfunction, "\n" + getGiveCommand(sword), true);
 
-    public void addEnchantment(Sword sword, ArrayList<String> list) {
-        for (String item : list) {
-            sword.addEnchantment(item, 1);
-        }
-    }
-
-    public void addPlayerPotion(Sword sword, ArrayList<String> list) {
-        for (String item : list) {
-            sword.addPlayerPotion(item, 1, 0, true);
-        }
-    }
-
-    public void addPlayerParticle(Sword sword, ArrayList<String> list) {
-        for (String item : list) {
-            sword.addPlayerParticle(item);
-        }
-    }
-
-    public void addEntityPotion(Sword sword, ArrayList<String> list) {
-        for (String item : list) {
-            sword.addEntityPotion(item, 1, 0, false);
-        }
-    }
- 
-    public void addEntityParticle(Sword sword, ArrayList<String> list) {
-        for (String item : list) {
-            sword.addEntityParticle(item);
-        }
-    }
- 
-
-    public Sword getSword() {
         return sword;
     }
+
+
+    public static String getGiveCommand(Sword sword) {
+		return String.format("give @a %s%s 1", sword.getType(), getTag(sword)); 
+	} 
+
+	public static String getTag(Sword sword) {
+        return String.format("{display:{%s,%s}%s%s,CustomID:%d}",
+            getNameString(sword), getLoreString(sword), getEnchantmentsString(sword), 
+            getAttributesString(sword), sword.getId());
+	}
+
+    public static String getNameString(Sword sword) {
+        return String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":\"true\",\"italic\":\"false\"}'", 
+            sword.getName(), sword.getColor());
+    }
+
+    public static String getLoreString(Sword sword) {
+        return String.format("Lore:['{\"text\":\"\"}'," +
+        "'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"true\",\"underlined\":\"true\"}'," +
+        "'{\"text\":\"\"}'," +
+        "'{\"text\":\"%s\",\"color\":\"%s\"}']", 
+        rarityLookup[sword.getRarity()][0], rarityLookup[sword.getRarity()][1], sword.getLore(), "gray");
+    }
+
+
+
+
+    public static void addEnchantments(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            sword.getEnchantments().add(new Enchantment(item, 1));
+        }
+    } 
+
+    public static String getEnchantmentsString(Sword sword) {
+        if (sword.getEnchantments().size() == 0) return "";
+        return ",Enchantments:" + sword.getEnchantments();
+    }
+
+
+
+    public static void addHeldEffects(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            sword.getHeldEffects().add(new Effect(item, 1, 0, false));
+        }
+    }
+
+    public static String getHeldEffectsString(Sword sword) {
+        if (sword.getHeldEffects().size() == 0) return "";
+        String output = String.format("############ %s (%s), id: %d ############\n", 
+            sword.getName(), sword.getType(), sword.getId());
+        for (Effect e : sword.getHeldEffects()) {
+            output += String.format("execute as @a[nbt={SelectedItem:{tag:{CustomID:%d}}}] run effect give @s ", 
+                sword.getId()) + e + "\n";
+        }
+        return output; 
+    }
+ 
+
+
+    public static void addAttackEffects(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            sword.getAttackEffects().add(new Effect(item, 1, 0, false));
+        }
+    }
+
+    public static String getAttackEffectsString(Sword sword) {
+        String output = "";
+        for (Effect e : sword.getAttackEffects()) {
+            output += "effect give @s " + e + "\n";
+        }
+        return output;
+    }
+
+
+
+    public static String getDealDamageString(Sword sword) {
+        return String.format("execute as @s[nbt={SelectedItem:{tag:{CustomID:%d}}}] run execute as " +
+        "@e[distance=..5,nbt={HurtTime:10s},tag=!am_the_attacker] run function aidp:swords/sword%d", sword.getId(), sword.getId());
+    }
+
+    public static String getAttackFunctionString(Sword sword) {
+        return String.format("%s\n%s\n%s\n",
+            getAttackEffectsString(sword), getAttackParticlesString(sword), getHeldParticlesString(sword));
+    }
+
+
+    public static void addHeldParticles(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            sword.getHeldParticles().add(new Particle(item));
+        }
+    }
+
+    public static String getHeldParticlesString(Sword sword) {
+        String output = "";
+        for (Particle p : sword.getHeldParticles()) {
+            output += p + "\n";
+        }
+        return output;
+    }
+
+    public static void addAttackParticles(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            sword.getHeldParticles().add(new Particle(item));
+        }
+    }
+
+    public static String getAttackParticlesString(Sword sword) {
+        String output = "";
+        for (Particle p : sword.getAttackParticles()) {
+            output += "execute as @s run " + p + "\n";
+        }
+        return output;
+    }
+
+
+    public static void addAttributeModifier(Sword sword) {}
+ 
+    public static String getAttributesString(Sword sword) {
+        String output = "";
+        /* 
+        if (attributeModifiersList.size() > 0) {
+            output = String.format(",AttributeModifiers:%s", listToString(attributeModifiersList));
+        }
+        */
+        return output;
+    }
+
+
+
 }
+
+
+
+class Enchantment {
+    private String enchant;
+    private int level;
+
+    public Enchantment(String enchant, int level) {
+        this.enchant = enchant;
+        this.level = level;
+    }
+
+    public String toString() {
+        return String.format("{id:\"minecraft:%s\",lvl:%ds}", enchant, level);
+    }
+}
+
+
+
+class Effect {
+    private String effect;
+    private int length;
+    private int amount; 
+    private boolean showParticles;
+
+    public Effect(String effect, int length, int amount, boolean showParticles) {
+        this.effect = effect;
+        this.length = length;
+        this.amount = amount;
+        this.showParticles = showParticles;
+    }
+
+    public String toString() {
+        return String.format("minecraft:%s %d %d %b",
+            effect, length, amount, showParticles);
+    }
+}
+
+
+class Particle {
+    private String particle;
+
+    public Particle(String particle) {
+        this.particle = particle;
+    }
+
+    public String toString() {
+        return String.format("particle %s ~ ~1 ~ 0 0 0 0.3 20 force", particle);
+    }
+}
+
+
 
 /*
 
