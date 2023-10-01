@@ -1,8 +1,8 @@
 package aidp;
 
 import java.util.ArrayList;
-
 import java.nio.file.Path;
+import java.util.Random;
 
 public class SwordBuilder {
 
@@ -19,6 +19,7 @@ public class SwordBuilder {
     + "color: <hexcode>," 
     + "lore: <string>"
     + "enchantments: [<unbreaking,knockback,sharpness,fire_aspect,looting>],"
+    + "attributes: [<max_health,knockback_resistantce,movement_speed,attack_damage,armor,armor_touchness,attack_speed,luck,max_absorption>]"
     + "held_effects: [<speed,slowness,jump_boost,levitation>]"
     + "held_particles: [<cloud,flame,barrier,bubble,enchant>]"
     + "attack_effects: [<speed,slowness,jump_boost,levitation>]"
@@ -26,11 +27,12 @@ public class SwordBuilder {
     + "} ";
 
     private static String restrictions = ""
-    + "enchantments: length <= 2,"
-    + "player_effects: length <= 2," 
-    + "player_particles: length <= 2," 
-    + "entity_effects: length <= 2,"
-    + "entity_particles: length <= 2";
+    + "enchantments: pick <= 2,"
+    + "attributes: pick <= 1"
+    + "player_effects: pick <= 2," 
+    + "player_particles: pick <= 2," 
+    + "entity_effects: pick <= 2,"
+    + "entity_particles: pick <= 2";
 
     public static Sword newSword(int id, int rarity, String theme) {
 
@@ -51,6 +53,7 @@ public class SwordBuilder {
         addAttackEffects(sword, request.getAsArrayList("attack_effects"));
         addHeldParticles(sword, request.getAsArrayList("held_particles"));
         addAttackParticles(sword, request.getAsArrayList("attack_particles"));
+        addAttributes(sword, request.getAsArrayList("attributes"));
 
         // Add item to deal damage
         Structure.writeToLine(App.f_deal_damagemcfunction, getDealDamageString(sword), 2);
@@ -94,7 +97,23 @@ public class SwordBuilder {
 
 
 
+    /*
+     * Construct deal damage string
+     */
+    public static String getDealDamageString(Sword sword) {
+        return String.format("execute as @s[nbt={SelectedItem:{tag:{CustomID:%d}}}] run execute as " +
+        "@e[distance=..5,nbt={HurtTime:10s},tag=!am_the_attacker] run function aidp:swords/sword%d", sword.getId(), sword.getId());
+    }
 
+    public static String getAttackFunctionString(Sword sword) {
+        return String.format("%s\n%s\n%s\n",
+            getAttackEffectsString(sword), getAttackParticlesString(sword), getHeldParticlesString(sword));
+    }
+
+
+    /* 
+     * Enchantments
+     */
     public static void addEnchantments(Sword sword, ArrayList<String> list) {
         for (String item : list) {
             sword.getEnchantments().add(new Enchantment(item, 1));
@@ -108,6 +127,25 @@ public class SwordBuilder {
 
 
 
+    /*
+     * Attribute modifier
+     */
+    public static void addAttributes(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            sword.getAttributes().add(new Attribute(item,0.1,1,"mainhand"));
+        }
+    }
+ 
+    public static String getAttributesString(Sword sword) {
+        if (sword.getAttributes().size() == 0) return "";
+        return ",AttributeModifiers:" + sword.getAttributes();
+    }
+
+
+
+    /* 
+     * Held Effects
+     */
     public static void addHeldEffects(Sword sword, ArrayList<String> list) {
         for (String item : list) {
             sword.getHeldEffects().add(new Effect(item, 1, 0, true));
@@ -127,6 +165,9 @@ public class SwordBuilder {
  
 
 
+    /* 
+     * Attack Effects
+     */
     public static void addAttackEffects(Sword sword, ArrayList<String> list) {
         for (String item : list) {
             sword.getAttackEffects().add(new Effect(item, 1, 0, true));
@@ -143,17 +184,9 @@ public class SwordBuilder {
 
 
 
-    public static String getDealDamageString(Sword sword) {
-        return String.format("execute as @s[nbt={SelectedItem:{tag:{CustomID:%d}}}] run execute as " +
-        "@e[distance=..5,nbt={HurtTime:10s},tag=!am_the_attacker] run function aidp:swords/sword%d", sword.getId(), sword.getId());
-    }
-
-    public static String getAttackFunctionString(Sword sword) {
-        return String.format("%s\n%s\n%s\n",
-            getAttackEffectsString(sword), getAttackParticlesString(sword), getHeldParticlesString(sword));
-    }
-
-
+    /*
+     * Held Particles
+     */
     public static void addHeldParticles(Sword sword, ArrayList<String> list) {
         for (String item : list) {
             sword.getHeldParticles().add(new Particle(item));
@@ -168,6 +201,11 @@ public class SwordBuilder {
         return output;
     }
 
+
+
+    /*
+     * Attack Particles
+     */
     public static void addAttackParticles(Sword sword, ArrayList<String> list) {
         for (String item : list) {
             sword.getHeldParticles().add(new Particle(item));
@@ -181,22 +219,6 @@ public class SwordBuilder {
         }
         return output;
     }
-
-
-    public static void addAttributeModifier(Sword sword) {}
- 
-    public static String getAttributesString(Sword sword) {
-        String output = "";
-        /* 
-        if (attributeModifiersList.size() > 0) {
-            output = String.format(",AttributeModifiers:%s", listToString(attributeModifiersList));
-        }
-        */
-        return output;
-    }
-
-
-
 }
 
 
@@ -251,8 +273,29 @@ class Particle {
 
 
 
-/*
+class Attribute {
+    private String name;
+    private double amount;
+    private int operation;
+    private String slot;
+    private long uuid;
 
+    public Attribute(String name, double amount, int operation, String slot) {
+        this.name = name;
+        this.amount = amount;
+        this.operation = operation;
+        this.slot = slot;
+        uuid = new Random().nextLong() % 10000000000L;
+    }
+
+    public String toString() {
+        return String.format("{AttributeName:\"generic.%s\",Name:\"generic.%s\"," +
+        "Amount:%f,Operation:%d,UUID:[I;%010d,111111111,2222222222,3333333333],Slot:\"%s\"}",
+        name, name, amount, operation, uuid, slot);
+    }
+}
+
+/*
 {id:"minecraft:binding_curse",lvl:1s} 2
 {id:"minecraft:sharpness",lvl:1s} -2 -4 -6 -8 -10
 {id:"minecraft:smite",lvl:1s}

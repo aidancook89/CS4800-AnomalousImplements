@@ -14,6 +14,7 @@ public class Sword {
     private ArrayList<Effect> attackEffectsList = new ArrayList<Effect>();
     private ArrayList<Particle> heldParticlesList = new ArrayList<Particle>();
     private ArrayList<Particle> attackParticlesList = new ArrayList<Particle>();
+    private ArrayList<Attribute> attributesList = new ArrayList<Attribute>();
 
     public Sword(String type, int id, int rarity) {
 		this.type = type;
@@ -46,6 +47,10 @@ public class Sword {
     
     public ArrayList<Particle> getAttackParticles() {
         return attackParticlesList;
+    }
+
+    public ArrayList<Attribute> getAttributes() {
+        return attributesList;
     }
 
     public void setName(String name, String color) {
