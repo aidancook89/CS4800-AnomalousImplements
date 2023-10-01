@@ -110,7 +110,7 @@ public class SwordBuilder {
 
     public static void addHeldEffects(Sword sword, ArrayList<String> list) {
         for (String item : list) {
-            sword.getHeldEffects().add(new Effect(item, 1, 0, false));
+            sword.getHeldEffects().add(new Effect(item, 1, 0, true));
         }
     }
 
@@ -129,7 +129,7 @@ public class SwordBuilder {
 
     public static void addAttackEffects(Sword sword, ArrayList<String> list) {
         for (String item : list) {
-            sword.getAttackEffects().add(new Effect(item, 1, 0, false));
+            sword.getAttackEffects().add(new Effect(item, 1, 0, true));
         }
     }
 
@@ -221,18 +221,18 @@ class Effect {
     private String effect;
     private int length;
     private int amount; 
-    private boolean showParticles;
+    private boolean hideParticles;
 
-    public Effect(String effect, int length, int amount, boolean showParticles) {
+    public Effect(String effect, int length, int amount, boolean hideParticles) {
         this.effect = effect;
         this.length = length;
         this.amount = amount;
-        this.showParticles = showParticles;
+        this.hideParticles = hideParticles;
     }
 
     public String toString() {
         return String.format("minecraft:%s %d %d %b",
-            effect, length, amount, showParticles);
+            effect, length, amount, hideParticles);
     }
 }
 
