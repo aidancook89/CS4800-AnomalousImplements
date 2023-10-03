@@ -1,6 +1,7 @@
 package aidp;
 
 import java.util.Random;
+import java.util.ArrayList;
 
 public abstract class SwordAttribute {
     protected int upgradePrice;
@@ -58,11 +59,38 @@ class Lore extends SwordAttribute {
     public void upgrade() {}
 
     public String toString() {
-        return String.format("Lore:['{\"text\":\"\"}'," +
-            "'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"true\",\"underlined\":\"true\"}'," +
-            "'{\"text\":\"\"}'," +
-            "'{\"text\":\"%s\",\"color\":\"%s\"}']", 
-            rarityLookup[rarity][0], rarityLookup[rarity][1], text, color);
+        String output = "Lore:[";
+        output += "'{\"text\":\"\"}'";
+        output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"true\",\"underlined\":\"true\"}'", rarityLookup[rarity][0], rarityLookup[rarity][1]);
+        output += ",'{\"text\":\"\"}'";
+
+        ArrayList<String> parts = breakUp(text, 40); 
+        for (String part : parts) {
+            output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\"}'", part, color);
+        }
+
+        return output + ",'{\"text\":\"\"}']";
+    }
+
+    public ArrayList<String> breakUp(String text, int count) {
+        int startIndex = 0;
+        int length = text.length();
+        ArrayList<String> parts = new ArrayList<>();
+
+        while (startIndex < length) {
+            int endIndex = startIndex + count;
+            if (endIndex > length) endIndex = length;
+            while (endIndex < length && endIndex > startIndex && text.charAt(endIndex - 1) != ' ') {
+                endIndex--;
+            }
+            parts.add(text.substring(startIndex, endIndex));
+            if (endIndex < length && text.charAt(endIndex) == ' ') {
+                endIndex++;
+            }
+            startIndex = endIndex; 
+        }
+        
+        return parts;
     }
 }
 

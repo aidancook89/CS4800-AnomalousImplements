@@ -2,7 +2,6 @@ package aidp;
 
 import java.util.ArrayList;
 import java.nio.file.Path;
-import java.text.AttributedCharacterIterator.Attribute;
 import java.util.function.Function;
 import java.util.Random;
 
@@ -33,12 +32,27 @@ public class SwordBuilder {
     public static Sword newSword(int id, int rarity, String theme) {
 
         // Make request
+        /* 
         Request request = RequestHandler.makeRequest(
             "Provide me with a JSON in the following format: " + requestJson + restrictions,
             String.format("Sword with themes: %s", theme), 
             0.9
         );        
         System.out.println(request.getContentString());
+        */
+        String fake = "{" 
+        + "\"name\": \"Breakfast Sword\","
+        + "\"color\": \"#FFFF00\","
+        + "\"lore\": \"This sword fuels your hunger for victory! This is a test that will be useful for running the codebase multiple times. Extended lore will display on newlines, hopefully.\","
+        + "\"enchantments\": [\"unbreaking\", \"looting\"],"
+        + "\"modifiers\": [\"attack_damage\", \"movement_speed\"],"
+        + "\"held_effects\": [\"jump_boost\"],"
+        + "\"attack_effects\": [\"levitation\"],"
+        + "\"held_particles\": [\"cloud\", \"bubble\"],"
+        + "\"attack_particles\": [\"cloud\", \"bubble\"]"
+        + "}";
+        Request request = new Request(fake);
+
 
         // Create new sword and add attributes
         Sword sword = new Sword(id);
@@ -53,7 +67,7 @@ public class SwordBuilder {
         addAttributes(sword, request.getAsArrayList("held_particles"), HeldParticle::new);
         addAttributes(sword, request.getAsArrayList("attack_particles"), AttackParticle::new);
 
-        sword.setCredit(10);
+        sword.setCredit(20);
         balanceAttributes(sword);
 
         // Add item to deal damage
@@ -89,7 +103,6 @@ public class SwordBuilder {
             if (upgradePrice != 0) {
                 attribute.upgrade();
                 sword.setCredit(sword.getCredit() - upgradePrice);
-                System.out.println(sword.getCredit());
             }
         }
     }

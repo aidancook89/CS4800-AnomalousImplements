@@ -16,7 +16,11 @@ public class Request {
     
     private JsonObject contentJson;
     private String contentString;
-    
+ 
+    public Request(String contentString) {
+        contentJson = JsonParser.parseString(contentString).getAsJsonObject();
+    }   
+
     public Request(String requestBody, String responseBody, int statusCode) {
         this.requestBody = requestBody;
         this.responseBody = responseBody;
@@ -33,6 +37,7 @@ public class Request {
 
         contentJson = JsonParser.parseString(contentString).getAsJsonObject();
     }
+
 
     public String getRequest() {
         return requestBody;
