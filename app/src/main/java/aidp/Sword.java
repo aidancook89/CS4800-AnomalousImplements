@@ -9,12 +9,14 @@ public class Sword {
     private String name = "default";
     private String color = "white"; 
     private String lore = "default";
-    private ArrayList<Enchantment> enchantmentsList = new ArrayList<Enchantment>();
-    private ArrayList<Effect> heldEffectsList = new ArrayList<Effect>();
-    private ArrayList<Effect> attackEffectsList = new ArrayList<Effect>();
-    private ArrayList<Particle> heldParticlesList = new ArrayList<Particle>();
-    private ArrayList<Particle> attackParticlesList = new ArrayList<Particle>();
-    private ArrayList<Attribute> attributesList = new ArrayList<Attribute>();
+
+    private ArrayList<Attribute> allAttributes = new ArrayList<Attribute>();
+    private ArrayList<Enchantment> enchantments = new ArrayList<>();
+    private ArrayList<Effect> heldEffects = new ArrayList<>();
+    private ArrayList<Effect> attackEffects = new ArrayList<>();
+    private ArrayList<Particle> heldParticles = new ArrayList<>();
+    private ArrayList<Particle> attackParticles = new ArrayList<>();
+    private ArrayList<Modifier> modifiers = new ArrayList<>();
 
     public Sword(String type, int id, int rarity) {
 		this.type = type;
@@ -28,30 +30,13 @@ public class Sword {
     public String getName() { return name; }
     public String getColor() { return color; }
     public String getLore() { return lore; }
-
-    public ArrayList<Enchantment> getEnchantments() {
-        return enchantmentsList;
-    }
-
-    public ArrayList<Effect> getHeldEffects() {
-        return heldEffectsList;
-    }
-    
-    public ArrayList<Effect> getAttackEffects() {
-        return attackEffectsList;
-    }
-
-    public ArrayList<Particle> getHeldParticles() {
-        return heldParticlesList;
-    }
-    
-    public ArrayList<Particle> getAttackParticles() {
-        return attackParticlesList;
-    }
-
-    public ArrayList<Attribute> getAttributes() {
-        return attributesList;
-    }
+    public ArrayList<Attribute> getAllAttributes() { return allAttributes; }
+    public ArrayList<Enchantment> getEnchantments() { return enchantments; }
+    public ArrayList<Modifier> getModifiers() { return modifiers; }
+    public ArrayList<Effect> getHeldEffects() { return heldEffects; }
+    public ArrayList<Effect> getAttackEffects() { return attackEffects; }
+    public ArrayList<Particle> getHeldParticles() { return heldParticles; }
+    public ArrayList<Particle> getAttackParticles() { return attackParticles; }
 
     public void setName(String name, String color) {
 		this.name = name;
