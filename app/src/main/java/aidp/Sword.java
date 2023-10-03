@@ -3,14 +3,11 @@ package aidp;
 import java.util.ArrayList;
 
 public class Sword {
-    private String type;
-    private int id;
-    private int rarity;
-    private String name = "default";
-    private String color = "white"; 
-    private String lore = "default";
-
     private ArrayList<Attribute> allAttributes = new ArrayList<Attribute>();
+    private int id;
+    private Name name;
+    private Lore lore;
+    private Type type;
     private ArrayList<Enchantment> enchantments = new ArrayList<>();
     private ArrayList<Effect> heldEffects = new ArrayList<>();
     private ArrayList<Effect> attackEffects = new ArrayList<>();
@@ -18,18 +15,11 @@ public class Sword {
     private ArrayList<Particle> attackParticles = new ArrayList<>();
     private ArrayList<Modifier> modifiers = new ArrayList<>();
 
-    public Sword(String type, int id, int rarity) {
-		this.type = type;
-		this.id = id;
-        this.rarity = rarity;
-    }
-
-    public String getType() { return type; }
+    public Sword(int id) { this.id = id; }
     public int getId() { return id; }
-    public int getRarity() { return rarity; }
-    public String getName() { return name; }
-    public String getColor() { return color; }
-    public String getLore() { return lore; }
+    public Name getName() { return name; }
+    public Lore getLore() { return lore; }
+    public Type getType() { return type; }
     public ArrayList<Attribute> getAllAttributes() { return allAttributes; }
     public ArrayList<Enchantment> getEnchantments() { return enchantments; }
     public ArrayList<Modifier> getModifiers() { return modifiers; }
@@ -38,12 +28,7 @@ public class Sword {
     public ArrayList<Particle> getHeldParticles() { return heldParticles; }
     public ArrayList<Particle> getAttackParticles() { return attackParticles; }
 
-    public void setName(String name, String color) {
-      this.name = name;
-      this.color = color;
-	  }
-
-    public void setLore(String lore) {
-        this.lore = lore;
-    }
+    public void setName(Name name) { this.name = name; }
+    public void setLore(Lore lore) { this.lore = lore; }
+    public void setType(Type type) { this.type = type; }
 }

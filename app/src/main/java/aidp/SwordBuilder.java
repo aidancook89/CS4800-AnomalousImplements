@@ -7,13 +7,7 @@ import java.util.function.Function;
 
 public class SwordBuilder {
 
-    private static String[][] rarityLookup = new String[][] {
-        {"COMMON", "white"},
-        {"UNCOMMON", "green"},
-        {"RARE", "blue"},
-        {"EPIC", "purple"},
-        {"LEGENDARY", "gold"}
-    };
+    
 
     private static String requestJson = "{"
     + "name: <string>," 
@@ -46,9 +40,11 @@ public class SwordBuilder {
         System.out.println(request.getContentString());
 
         // Create new sword and add attributes
-        Sword sword = new Sword("wooden_sword", id, rarity);
-        sword.setName(request.getAsString("name"),request.getAsString("color"));
-        sword.setLore(request.getAsString("lore"));
+        Sword sword = new Sword(id);
+        sword.setName(new Name(request.getAsString("name"),request.getAsString("color")));
+        sword.setLore(new Lore(request.getAsString("lore"), rarity));
+        sword.setType(new Type(0));
+
         addAttributes(sword, request.getAsArrayList("enchantments"), Enchantment::new);
         addAttributes(sword, request.getAsArrayList("modifiers"), Modifier::new);
         addAttributes(sword, request.getAsArrayList("held_effects"), HeldEffect::new);
@@ -86,23 +82,6 @@ public class SwordBuilder {
             getModifierString(sword), sword.getId());
 	}
 
-    // REQUIRED: ADD PARSING TO VERIFY THAT THERE ARE NO CHARACTERS THAT BREAK FORMATING FOR MCFUNCTION (', ", maybe more...)
-    public static String getNameString(Sword sword) {
-        return String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":\"true\",\"italic\":\"false\"}'", 
-            sword.getName().replace("'", "\'"), 
-            sword.getColor()
-        );
-    }
-
-    // REQUIRED: ADD FUNCTIONALITY TO ADD "NEWLINES" INTO LORE
-    public static String getLoreString(Sword sword) {
-        return String.format("Lore:['{\"text\":\"\"}'," +
-        "'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"true\",\"underlined\":\"true\"}'," +
-        "'{\"text\":\"\"}'," +
-        "'{\"text\":\"%s\",\"color\":\"%s\"}']", 
-        rarityLookup[sword.getRarity()][0], rarityLookup[sword.getRarity()][1], sword.getLore(), "gray");
-    }
-
     public static String getDealDamageString(Sword sword) {
         return String.format("execute as @s[nbt={SelectedItem:{tag:{CustomID:%d}}}] run execute as " +
         "@e[distance=..5,nbt={HurtTime:10s},tag=!am_the_attacker] run function aidp:swords/sword%d", sword.getId(), sword.getId());
@@ -125,6 +104,14 @@ public class SwordBuilder {
     /*
      * getAttributeString
      */
+    public static String getNameString(Sword sword) {
+        return sword.getName().toString();
+    }
+
+    public static String getLoreString(Sword sword) {
+        return sword.getLore().toString();
+    }
+
     public static String getEnchantmentsString(Sword sword) {
         if (sword.getEnchantments().size() == 0) return "";
         return ",Enchantments:" + sword.getEnchantments();
@@ -205,12 +192,87 @@ public class SwordBuilder {
 
 
 abstract class Attribute {
-    protected int price;
+    protected int upgradePrice;
+    protected int upgradeLevel = 0;
+    protected int upgradeMaxLevel;
 
     public abstract void upgrade();
 
-    public int getPrice() {
-        return price;
+    // Checks if a upgrade can be made to this attribute
+    // If it can, return the price of the upgrade, otherwise
+    // return -1
+    public int canUpgrade(int credit) {
+        if ((credit >= upgradePrice) && (upgradeLevel < upgradeMaxLevel)) return upgradePrice;
+        else return -1;
+    }
+}
+
+
+class Name extends Attribute {
+    private String text = "default";
+    private String color = "white";
+
+    public Name(String text, String color) {
+        this.text = text;
+        this.color = color;
+        upgradeMaxLevel = 0; // Setting upgradeMaxLevel to zero means that this cannot be upgraded
+    }
+
+    public void upgrade() {}
+
+    public String toString() {
+        return String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":\"true\",\"italic\":\"false\"}'", text, color);
+    }
+}
+
+class Lore extends Attribute {
+    private String text = "default";
+    private int rarity = 0;
+    private String color = "gray";
+
+    private static String[][] rarityLookup = new String[][] {
+        {"COMMON", "white"},
+        {"UNCOMMON", "green"},
+        {"RARE", "blue"},
+        {"EPIC", "purple"},
+        {"LEGENDARY", "gold"}
+    };
+
+    public Lore(String text, int rarity) {
+        this.text = text;
+        this.rarity = rarity;
+        upgradeMaxLevel = 0; 
+    }
+
+    public void upgrade() {}
+
+    public String toString() {
+        return String.format("Lore:['{\"text\":\"\"}'," +
+            "'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"true\",\"underlined\":\"true\"}'," +
+            "'{\"text\":\"\"}'," +
+            "'{\"text\":\"%s\",\"color\":\"%s\"}']", 
+            rarityLookup[rarity][0], rarityLookup[rarity][1], text, color);
+    }
+}
+
+
+
+class Type extends Attribute {
+    private int type = 0;
+    private String[] typeList = {"wooden_sword", "stone_sword", "iron_sword"};
+
+    public Type(int type) {
+        this.type = type % typeList.length;
+        upgradeMaxLevel = typeList.length-1;
+    }
+
+    public void upgrade() {
+        upgradeLevel += 1;
+        upgradePrice += 10;
+    }
+
+    public String toString() {
+        return typeList[type];
     }
 }
 
@@ -222,11 +284,13 @@ class Enchantment extends Attribute {
 
     public Enchantment(String enchant) {
         this.enchant = enchant;
+        upgradeMaxLevel = 3;
+        upgradePrice = 2;
     }
 
     public void upgrade() {
         level += 1;
-        price += 1;
+        upgradePrice += 1;
     }
 
     public String toString() {
@@ -251,7 +315,6 @@ abstract class Effect extends Attribute {
 class HeldEffect extends Effect {
     public HeldEffect(String effect) {
         this.effect = effect;
-        price = 2;
     }
 
     public void upgrade() {}
@@ -260,7 +323,6 @@ class HeldEffect extends Effect {
 class AttackEffect extends Effect {
     public AttackEffect(String effect) {
         this.effect = effect;
-        price = 2;
     }
 
     public void upgrade() {}
@@ -278,7 +340,6 @@ abstract class Particle extends Attribute {
 class HeldParticle extends Particle {
     public HeldParticle(String particle) {
         this.particle = particle;
-        price = 1;
     }
 
     public void upgrade() {}
@@ -287,7 +348,6 @@ class HeldParticle extends Particle {
 class AttackParticle extends Particle {
     public AttackParticle(String particle) {
         this.particle = particle;
-        price = 1;
     }
 
     public void upgrade() {}
