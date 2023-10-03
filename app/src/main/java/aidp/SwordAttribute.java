@@ -10,11 +10,11 @@ public abstract class SwordAttribute {
     public abstract void upgrade();
 
     // Checks if a upgrade can be made to this attribute
-    // If it can, return the price of the upgrade, otherwise
-    // return -1
+    // If it can, return the price of the upgrade, otherwise return 0
+    // Keep in mind that an "upgrade" can be bad, and return a negative price
     public int canUpgrade(int credit) {
         if ((credit >= upgradePrice) && (upgradeLevel < upgradeMaxLevel)) return upgradePrice;
-        else return -1;
+        else return 0;
     }
 }
 
@@ -78,8 +78,9 @@ class Type extends SwordAttribute {
     }
 
     public void upgrade() {
+        type += 1;
         upgradeLevel += 1;
-        upgradePrice += 10;
+        upgradePrice += 5;
     }
 
     public String toString() {
@@ -102,6 +103,7 @@ class Enchantment extends SwordAttribute {
     public void upgrade() {
         level += 1;
         upgradePrice += 1;
+        upgradeLevel += 1;
     }
 
     public String toString() {
@@ -126,17 +128,29 @@ abstract class Effect extends SwordAttribute {
 class HeldEffect extends Effect {
     public HeldEffect(String effect) {
         this.effect = effect;
+        upgradeMaxLevel = 3;
+        upgradePrice = 2;
     }
 
-    public void upgrade() {}
+    public void upgrade() {
+        amount += 1;
+        upgradePrice += 1;
+        upgradeLevel += 1;
+    }
 }
 
 class AttackEffect extends Effect {
     public AttackEffect(String effect) {
         this.effect = effect;
+        upgradeMaxLevel = 3;
+        upgradePrice = 2;
     }
 
-    public void upgrade() {}
+    public void upgrade() {
+        amount += 1;
+        upgradePrice += 1;
+        upgradeLevel += 1;
+    }
 }
 
 

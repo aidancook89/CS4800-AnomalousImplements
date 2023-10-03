@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Sword {
     private ArrayList<SwordAttribute> allAttributes = new ArrayList<SwordAttribute>();
     private int id;
+    private int credit;
     private Name name;
     private Lore lore;
     private Type type;
@@ -17,6 +18,7 @@ public class Sword {
 
     public Sword(int id) { this.id = id; }
     public int getId() { return id; }
+    public int getCredit() { return credit; }
     public Name getName() { return name; }
     public Lore getLore() { return lore; }
     public Type getType() { return type; }
@@ -31,4 +33,5 @@ public class Sword {
     public void setName(Name name) { this.name = name; }
     public void setLore(Lore lore) { this.lore = lore; }
     public void setType(Type type) { this.type = type; }
+    public void setCredit(int credit) { this.credit = credit; }
 }

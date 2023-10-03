@@ -2,7 +2,9 @@ package aidp;
 
 import java.util.ArrayList;
 import java.nio.file.Path;
+import java.text.AttributedCharacterIterator.Attribute;
 import java.util.function.Function;
+import java.util.Random;
 
 public class SwordBuilder {
 
@@ -50,6 +52,8 @@ public class SwordBuilder {
         addAttributes(sword, request.getAsArrayList("attack_effects"), AttackEffect::new);
         addAttributes(sword, request.getAsArrayList("held_particles"), HeldParticle::new);
         addAttributes(sword, request.getAsArrayList("attack_particles"), AttackParticle::new);
+
+        sword.setCredit(10);
         balanceAttributes(sword);
 
         // Add item to deal damage
@@ -73,6 +77,24 @@ public class SwordBuilder {
     // BUILDERS
     //////////////////////////////////////////////////
 
+    public static void balanceAttributes(Sword sword) { 
+        ArrayList<SwordAttribute> list = sword.getAllAttributes(); 
+        Random random = new Random();
+
+        for (int i = 0; i < sword.getCredit(); i++) {
+            int randomIndex = random.nextInt(list.size());
+            SwordAttribute attribute = list.get(randomIndex);
+            int upgradePrice = attribute.canUpgrade(sword.getCredit());
+
+            if (upgradePrice != 0) {
+                attribute.upgrade();
+                sword.setCredit(sword.getCredit() - upgradePrice);
+                System.out.println(sword.getCredit());
+            }
+        }
+    }
+    
+
     public static String buildGiveCommand(Sword sword) {
 		return String.format("give @a %s%s 1", sword.getType(), buildTag(sword)); 
 	} 
@@ -93,11 +115,7 @@ public class SwordBuilder {
             getAttackEffectString(sword), getAttackParticleString(sword), getHeldParticleString(sword));
     }
 
-    public static void balanceAttributes(Sword sword) { 
-
-    }
-
-
+    
 
     //////////////////////////////////////////////////
     // ATTRIBUTE RETRIEVAL
