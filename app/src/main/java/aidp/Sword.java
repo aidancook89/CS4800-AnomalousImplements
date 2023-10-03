@@ -39,11 +39,11 @@ public class Sword {
     public ArrayList<Particle> getAttackParticles() { return attackParticles; }
 
     public void setName(String name, String color) {
-		this.name = name;
-		this.color = color;
-	}
+      this.name = name;
+      this.color = color;
+	  }
 
     public void setLore(String lore) {
-		this.lore = lore;
-	}
+        this.lore = lore;
+    }
 }

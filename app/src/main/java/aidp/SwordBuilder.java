@@ -3,6 +3,7 @@ package aidp;
 import java.util.ArrayList;
 import java.nio.file.Path;
 import java.util.Random;
+import java.util.function.Function;
 
 public class SwordBuilder {
 
@@ -27,21 +28,19 @@ public class SwordBuilder {
     + "} ";
     
     private static String restrictions = ""
-    + "enchantments: pick <= 2,"
-    + "attributes: pick <= 1"
-    + "player_effects: pick <= 2," 
-    + "player_particles: pick <= 2," 
-    + "entity_effects: pick <= 2,"
-    + "entity_particles: pick <= 2";
-
-
+    + "enchantments: size <= 2,"
+    + "attributes: size <= 2"
+    + "player_effects: size <= 2," 
+    + "player_particles: size <= 2," 
+    + "entity_effects: size <= 2,"
+    + "entity_particles: size <= 2";
 
     public static Sword newSword(int id, int rarity, String theme) {
 
         // Make request
         Request request = RequestHandler.makeRequest(
             "Provide me with a JSON in the following format: " + requestJson + restrictions,
-            String.format("Interesting sword with theme: %s", theme), 
+            String.format("Sword with themes: %s", theme), 
             0.9
         );        
         System.out.println(request.getContentString());
@@ -50,12 +49,12 @@ public class SwordBuilder {
         Sword sword = new Sword("wooden_sword", id, rarity);
         sword.setName(request.getAsString("name"),request.getAsString("color"));
         sword.setLore(request.getAsString("lore"));
-        addAttributes(sword, "Enchantment", request.getAsArrayList("enchantments"));
-        addAttributes(sword, "Modifier", request.getAsArrayList("modifiers"));
-        addAttributes(sword, "HeldEffect", request.getAsArrayList("held_effects"));
-        addAttributes(sword, "AttackEffect", request.getAsArrayList("attack_effects"));
-        addAttributes(sword, "HeldParticle", request.getAsArrayList("held_particles"));
-        addAttributes(sword, "AttackParticle", request.getAsArrayList("attack_particles"));
+        addAttributes(sword, request.getAsArrayList("enchantments"), Enchantment::new);
+        addAttributes(sword, request.getAsArrayList("modifiers"), Modifier::new);
+        addAttributes(sword, request.getAsArrayList("held_effects"), HeldEffect::new);
+        addAttributes(sword, request.getAsArrayList("attack_effects"), AttackEffect::new);
+        addAttributes(sword, request.getAsArrayList("held_particles"), HeldParticle::new);
+        addAttributes(sword, request.getAsArrayList("attack_particles"), AttackParticle::new);
         balanceAttributes(sword);
 
         // Add item to deal damage
@@ -177,7 +176,6 @@ public class SwordBuilder {
     }
 
 
-
     /*
      * addAttributes
      * 
@@ -185,43 +183,24 @@ public class SwordBuilder {
      * and adds a new attribute of that type into the corresponding 
      * list of our sword object.
      */
-    public static void addAttributes(Sword sword, String target, ArrayList<String> list) {
+    public static void addAttributes(Sword sword, ArrayList<String> list, Function<String, Attribute> attributeFactory) {
         for (String item : list) {
-            Attribute attribute;
-            switch (target) {
-                case "Enchantment":
-                    attribute = new Enchantment(item);
-                    sword.getEnchantments().add((Enchantment) attribute);
-                    break;
-                case "Modifier":
-                    attribute = new Modifier(item);
-                    sword.getModifiers().add((Modifier) attribute);
-                    break;
-                case "HeldEffect":
-                    attribute = new HeldEffect(item);
-                    sword.getHeldEffects().add((HeldEffect) attribute);
-                    break;
-                case "AttackEffect":
-                    attribute = new AttackEffect(item);
-                    sword.getAttackEffects().add((AttackEffect) attribute);
-                    break;
-                case "HeldParticle":
-                    attribute = new HeldParticle(item);
-                    sword.getHeldParticles().add((HeldParticle) attribute);
-                    break;
-                case "AttackParticle":
-                    attribute = new AttackParticle(item);
-                    sword.getAttackParticles().add((AttackParticle) attribute);
-                    break;
-                default:
-                    attribute = new NullAttribute();
-                    break;
-            }
-
+            Attribute attribute = attributeFactory.apply(item);
             sword.getAllAttributes().add(attribute);
+
+            if (attribute instanceof Enchantment) sword.getEnchantments().add((Enchantment) attribute);
+            if (attribute instanceof Modifier) sword.getModifiers().add((Modifier) attribute);
+            if (attribute instanceof HeldEffect) sword.getHeldEffects().add((HeldEffect) attribute);
+            if (attribute instanceof AttackEffect) sword.getAttackEffects().add((AttackEffect) attribute);
+            if (attribute instanceof HeldParticle) sword.getHeldParticles().add((HeldParticle) attribute);
+            if (attribute instanceof AttackParticle) sword.getAttackParticles().add((AttackParticle) attribute);
         }
     }
+    
 }
+
+
+
 
 
 
@@ -233,12 +212,6 @@ abstract class Attribute {
     public int getPrice() {
         return price;
     }
-}
-
-
-class NullAttribute extends Attribute {
-    public NullAttribute() {}
-    public void upgrade() {}
 }
 
 
@@ -341,7 +314,6 @@ class Modifier extends Attribute {
     public String toString() {
         return String.format("{AttributeName:\"generic.%s\",Name:\"generic.%s\"," +
         "Amount:%f,Operation:%d,UUID:[I;469651195,-1054259622,-1995201699,-859124615],Slot:\"%s\"}",
-        //"Amount:%f,Operation:%d,UUID:[I;%010d,111111111,2222222222,3333333333],Slot:\"%s\"}",
         name, name, amount, operation, uuid, slot);
     }
 }
