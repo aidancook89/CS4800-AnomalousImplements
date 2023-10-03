@@ -3,7 +3,7 @@ package aidp;
 import java.util.ArrayList;
 
 public class Sword {
-    private ArrayList<Attribute> allAttributes = new ArrayList<Attribute>();
+    private ArrayList<SwordAttribute> allAttributes = new ArrayList<SwordAttribute>();
     private int id;
     private Name name;
     private Lore lore;
@@ -20,7 +20,7 @@ public class Sword {
     public Name getName() { return name; }
     public Lore getLore() { return lore; }
     public Type getType() { return type; }
-    public ArrayList<Attribute> getAllAttributes() { return allAttributes; }
+    public ArrayList<SwordAttribute> getAllAttributes() { return allAttributes; }
     public ArrayList<Enchantment> getEnchantments() { return enchantments; }
     public ArrayList<Modifier> getModifiers() { return modifiers; }
     public ArrayList<Effect> getHeldEffects() { return heldEffects; }
