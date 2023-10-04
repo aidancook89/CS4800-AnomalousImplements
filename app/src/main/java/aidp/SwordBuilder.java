@@ -88,26 +88,50 @@ public class SwordBuilder {
 
 
     //////////////////////////////////////////////////
-    // BUILDERS
+    // BALANCE
     //////////////////////////////////////////////////
-
     public static void balanceAttributes(Sword sword) { 
-        ArrayList<SwordAttribute> list = sword.getAllAttributes(); 
+        // Create a random object for getting indecies
         Random random = new Random();
 
-        for (int i = 0; i < sword.getCredit(); i++) {
+        // Copy our attribute list
+        ArrayList<SwordAttribute> list = sword.getAllAttributes(); 
+
+        // While our list is not empty (i.e. we can upgrade an attribute)
+        while (list.size() > 0) {
+            // Get a random attribute and get the price
             int randomIndex = random.nextInt(list.size());
             SwordAttribute attribute = list.get(randomIndex);
             int upgradePrice = attribute.canUpgrade(sword.getCredit());
 
+            System.out.println("UPGRADE:");
+            System.out.println("Index: " + randomIndex);
+            System.out.println("Credit: " + sword.getCredit());
+            System.out.println("upgradePrice: " + upgradePrice);
+            System.out.println("List size: " + list.size());
+            System.out.println();
+
+            // If we cannot upgrade the attribute, remove it from our list
+            if (upgradePrice == 0) list.remove(randomIndex);
+
+            // If we can upgrade the attribute, upgrade an update our credit
             if (upgradePrice != 0) {
                 attribute.upgrade();
                 sword.setCredit(sword.getCredit() - upgradePrice);
+
+                // If our upgrade gave use credit (the price of the upgrade was negative)
+                // Add all attributes back into the list (chance that we may be able to upgrade some of them)
+                if (upgradePrice < 0) list = sword.getAllAttributes();
             }
         }
     }
+
     
 
+
+    //////////////////////////////////////////////////
+    // BUILDERS
+    //////////////////////////////////////////////////
     public static String buildGiveCommand(Sword sword) {
 		return String.format("give @a %s%s 1", sword.getType(), buildTag(sword)); 
 	} 
