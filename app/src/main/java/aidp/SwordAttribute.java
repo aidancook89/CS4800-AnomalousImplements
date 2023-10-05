@@ -66,7 +66,7 @@ class Lore extends SwordAttribute {
 
         ArrayList<String> parts = breakUp(text, 40); 
         for (String part : parts) {
-            output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\"}'", part, color);
+            output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"false\"}'", part, color);
         }
 
         return output + ",'{\"text\":\"\"}']";
@@ -98,17 +98,19 @@ class Lore extends SwordAttribute {
 
 class Type extends SwordAttribute {
     private int type = 0;
-    private String[] typeList = {"wooden_sword", "stone_sword", "iron_sword"};
+    private String[] typeList = {"wooden_sword", "stone_sword", "iron_sword", "gold_sword", "diamond_sword"};
 
     public Type(int type) {
         this.type = type % typeList.length;
         upgradeMaxLevel = typeList.length-1;
+        upgradePrice = 10;
     }
 
     public void upgrade() {
         type += 1;
+
         upgradeLevel += 1;
-        upgradePrice += 5;
+        upgradePrice += 10;
     }
 
     public String toString() {
@@ -124,14 +126,15 @@ class Enchantment extends SwordAttribute {
 
     public Enchantment(String enchant) {
         this.enchant = enchant;
-        upgradeMaxLevel = 3;
+        upgradeMaxLevel = 5;
         upgradePrice = 2;
     }
 
     public void upgrade() {
         level += 1;
-        upgradePrice += 1;
+
         upgradeLevel += 1;
+        upgradePrice += 2;
     }
 
     public String toString() {
@@ -156,28 +159,30 @@ abstract class Effect extends SwordAttribute {
 class HeldEffect extends Effect {
     public HeldEffect(String effect) {
         this.effect = effect;
-        upgradeMaxLevel = 3;
-        upgradePrice = 2;
+        upgradeMaxLevel = 5;
+        upgradePrice = 3;
     }
 
     public void upgrade() {
         amount += 1;
-        upgradePrice += 1;
+
         upgradeLevel += 1;
+        upgradePrice += 3;
     }
 }
 
 class AttackEffect extends Effect {
     public AttackEffect(String effect) {
         this.effect = effect;
-        upgradeMaxLevel = 3;
-        upgradePrice = 2;
+        upgradeMaxLevel = 5;
+        upgradePrice = 3;
     }
 
     public void upgrade() {
         amount += 1;
-        upgradePrice += 1;
+
         upgradeLevel += 1;
+        upgradePrice += 3;
     }
 }
 
@@ -208,25 +213,63 @@ class AttackParticle extends Particle {
 
 
 class Modifier extends SwordAttribute {
-    private String name;
-    private double amount = 0.1;
-    private int operation = 1;
-    private String slot = "mainhand";
-    private long uuid;
+    protected String name;
+    protected double amount = 0.1;
+    protected int operation = 1;
+    protected String slot = "mainhand";
+    protected long uuid;
 
     public Modifier(String name) {
         this.name = name;
-        uuid = new Random().nextLong() % 10000000000L;
+        uuid = new Random().nextLong() % 1000000000L;
+        upgradePrice = 3;
+        upgradeMaxLevel = 3;
     }
 
     public void upgrade() {
+        amount += 0.1;
 
+        upgradeLevel += 1;
+        upgradePrice += 3;
     }
 
-    //REQUIRED: NOT FUNCTIONING
     public String toString() {
-        return String.format("{AttributeName:\"generic.%s\",Name:\"generic.%s\"," +
-        "Amount:%f,Operation:%d,UUID:[I;469651195,-1054259622,-1995201699,-859124615],Slot:\"%s\"}",
-        name, name, amount, operation, uuid, slot);
+        return String.format("{AttributeName:\"generic.%s\",Name:\"generic.%s\",Amount:%f,Operation:%d,"
+        + "UUID:[I;%d,2081703129,-1522820555,-530514328],Slot:\"%s\"}", 
+            name, name, amount, operation, uuid, slot);
+    }
+}
+
+class AttackDamage extends Modifier {
+
+    public AttackDamage(double amount) {
+        super("attack_damage");
+        this.amount = amount;
+        operation = 0;
+        upgradePrice = 3;
+        upgradeMaxLevel = 10;
+    }
+
+    public void upgrade() {
+        amount += 1;
+        upgradeLevel += 1;
+        upgradePrice += 3;
+    }
+}
+
+class AttackSpeed extends Modifier {
+
+    public AttackSpeed(double amount) {
+        super("attack_speed");
+        this.amount = amount;
+        operation = 0;
+        upgradePrice = 3;
+        upgradeMaxLevel = 10;
+    }
+
+    public void upgrade() {
+        amount += 0.4;
+        upgradeLevel += 1;
+        upgradePrice += 3;
     }
 }

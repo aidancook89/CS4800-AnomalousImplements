@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Sword {
     private ArrayList<SwordAttribute> allAttributes = new ArrayList<SwordAttribute>();
     private int id;
+    private int rarity;
     private int credit;
     private Name name;
     private Lore lore;
@@ -16,8 +17,14 @@ public class Sword {
     private ArrayList<Particle> attackParticles = new ArrayList<>();
     private ArrayList<Modifier> modifiers = new ArrayList<>();
 
-    public Sword(int id) { this.id = id; }
+    public Sword(int id, int rarity) { 
+        this.id = id; 
+        this.rarity = rarity;
+        credit = 20 + (rarity * 20);
+    }
+
     public int getId() { return id; }
+    public int getRarity() { return rarity; }
     public int getCredit() { return credit; }
     public Name getName() { return name; }
     public Lore getLore() { return lore; }

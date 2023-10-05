@@ -7,31 +7,32 @@ import java.util.Random;
 
 public class SwordBuilder {
 
-    private static String requestJson = "{"
+    private static String particleList = "ambient_entity_effect,angry_villager,ash,bubble,bubble_pop,campfire_cosy_smoke,campfire_signal_smoke,cherry_leaves,cloud,composter,crimson_spore,dolphin,dragon_breath,effect,egg_crack,elder_guardian,electric_spark,enchant,enchanted_hit,end_rod,entity_effect,explosion,firework,fishing,flame,flash,glow,glow_squid_ink,happy_villager,heart,instant_effect,item_slime,item_snowball,large_smoke,lava,mycelium,nautilus,note,poof,portal,rain,reverse_portal,scrape,sculk_charge_pop,sculk_soul,smoke,sneeze,snowflake,sonic_boom,soul,soul_fire_flame,spit,splash,spore_blossom_air,squid_ink,uderwater,warped_spore,wax_off,wax_on,white_ash,witch";
+
+    private static String requestJson = String.format("{"
     + "name: <string>," 
     + "color: <hexcode>," 
     + "lore: <string>"
     + "enchantments: [<binding_curse,sharpness,smite,bane_of_arthropods,knockback,fire_aspect,looting,sweeping,unbreaking,mending,vanishing_curse>]"
-    + "modifiers: [<max_health,knockback_resistantce,movement_speed,attack_damage,armor,armor_touchness,attack_speed,luck,max_absorption>]"
+    + "modifiers: [<max_health,knockback_resistantce,movement_speed,armor,armor_touchness,luck,max_absorption>]"
     + "held_effects: [<speed,slowness,jump_boost,levitation>]"
     + "attack_effects: [<speed,slowness,jump_boost,levitation>]"
-    + "held_particles: [<cloud,flame,barrier,bubble,enchant>]"
-    + "attack_particles: [<cloud,flame,bubble,enchant>]"
-    + "} ";
+    + "held_particles: [<%s>]"
+    + "attack_particles: [<%s>]"
+    + "} ",
+    particleList, particleList);
     
     private static String restrictions = ""
-    + "enchantments: size <= 2,"
-    + "attributes: size <= 2"
-    + "player_effects: size <= 2," 
-    + "player_particles: size <= 2," 
-    + "entity_effects: size <= 2,"
-    + "entity_particles: size <= 2";
-
+    + "enchantments: size <= 3,"
+    + "attributes: size <= 3"
+    + "player_effects: size <= 3," 
+    + "player_particles: size <= 3," 
+    + "entity_effects: size <= 3,"
+    + "entity_particles: size <= 3";
 
 
     public static Sword newSword(int id, int rarity, String theme) {
 
-        // Make request
         /* 
         Request request = RequestHandler.makeRequest(
             "Provide me with a JSON in the following format: " + requestJson + restrictions,
@@ -40,12 +41,13 @@ public class SwordBuilder {
         );        
         System.out.println(request.getContentString());
         */
+         
         String fake = "{" 
         + "\"name\": \"Breakfast Sword\","
         + "\"color\": \"#FFFF00\","
         + "\"lore\": \"This sword fuels your hunger for victory! This is a test that will be useful for running the codebase multiple times. Extended lore will display on newlines, hopefully.\","
         + "\"enchantments\": [\"unbreaking\", \"looting\"],"
-        + "\"modifiers\": [\"attack_damage\", \"movement_speed\"],"
+        + "\"modifiers\": [\"movement_speed\"],"
         + "\"held_effects\": [\"jump_boost\"],"
         + "\"attack_effects\": [\"levitation\"],"
         + "\"held_particles\": [\"cloud\", \"bubble\"],"
@@ -53,12 +55,14 @@ public class SwordBuilder {
         + "}";
         Request request = new Request(fake);
 
-
         // Create new sword and add attributes
-        Sword sword = new Sword(id);
-        sword.setName(new Name(request.getAsString("name"),request.getAsString("color")));
-        sword.setLore(new Lore(request.getAsString("lore"), rarity));
-        sword.setType(new Type(0));
+        Sword sword = new Sword(id, rarity);
+        setName(sword, new Name(request.getAsString("name"),request.getAsString("color")));
+        setLore(sword, new Lore(request.getAsString("lore"), rarity));
+        setType(sword, new Type(0));
+        addModifier(sword, new AttackDamage(1));
+        addModifier(sword, new AttackSpeed(-3));
+
 
         addAttributes(sword, request.getAsArrayList("enchantments"), Enchantment::new);
         addAttributes(sword, request.getAsArrayList("modifiers"), Modifier::new);
@@ -66,8 +70,6 @@ public class SwordBuilder {
         addAttributes(sword, request.getAsArrayList("attack_effects"), AttackEffect::new);
         addAttributes(sword, request.getAsArrayList("held_particles"), HeldParticle::new);
         addAttributes(sword, request.getAsArrayList("attack_particles"), AttackParticle::new);
-
-        sword.setCredit(20);
         balanceAttributes(sword);
 
         // Add item to deal damage
@@ -104,13 +106,6 @@ public class SwordBuilder {
             SwordAttribute attribute = list.get(randomIndex);
             int upgradePrice = attribute.canUpgrade(sword.getCredit());
 
-            System.out.println("UPGRADE:");
-            System.out.println("Index: " + randomIndex);
-            System.out.println("Credit: " + sword.getCredit());
-            System.out.println("upgradePrice: " + upgradePrice);
-            System.out.println("List size: " + list.size());
-            System.out.println();
-
             // If we cannot upgrade the attribute, remove it from our list
             if (upgradePrice == 0) list.remove(randomIndex);
 
@@ -118,6 +113,14 @@ public class SwordBuilder {
             if (upgradePrice != 0) {
                 attribute.upgrade();
                 sword.setCredit(sword.getCredit() - upgradePrice);
+                
+                /* 
+                System.out.println("UPGRADED: " + attribute);
+                System.out.println("upgradePrice: " + upgradePrice);
+                System.out.println("Credit: " + sword.getCredit());
+                System.out.println("List size: " + list.size());
+                System.out.println();
+                */
 
                 // If our upgrade gave use credit (the price of the upgrade was negative)
                 // Add all attributes back into the list (chance that we may be able to upgrade some of them)
@@ -211,6 +214,34 @@ public class SwordBuilder {
     }
 
 
+    
+
+    //////////////////////////////////////////////////
+    // ADDING ATTRIBUTES
+    //////////////////////////////////////////////////
+    public static void setName(Sword sword, Name name) { 
+        sword.setName(name);
+        sword.getAllAttributes().add(name);
+    }
+
+    public static void setLore(Sword sword, Lore lore) { 
+        sword.setLore(lore);
+        sword.getAllAttributes().add(lore);
+    }
+
+    public static void setType(Sword sword, Type type) { 
+        sword.setType(type); 
+        sword.getAllAttributes().add(type);
+    }
+
+    public static void setCredit(Sword sword, int credit) { 
+        sword.setCredit(credit); 
+    }
+
+    public static void addModifier(Sword sword, Modifier modifier) {
+        sword.getModifiers().add(modifier);
+        sword.getAllAttributes().add(modifier);
+    }
 
     /*
      * addAttributes
