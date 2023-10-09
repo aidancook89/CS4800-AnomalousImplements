@@ -33,7 +33,8 @@ class Name extends SwordAttribute {
     }
 
     public String toString() {
-        return String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":\"true\",\"italic\":\"false\"}'", text, color);
+        return String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":\"true\",\"italic\":\"false\"}'", 
+            text.replaceAll("'", "\'"), color);
     }
 }
 
@@ -63,7 +64,8 @@ class Lore extends SwordAttribute {
 
         ArrayList<String> parts = breakUp(text, 40); 
         for (String part : parts) {
-            output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"false\"}'", part, color);
+            output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"false\"}'", 
+                part.replaceAll("'", "\'"), color);
         }
 
         return output + ",'{\"text\":\"\"}']";
@@ -204,7 +206,7 @@ class Sound extends SwordAttribute {
     }
 
     public String toString() {
-        return String.format("playsound %s master @a ~ ~ ~ 1 1", sound);
+        return String.format("playsound %s master @a ~ ~ ~ 0.5 1", sound);
     }
 }
 

@@ -82,7 +82,7 @@ public class App {
         d_ns_advancements_deal_damage = Structure.newDir(d_ns_advancements, "deal_damage.json", true);
         Structure.copyContents(template.resolve("deal_damage.json"), d_ns_advancements_deal_damage); 
 
-        Sword sword0 = SwordBuilder.newSword(0, 0, "");
+        Sword sword0 = SwordBuilder.newSword(0, 0, "color,fun,news,something");
         //Sword sword1 = SwordBuilder.newSword(1, 1, "");
         //Sword sword2 = SwordBuilder.newSword(2, 2, "");
         //Sword sword3 = SwordBuilder.newSword(3, 3, "");

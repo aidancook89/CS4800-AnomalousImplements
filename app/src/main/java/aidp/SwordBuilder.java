@@ -13,7 +13,8 @@ public class SwordBuilder {
         + "scrape,sculk_charge_pop,sculk_soul,smoke,sneeze,snowflake,sonic_boom,soul,soul_fire_flame,spit,splash,spore_blossom_air,"
         + "squid_ink,uderwater,warped_spore,wax_off,wax_on,white_ash,witch";
 
-    private static String soundList = "minecraft:block.amethyst_block.place, entity.firework_rocket.blast_far";
+    private static String soundList = "minecraft:block.amethyst_block.place,"
+        + "minecraft:entity.firework_rocket.launch, minecraft:block.piston.extend";
 
     private static String requestJson = String.format("{"
     + "name: <string>," 
@@ -21,7 +22,7 @@ public class SwordBuilder {
     + "lore: <string>"
     + "enchantments: [<binding_curse,sharpness,smite,bane_of_arthropods,knockback,fire_aspect,looting,sweeping,unbreaking,mending,vanishing_curse>]"
     + "modifiers: [<max_health,knockback_resistantce,movement_speed,armor,armor_touchness,luck,max_absorption>]"
-    + "held_effects: [<speed,slowness,jump_boost,levitation>]"
+    + "held_effects: [<speed,slowness,jump_boost>]"
     + "attack_effects: [<speed,slowness,jump_boost,levitation>]"
     + "particles: [<%s>]"
     + "sounds: [<%s>]"
@@ -29,25 +30,27 @@ public class SwordBuilder {
     particleList, soundList);
     
     private static String restrictions = ""
-    + "enchantments: size <= 3,"
-    + "attributes: size <= 3"
-    + "player_effects: size <= 3," 
-    + "player_particles: size <= 3," 
-    + "entity_effects: size <= 3,"
-    + "entity_particles: size <= 3";
+    + "enchantments: pick 2,"
+    + "modifiers: pick 2,"
+    + "held_effects: pick 2," 
+    + "attack_effects: pick 2," 
+    + "particles: pick 2," 
+    + "effects: pick 2,"
+    + "sounds: pick 1";
 
 
     public static Sword newSword(int id, int rarity, String theme) {
 
         /* 
         Request request = RequestHandler.makeRequest(
-            "Provide me with a JSON in the following format: " + requestJson + restrictions,
-            String.format("Sword with themes: %s", theme), 
+            "Provide a JSON in the following format: " + requestJson + restrictions,
+            String.format("An interesting sword with themes: %s", theme), 
             0.9
         );        
         System.out.println(request.getContentString());
         */
-         
+
+        
         String fake = "{" 
         + "\"name\": \"Breakfast Sword\","
         + "\"color\": \"#FFFF00\","
@@ -66,7 +69,7 @@ public class SwordBuilder {
         setName(sword, new Name(request.getAsString("name"),request.getAsString("color")));
         setLore(sword, new Lore(request.getAsString("lore"), rarity));
         setType(sword, new Type(0));
-        addModifier(sword, new AttackDamage(1));
+        addModifier(sword, new AttackDamage(3));
         addModifier(sword, new AttackSpeed(-3));
 
         addEnchantments(sword, request.getAsArrayList("enchantments"));
@@ -225,9 +228,15 @@ public class SwordBuilder {
     //////////////////////////////////////////////////
     public static void setName(Sword sword, Name name) { sword.setName(name); }
     public static void setLore(Sword sword, Lore lore) { sword.setLore(lore); }
-    public static void setType(Sword sword, Type type) { sword.setType(type); }
+    public static void setType(Sword sword, Type type) { 
+        sword.setType(type); 
+        sword.getUpgradeAttributes().add(type);
+    }
     public static void setCredit(Sword sword, int credit) { sword.setCredit(credit); }
-    public static void addModifier(Sword sword, Modifier modifier) { sword.getModifiers().add(modifier); }
+    public static void addModifier(Sword sword, Modifier modifier) { 
+        sword.getModifiers().add(modifier); 
+        sword.getUpgradeAttributes().add(modifier);
+    }
 
     public static void addEnchantments(Sword sword, ArrayList<String> list) {
         for (String item : list) {
