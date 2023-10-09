@@ -191,10 +191,20 @@ class Particle extends SwordAttribute {
         this.particle = particle;
     }
 
-    public void upgrade() {}
-
     public String toString() {
         return String.format("execute as @s at @s run particle %s ~ ~1 ~ 0 0 0 0.3 20 force", particle);
+    }
+}
+
+class Sound extends SwordAttribute {
+    private String sound;
+
+    public Sound(String sound) {
+        this.sound = sound;
+    }
+
+    public String toString() {
+        return String.format("playsound %s master @a ~ ~ ~ 1 1", sound);
     }
 }
 

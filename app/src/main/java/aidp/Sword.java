@@ -10,10 +10,11 @@ public class Sword {
     private Lore lore;
     private Type type;
     private ArrayList<Enchantment> enchantments = new ArrayList<>();
+    private ArrayList<Modifier> modifiers = new ArrayList<>();
     private ArrayList<Effect> heldEffects = new ArrayList<>();
     private ArrayList<Effect> attackEffects = new ArrayList<>();
     private ArrayList<Particle> particles = new ArrayList<>();
-    private ArrayList<Modifier> modifiers = new ArrayList<>();
+    private ArrayList<Sound> sounds = new ArrayList<>();
     private ArrayList<UpgradeAttribute> upgradeAttributes = new ArrayList<UpgradeAttribute>();
 
     public Sword(int id, int rarity) { 
@@ -55,4 +56,6 @@ public class Sword {
     public ArrayList<Particle> getParticles() { return particles; }
     public void addParticle(Particle attribute) { particles.add(attribute); }
 
+    public ArrayList<Sound> getSounds() { return sounds; }
+    public void addSound(Sound attribute) { sounds.add(attribute); }
 }

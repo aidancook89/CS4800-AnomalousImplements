@@ -13,6 +13,8 @@ public class SwordBuilder {
         + "scrape,sculk_charge_pop,sculk_soul,smoke,sneeze,snowflake,sonic_boom,soul,soul_fire_flame,spit,splash,spore_blossom_air,"
         + "squid_ink,uderwater,warped_spore,wax_off,wax_on,white_ash,witch";
 
+    private static String soundList = "minecraft:block.amethyst_block.place, entity.firework_rocket.blast_far";
+
     private static String requestJson = String.format("{"
     + "name: <string>," 
     + "color: <hexcode>," 
@@ -21,10 +23,10 @@ public class SwordBuilder {
     + "modifiers: [<max_health,knockback_resistantce,movement_speed,armor,armor_touchness,luck,max_absorption>]"
     + "held_effects: [<speed,slowness,jump_boost,levitation>]"
     + "attack_effects: [<speed,slowness,jump_boost,levitation>]"
-    + "held_particles: [<%s>]"
-    + "attack_particles: [<%s>]"
+    + "particles: [<%s>]"
+    + "sounds: [<%s>]"
     + "} ",
-    particleList, particleList);
+    particleList, soundList);
     
     private static String restrictions = ""
     + "enchantments: size <= 3,"
@@ -54,7 +56,8 @@ public class SwordBuilder {
         + "\"modifiers\": [\"movement_speed\"],"
         + "\"held_effects\": [\"jump_boost\"],"
         + "\"attack_effects\": [\"levitation\"],"
-        + "\"particles\": [\"cloud\", \"bubble\"]"
+        + "\"particles\": [\"cloud\", \"bubble\"],"
+        + "\"sounds\": [\"entity.firework_rocket.blast_far\"]"
         + "}";
         Request request = new Request(fake);
 
@@ -66,12 +69,12 @@ public class SwordBuilder {
         addModifier(sword, new AttackDamage(1));
         addModifier(sword, new AttackSpeed(-3));
 
-
         addEnchantments(sword, request.getAsArrayList("enchantments"));
         addModifiers(sword, request.getAsArrayList("modifiers"));
         addHeldEffects(sword, request.getAsArrayList("held_effects"));
         addAttackEffects(sword, request.getAsArrayList("attack_effects"));
         addParticles(sword, request.getAsArrayList("particles"));
+        addSounds(sword, request.getAsArrayList("sounds"));
         balanceAttributes(sword);
 
         // Add item to deal damage
@@ -153,8 +156,8 @@ public class SwordBuilder {
     }
 
     public static String buildAttackFunction(Sword sword) {
-        return String.format("%s\n%s\n",
-            getAttackEffectString(sword), getParticleString(sword));
+        return String.format("%s\n%s\n%s\n",
+            getAttackEffectString(sword), getParticleString(sword), getSoundString(sword));
     }
 
     
@@ -207,6 +210,14 @@ public class SwordBuilder {
         return output;
     }
 
+    public static String getSoundString(Sword sword) {
+        String output = "";
+        for (Sound s : sword.getSounds()) {
+            output += s + "\n";
+        }
+        return output;
+    }
+
         
 
     //////////////////////////////////////////////////
@@ -254,6 +265,13 @@ public class SwordBuilder {
         for (String item : list) {
             Particle attribute = new Particle(item);
             sword.addParticle(attribute);
+        }
+    }
+
+    public static void addSounds(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            Sound attribute = new Sound(item);
+            sword.addSound(attribute);
         }
     }
 }
