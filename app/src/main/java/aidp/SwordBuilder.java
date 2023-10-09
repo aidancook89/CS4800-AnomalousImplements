@@ -100,13 +100,13 @@ public class SwordBuilder {
         Random random = new Random();
 
         // Copy our attribute list
-        ArrayList<SwordAttribute> list = sword.getUpgradeAttributes(); 
+        ArrayList<UpgradeAttribute> list = sword.getUpgradeAttributes(); 
 
         // While our list is not empty (i.e. we can upgrade an attribute)
         while (list.size() > 0) {
             // Get a random attribute and get the price
             int randomIndex = random.nextInt(list.size());
-            SwordAttribute attribute = list.get(randomIndex);
+            UpgradeAttribute attribute = list.get(randomIndex);
             int upgradePrice = attribute.canUpgrade(sword.getCredit());
 
             // If we cannot upgrade the attribute, remove it from our list

@@ -14,7 +14,7 @@ public class Sword {
     private ArrayList<Effect> attackEffects = new ArrayList<>();
     private ArrayList<Particle> particles = new ArrayList<>();
     private ArrayList<Modifier> modifiers = new ArrayList<>();
-    private ArrayList<SwordAttribute> upgradeAttributes = new ArrayList<SwordAttribute>();
+    private ArrayList<UpgradeAttribute> upgradeAttributes = new ArrayList<UpgradeAttribute>();
 
     public Sword(int id, int rarity) { 
         this.id = id; 
@@ -37,8 +37,8 @@ public class Sword {
     public Type getType() { return type; }
     public void setType(Type type) { this.type = type; }
 
-    public ArrayList<SwordAttribute> getUpgradeAttributes() { return upgradeAttributes; }
-    public void addUpgradeAttribute(SwordAttribute attribute) { upgradeAttributes.add(attribute); }
+    public ArrayList<UpgradeAttribute> getUpgradeAttributes() { return upgradeAttributes; }
+    public void addUpgradeAttribute(UpgradeAttribute attribute) { upgradeAttributes.add(attribute); }
 
     public ArrayList<Enchantment> getEnchantments() { return enchantments; }
     public void addEnchantment(Enchantment attribute) { enchantments.add(attribute); }

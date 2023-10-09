@@ -3,10 +3,12 @@ package aidp;
 import java.util.Random;
 import java.util.ArrayList;
 
-public abstract class SwordAttribute {
+public abstract class SwordAttribute {}
+
+abstract class UpgradeAttribute extends SwordAttribute {
     protected int upgradePrice;
-    protected int upgradeLevel = 0;
     protected int upgradeMaxLevel;
+    protected int upgradeLevel = 0;
 
     public abstract void upgrade();
 
@@ -20,6 +22,7 @@ public abstract class SwordAttribute {
 }
 
 
+
 class Name extends SwordAttribute {
     private String text = "default";
     private String color = "white";
@@ -27,10 +30,7 @@ class Name extends SwordAttribute {
     public Name(String text, String color) {
         this.text = text;
         this.color = color;
-        upgradeMaxLevel = 0; // Setting upgradeMaxLevel to zero means that this cannot be upgraded
     }
-
-    public void upgrade() {}
 
     public String toString() {
         return String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":\"true\",\"italic\":\"false\"}'", text, color);
@@ -53,10 +53,7 @@ class Lore extends SwordAttribute {
     public Lore(String text, int rarity) {
         this.text = text;
         this.rarity = rarity;
-        upgradeMaxLevel = 0; 
     }
-
-    public void upgrade() {}
 
     public String toString() {
         String output = "Lore:[";
@@ -96,7 +93,7 @@ class Lore extends SwordAttribute {
 
 
 
-class Type extends SwordAttribute {
+class Type extends UpgradeAttribute {
     private int type = 0;
     private String[] typeList = {"wooden_sword", "stone_sword", "iron_sword", "gold_sword", "diamond_sword"};
 
@@ -120,7 +117,7 @@ class Type extends SwordAttribute {
 
 
 
-class Enchantment extends SwordAttribute {
+class Enchantment extends UpgradeAttribute {
     private String enchant;
     private int level = 1;
 
@@ -144,7 +141,7 @@ class Enchantment extends SwordAttribute {
 
 
 
-abstract class Effect extends SwordAttribute {
+abstract class Effect extends UpgradeAttribute {
     protected String effect;
     protected int length = 1;
     protected int amount = 0; 
@@ -203,7 +200,7 @@ class Particle extends SwordAttribute {
 
 
 
-class Modifier extends SwordAttribute {
+class Modifier extends UpgradeAttribute {
     protected String name;
     protected double amount = 0.1;
     protected int operation = 1;
