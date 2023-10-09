@@ -2,12 +2,16 @@ package aidp;
 
 import java.util.ArrayList;
 import java.nio.file.Path;
-import java.util.function.Function;
 import java.util.Random;
 
 public class SwordBuilder {
 
-    private static String particleList = "ambient_entity_effect,angry_villager,ash,bubble,bubble_pop,campfire_cosy_smoke,campfire_signal_smoke,cherry_leaves,cloud,composter,crimson_spore,dolphin,dragon_breath,effect,egg_crack,elder_guardian,electric_spark,enchant,enchanted_hit,end_rod,entity_effect,explosion,firework,fishing,flame,flash,glow,glow_squid_ink,happy_villager,heart,instant_effect,item_slime,item_snowball,large_smoke,lava,mycelium,nautilus,note,poof,portal,rain,reverse_portal,scrape,sculk_charge_pop,sculk_soul,smoke,sneeze,snowflake,sonic_boom,soul,soul_fire_flame,spit,splash,spore_blossom_air,squid_ink,uderwater,warped_spore,wax_off,wax_on,white_ash,witch";
+    private static String particleList = "ambient_entity_effect,angry_villager,ash,bubble,bubble_pop,campfire_cosy_smoke," 
+        + "campfire_signal_smoke,cherry_leaves,cloud,composter,crimson_spore,dolphin,dragon_breath,effect,egg_crack,elder_guardian,"
+        + "electric_spark,enchant,enchanted_hit,end_rod,entity_effect,firework,fishing,flame,flash,glow,glow_squid_ink,happy_villager,"
+        + "heart,instant_effect,item_slime,item_snowball,large_smoke,lava,mycelium,nautilus,note,poof,portal,rain,reverse_portal,"
+        + "scrape,sculk_charge_pop,sculk_soul,smoke,sneeze,snowflake,sonic_boom,soul,soul_fire_flame,spit,splash,spore_blossom_air,"
+        + "squid_ink,uderwater,warped_spore,wax_off,wax_on,white_ash,witch";
 
     private static String requestJson = String.format("{"
     + "name: <string>," 
@@ -50,8 +54,7 @@ public class SwordBuilder {
         + "\"modifiers\": [\"movement_speed\"],"
         + "\"held_effects\": [\"jump_boost\"],"
         + "\"attack_effects\": [\"levitation\"],"
-        + "\"held_particles\": [\"cloud\", \"bubble\"],"
-        + "\"attack_particles\": [\"cloud\", \"bubble\"]"
+        + "\"particles\": [\"cloud\", \"bubble\"]"
         + "}";
         Request request = new Request(fake);
 
@@ -64,12 +67,11 @@ public class SwordBuilder {
         addModifier(sword, new AttackSpeed(-3));
 
 
-        addAttributes(sword, request.getAsArrayList("enchantments"), Enchantment::new);
-        addAttributes(sword, request.getAsArrayList("modifiers"), Modifier::new);
-        addAttributes(sword, request.getAsArrayList("held_effects"), HeldEffect::new);
-        addAttributes(sword, request.getAsArrayList("attack_effects"), AttackEffect::new);
-        addAttributes(sword, request.getAsArrayList("held_particles"), HeldParticle::new);
-        addAttributes(sword, request.getAsArrayList("attack_particles"), AttackParticle::new);
+        addEnchantments(sword, request.getAsArrayList("enchantments"));
+        addModifiers(sword, request.getAsArrayList("modifiers"));
+        addHeldEffects(sword, request.getAsArrayList("held_effects"));
+        addAttackEffects(sword, request.getAsArrayList("attack_effects"));
+        addParticles(sword, request.getAsArrayList("particles"));
         balanceAttributes(sword);
 
         // Add item to deal damage
@@ -89,6 +91,7 @@ public class SwordBuilder {
     }
 
 
+
     //////////////////////////////////////////////////
     // BALANCE
     //////////////////////////////////////////////////
@@ -97,7 +100,7 @@ public class SwordBuilder {
         Random random = new Random();
 
         // Copy our attribute list
-        ArrayList<SwordAttribute> list = sword.getAllAttributes(); 
+        ArrayList<SwordAttribute> list = sword.getUpgradeAttributes(); 
 
         // While our list is not empty (i.e. we can upgrade an attribute)
         while (list.size() > 0) {
@@ -124,13 +127,12 @@ public class SwordBuilder {
 
                 // If our upgrade gave use credit (the price of the upgrade was negative)
                 // Add all attributes back into the list (chance that we may be able to upgrade some of them)
-                if (upgradePrice < 0) list = sword.getAllAttributes();
+                if (upgradePrice < 0) list = sword.getUpgradeAttributes();
             }
         }
     }
 
     
-
 
     //////////////////////////////////////////////////
     // BUILDERS
@@ -151,8 +153,8 @@ public class SwordBuilder {
     }
 
     public static String buildAttackFunction(Sword sword) {
-        return String.format("%s\n%s\n%s\n",
-            getAttackEffectString(sword), getAttackParticleString(sword), getHeldParticleString(sword));
+        return String.format("%s\n%s\n",
+            getAttackEffectString(sword), getParticleString(sword));
     }
 
     
@@ -197,70 +199,61 @@ public class SwordBuilder {
         return output;
     }
 
-    public static String getHeldParticleString(Sword sword) {
+    public static String getParticleString(Sword sword) {
         String output = "";
-        for (Particle p : sword.getHeldParticles()) {
+        for (Particle p : sword.getParticles()) {
             output += p + "\n";
         }
         return output;
     }
 
-    public static String getAttackParticleString(Sword sword) {
-        String output = "";
-        for (Particle p : sword.getAttackParticles()) {
-            output += "execute as @s run " + p + "\n";
-        }
-        return output;
-    }
-
-
-    
+        
 
     //////////////////////////////////////////////////
     // ADDING ATTRIBUTES
     //////////////////////////////////////////////////
-    public static void setName(Sword sword, Name name) { 
-        sword.setName(name);
-        sword.getAllAttributes().add(name);
-    }
+    public static void setName(Sword sword, Name name) { sword.setName(name); }
+    public static void setLore(Sword sword, Lore lore) { sword.setLore(lore); }
+    public static void setType(Sword sword, Type type) { sword.setType(type); }
+    public static void setCredit(Sword sword, int credit) { sword.setCredit(credit); }
+    public static void addModifier(Sword sword, Modifier modifier) { sword.getModifiers().add(modifier); }
 
-    public static void setLore(Sword sword, Lore lore) { 
-        sword.setLore(lore);
-        sword.getAllAttributes().add(lore);
-    }
-
-    public static void setType(Sword sword, Type type) { 
-        sword.setType(type); 
-        sword.getAllAttributes().add(type);
-    }
-
-    public static void setCredit(Sword sword, int credit) { 
-        sword.setCredit(credit); 
-    }
-
-    public static void addModifier(Sword sword, Modifier modifier) {
-        sword.getModifiers().add(modifier);
-        sword.getAllAttributes().add(modifier);
-    }
-
-    /*
-     * addAttributes
-     * 
-     * Accepts a list of strings and the desired attribute target
-     * and adds a new attribute of that type into the corresponding 
-     * list of our sword object.
-     */
-    public static void addAttributes(Sword sword, ArrayList<String> list, Function<String, SwordAttribute> attributeFactory) {
+    public static void addEnchantments(Sword sword, ArrayList<String> list) {
         for (String item : list) {
-            SwordAttribute attribute = attributeFactory.apply(item);
-            sword.getAllAttributes().add(attribute);
+            Enchantment attribute = new Enchantment(item);
+            sword.addEnchantment(attribute);
+            sword.addUpgradeAttribute(attribute);
+        }
+    }
 
-            if (attribute instanceof Enchantment) sword.getEnchantments().add((Enchantment) attribute);
-            if (attribute instanceof Modifier) sword.getModifiers().add((Modifier) attribute);
-            if (attribute instanceof HeldEffect) sword.getHeldEffects().add((HeldEffect) attribute);
-            if (attribute instanceof AttackEffect) sword.getAttackEffects().add((AttackEffect) attribute);
-            if (attribute instanceof HeldParticle) sword.getHeldParticles().add((HeldParticle) attribute);
-            if (attribute instanceof AttackParticle) sword.getAttackParticles().add((AttackParticle) attribute);
+    public static void addModifiers(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            Modifier attribute = new Modifier(item);
+            sword.addModifier(attribute);
+            sword.addUpgradeAttribute(attribute);
+        }
+    }
+
+    public static void addAttackEffects(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            AttackEffect attribute = new AttackEffect(item);
+            sword.addAttackEffect(attribute);
+            sword.addUpgradeAttribute(attribute);
+        }
+    }
+
+    public static void addHeldEffects(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            HeldEffect attribute = new HeldEffect(item);
+            sword.addHeldEffect(attribute);
+            sword.addUpgradeAttribute(attribute);
+        }
+    }
+
+    public static void addParticles(Sword sword, ArrayList<String> list) {
+        for (String item : list) {
+            Particle attribute = new Particle(item);
+            sword.addParticle(attribute);
         }
     }
 }

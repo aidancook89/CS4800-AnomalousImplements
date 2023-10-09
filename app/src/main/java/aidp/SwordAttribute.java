@@ -187,29 +187,20 @@ class AttackEffect extends Effect {
 }
 
 
-abstract class Particle extends SwordAttribute {
-    protected String particle;
+class Particle extends SwordAttribute {
+    private String particle;
+
+    public Particle(String particle) {
+        this.particle = particle;
+    }
+
+    public void upgrade() {}
 
     public String toString() {
-        return String.format("particle %s ~ ~1 ~ 0 0 0 0.3 20 force", particle);
+        return String.format("execute as @s at @s run particle %s ~ ~1 ~ 0 0 0 0.3 20 force", particle);
     }
 }
 
-class HeldParticle extends Particle {
-    public HeldParticle(String particle) {
-        this.particle = particle;
-    }
-
-    public void upgrade() {}
-}
-
-class AttackParticle extends Particle {
-    public AttackParticle(String particle) {
-        this.particle = particle;
-    }
-
-    public void upgrade() {}
-}
 
 
 class Modifier extends SwordAttribute {
