@@ -2,177 +2,73 @@ package aidp;
 
 import java.util.ArrayList;
 
+
 //To do: Gather identifiers that are variable in spawn command.
 public class Entity {
-    public String type;
-    public String tag;
-    public String name;
-    public String color;
-
-    public boolean nameBold;
-    public boolean nameItalic;
-    public boolean nameUnderlined;
-    public boolean nameStrikethrough;
-    public boolean nameObfuscated;
+    private String type;
+    private String tag;
+    private String name;
+    private String color;
     
-    public String entityDeathLootTable;
+    private String entityDeathLootTable = "DeathLootTable:";
 
-    public ArrayList<String> potionList = new ArrayList<String>();
+    private ArrayList<PotionEffect> potionList = new ArrayList<PotionEffect>();
 
     //The following variables are only set to 0 or 1
-    public int entityVisualFire;
-    public int entityNoGravity;
-    public int entitySilent;
-    public int entityInvulnerable;
-    public int entityGlowing;
-    public int entityCustomNameVisible;
-    public int entityFallFlying;
-    public int entityHealth;
-    // End of boolean ints
+    /*
+     * Silent
+     * Glowing
+     * CustomNameVisible (should always be 1)
+     * FallFlying
+     * Health
+     */
+    private ArrayList<EntityModifiers> modifiers = new ArrayList<EntityModifiers>();
 
-    //Set from 0.0 to 1.0
-    public double genericKnockbackResistance;
-
-    //Can be up to approx 43, but should be kept well under that.
-    public int genericMovementSpeed;
-
-    public int genericAttackDamage;
-
-    //Low bound is 0, and cap is 30
-    public int genericArmor;
-
-    public int genericArmorToughness;
-    public int genericAttackKnockback;
+    /*
+     * generic.knockback_resistance
+     * generic.movement_speed
+     * generic.attack_damage
+     * generic.armor
+     * generic.armor_toughness
+     * generic.attack_knockback
+     */
+    private ArrayList<GenericModifiers> generic = new ArrayList<GenericModifiers>();
 
     public Entity(String type, String lootTable) {
         this.type = type;
-        entityDeathLootTable = lootTable;
+        entityDeathLootTable += lootTable;
     }
 
-    public void setEntityAttributes(int visualFire, int noGravity, int silent, int invulnerable, int glowing, int customNameVisible, int fallFlying, int health) {
-        entityVisualFire = visualFire;
-        entityNoGravity = noGravity;
-        entitySilent = silent;
-        entityInvulnerable = invulnerable;
-        entityGlowing = glowing;
-        entityCustomNameVisible = customNameVisible;
-        entityFallFlying = fallFlying;
-        entityHealth = health;
+    public String getType() { return type;}
+    public String getTag() { return tag;}
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+    public String getName() { return name;}
+    public void setName(String name, String color) { 
+        this.name = name;
+        this.color = color;
+    }
+    public String getColor() { return color;}
+    public String getLootTable() { return entityDeathLootTable;}
+
+    public void setLootTable(String lootTable) {
+        entityDeathLootTable += lootTable;
     }
 
-    public void setGenericAttributes(double knockbackResistance, int movementSpeed, int attackDamage, int armor, int armorToughness, int attackKnockback) {
-        genericKnockbackResistance = knockbackResistance;
-        genericMovementSpeed = movementSpeed;
-        genericAttackDamage = attackDamage;
-        genericArmor = armor;
-        genericArmorToughness = armorToughness;
-        genericAttackKnockback = attackKnockback;
+    public ArrayList<PotionEffect> getEffects() {
+        return potionList;
     }
 
-    public String getSpawnCommand() {
-        buildTag();
-        return "summon @p " + type + tag;
+    public ArrayList<EntityModifiers> getModifiers() {
+        return modifiers;
     }
 
-    public void buildTag() {
-        tag = "{";
-        tag += getEntityModifiers();
-        tag += getEntityNameString();
-        tag += getPotionEffects();
-        tag += getMiscEffects();
-
+    public ArrayList<GenericModifiers> getGenericMods() {
+        return generic;
     }
 
-     /*
-     * ENTITY NAME AND MODIFIERS
-     */
-
-    public void updateEntityName(String entityName, String nameColor, boolean bold, boolean italic, boolean underlined, boolean strikethrough, boolean obfuscated) {
-        name = entityName;
-        color = nameColor;
-        nameBold = bold;
-        nameItalic = italic;
-        nameUnderlined = underlined;
-        nameStrikethrough = strikethrough;
-        nameObfuscated = obfuscated;
-    }
-
-    public String getEntityNameString() {
-        String output = String.format("CustomName:'{\"text\":\"%s\",\"color\":\"%s\"", name, color);
-        if (nameBold)
-            output += String.format(",\"bold\":%b", nameBold);
-        if (nameItalic)
-            output += String.format(",\"italic\":%b", nameItalic);
-        if (nameUnderlined)
-            output += String.format(",\"underline\":%b", nameUnderlined);
-        if (nameStrikethrough)
-            output += String.format(",\"strikethrough\":%b", nameStrikethrough);
-        if (nameObfuscated)
-            output += String.format(",\"obfuscated\":%b", nameObfuscated);
-        output += "'}";
-        return output;
-    }
-
-    public String getEntityModifiers() {
-        String output = "";
-        if (entityVisualFire == 1)
-            output += String.format("HasVisualFire:%db,", entityVisualFire);
-        if (entityNoGravity == 1)
-            output += String.format("NoGravity:%db,", entityNoGravity);
-        if (entitySilent == 1)
-            output += String.format("Silent:%db,", entitySilent);
-        if (entityInvulnerable == 1)
-            output += String.format("Invulnerable:%db,", entityInvulnerable);
-        if (entityGlowing == 1)
-            output += String.format("Glowing:%db,", entityGlowing);
-        if (entityCustomNameVisible == 1)
-            output += String.format("CustomNameVisible:%db,", entityCustomNameVisible);
-
-        output += String.format("DeathLootTable:\"%s\",", entityDeathLootTable);
-
-        if (entityFallFlying == 1)
-            output += String.format("FallFlying:%db,", entityFallFlying);
-        output += String.format("Health:%df,", entityHealth);
-        return output;
-    }
-
-    /*
-     * POTION AND GENERIC EFFECTS
-     */
-
-    public void addPotionEffects(int id, int amplifier, int duration, int showParticles) {
-        String output = "";
-        output += String.format("{Id:%d,Amplifier:%db,Duration:%d,ShowParticles:%db}", id, amplifier, duration, showParticles);
-        potionList.add(output);
-    }
-
-    public String getPotionEffects() {
-        String output="[";
-        int size = potionList.size();
-        for (int i = 0; i < size-2; i++) {
-            output += potionList.get(i) + ",";
-        }
-        return output += potionList.get(size-1) + "],";
-    }
-
-    public String getMiscEffects() {
-        String output = "Attributes:[";
-        if (genericKnockbackResistance > 0)
-            output += String.format("{Name:generic.knockback_resistance,Base:%f}", genericKnockbackResistance);
-        if (genericMovementSpeed > 0)
-            output += String.format(",{Name:generic.movement_speed,Base:%d}", genericMovementSpeed);
-        if (genericAttackDamage > 0)
-            output += String.format(",{Name:generic.attack_damage,Base:%d}", genericAttackDamage);
-        if (genericArmor > 0)
-            output += String.format(",{Name:generic.armor,Base:%d}", genericArmor);
-        if (genericArmorToughness > 0)
-            output += String.format(",{Name:generic.armor_toughness,Base:%d}", genericArmorToughness);
-        if (genericAttackKnockback > 0)
-            output += String.format(",{Name:generic.attack_knockback,Base:%d}", genericAttackKnockback);
-        return output;
-    }
-
-    
+}
     /*
      * Speed : id 1
      * Slowness : id 2
@@ -209,4 +105,3 @@ public class Entity {
      * Darkness : id 33
      */
 
-}
