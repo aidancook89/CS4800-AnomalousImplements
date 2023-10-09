@@ -11,8 +11,8 @@ public class Sword {
     private Type type;
     private ArrayList<Enchantment> enchantments = new ArrayList<>();
     private ArrayList<Modifier> modifiers = new ArrayList<>();
-    private ArrayList<Effect> heldEffects = new ArrayList<>();
-    private ArrayList<Effect> attackEffects = new ArrayList<>();
+    private ArrayList<Effect> wielderEffects = new ArrayList<>();
+    private ArrayList<Effect> victimEffects = new ArrayList<>();
     private ArrayList<Particle> particles = new ArrayList<>();
     private ArrayList<Sound> sounds = new ArrayList<>();
     private ArrayList<UpgradeAttribute> upgradeAttributes = new ArrayList<UpgradeAttribute>();
@@ -47,11 +47,11 @@ public class Sword {
     public ArrayList<Modifier> getModifiers() { return modifiers; }
     public void addModifier(Modifier attribute) { modifiers.add(attribute); }
 
-    public ArrayList<Effect> getHeldEffects() { return heldEffects; }
-    public void addHeldEffect(HeldEffect attribute) { heldEffects.add(attribute); }
+    public ArrayList<Effect> getWielderEffects() { return wielderEffects; }
+    public void addWielderEffect(WielderEffect attribute) { wielderEffects.add(attribute); }
 
-    public ArrayList<Effect> getAttackEffects() { return attackEffects; }
-    public void addAttackEffect(AttackEffect attribute) { attackEffects.add(attribute); }
+    public ArrayList<Effect> getVictimEffects() { return victimEffects; }
+    public void addVictimEffect(VictimEffect attribute) { victimEffects.add(attribute); }
 
     public ArrayList<Particle> getParticles() { return particles; }
     public void addParticle(Particle attribute) { particles.add(attribute); }

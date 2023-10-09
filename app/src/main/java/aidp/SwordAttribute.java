@@ -155,8 +155,8 @@ abstract class Effect extends UpgradeAttribute {
     }
 }
 
-class HeldEffect extends Effect {
-    public HeldEffect(String effect) {
+class WielderEffect extends Effect {
+    public WielderEffect(String effect) {
         this.effect = effect;
         upgradeMaxLevel = 5;
         upgradePrice = 3;
@@ -170,8 +170,8 @@ class HeldEffect extends Effect {
     }
 }
 
-class AttackEffect extends Effect {
-    public AttackEffect(String effect) {
+class VictimEffect extends Effect {
+    public VictimEffect(String effect) {
         this.effect = effect;
         upgradeMaxLevel = 5;
         upgradePrice = 3;

@@ -18,14 +18,19 @@ public class SwordBuilder {
         + "block.basalt.hit, block.beehive.drip, block.calcite.break, block.chain.fall,"
         + "firework_rocket.blast_far, block.ladder.step";
 
+    private static String effectList = "speed, slowness, haste, mining_fatigue, strength, instant_health, instant_damage, jump_boost,"
+        + "nausea, regeneration, resistances, fire_resistance, water_breathing, invisibility, blindness, night_vision, hunger, weakness,"
+        + "poison, wither, health_boost, absorption, saturation, glowing, levitation, slow_falling, conduit_power, dolphins_grace,"
+        + "bad_omen, hero_of_the_village";
+
     private static String requestJson = String.format("{"
     + "name: <string>," 
     + "color: <hexcode>," 
     + "lore: <string>"
     + "enchantments: [<binding_curse,sharpness,smite,bane_of_arthropods,knockback,fire_aspect,looting,sweeping,unbreaking,mending,vanishing_curse>]"
     + "modifiers: [<max_health,knockback_resistantce,movement_speed,armor,armor_touchness,luck,max_absorption>]"
-    + "held_effects: [<speed,slowness,jump_boost>]"
-    + "attack_effects: [<speed,slowness,jump_boost,levitation>]"
+    + "wielder_effects: [<speed,slowness,jump_boost>]"
+    + "victim_effects: [<speed,slowness,jump_boost,levitation>]"
     + "particles: [<%s>]"
     + "sounds: [<%s>]"
     + "} ",
@@ -34,8 +39,8 @@ public class SwordBuilder {
     private static String restrictions = ""
     + "enchantments: pick 2,"
     + "modifiers: pick 2,"
-    + "held_effects: pick 2," 
-    + "attack_effects: pick 2," 
+    + "wielder_effects: pick 2," 
+    + "victim_effects: pick 2," 
     + "particles: pick 2," 
     + "effects: pick 2,"
     + "sounds: pick 1";
@@ -59,8 +64,8 @@ public class SwordBuilder {
         + "\"lore\": \"This sword fuels your hunger for victory! This is a test that will be useful for running the codebase multiple times. Extended lore will display on newlines, hopefully.\","
         + "\"enchantments\": [\"unbreaking\", \"looting\"],"
         + "\"modifiers\": [\"movement_speed\"],"
-        + "\"held_effects\": [\"jump_boost\"],"
-        + "\"attack_effects\": [\"levitation\"],"
+        + "\"wielder_effects\": [\"jump_boost\"],"
+        + "\"victim_effects\": [\"levitation\"],"
         + "\"particles\": [\"cloud\", \"bubble\"],"
         + "\"sounds\": [\"entity.firework_rocket.blast_far\"]"
         + "}";
@@ -76,8 +81,8 @@ public class SwordBuilder {
 
         addEnchantments(sword, request.getAsArrayList("enchantments"));
         addModifiers(sword, request.getAsArrayList("modifiers"));
-        addHeldEffects(sword, request.getAsArrayList("held_effects"));
-        addAttackEffects(sword, request.getAsArrayList("attack_effects"));
+        addWielderEffects(sword, request.getAsArrayList("wielder_effects"));
+        addVictimEffects(sword, request.getAsArrayList("victim_effects"));
         addParticles(sword, request.getAsArrayList("particles"));
         addSounds(sword, request.getAsArrayList("sounds"));
         balanceAttributes(sword);
@@ -90,7 +95,7 @@ public class SwordBuilder {
         Structure.writeTo(attackFunction, buildAttackFunction(sword), true);
     
         // Add potion effects for player
-        Structure.writeTo(App.f_item_tickmcfunction, getHeldEffectString(sword), true);
+        Structure.writeTo(App.f_item_tickmcfunction, getWielderEffectString(sword), true);
 
         // Add give command on load
         Structure.writeTo(App.f_loadmcfunction, "\n" + buildGiveCommand(sword), true);
@@ -162,7 +167,7 @@ public class SwordBuilder {
 
     public static String buildAttackFunction(Sword sword) {
         return String.format("%s\n%s\n%s\n",
-            getAttackEffectString(sword), getParticleString(sword), getSoundString(sword));
+            getVictimEffectString(sword), getParticleString(sword), getSoundString(sword));
     }
 
     
@@ -188,20 +193,20 @@ public class SwordBuilder {
         return ",AttributeModifiers:" + sword.getModifiers();
     }
 
-    public static String getHeldEffectString(Sword sword) {
-        if (sword.getHeldEffects().size() == 0) return "";
+    public static String getWielderEffectString(Sword sword) {
+        if (sword.getWielderEffects().size() == 0) return "";
         String output = String.format("############ %s (%s), id: %d ############\n", 
             sword.getName(), sword.getType(), sword.getId());
-        for (Effect e : sword.getHeldEffects()) {
+        for (Effect e : sword.getWielderEffects()) {
             output += String.format("execute as @a[nbt={SelectedItem:{tag:{CustomID:%d}}}] run effect give @s ", 
                 sword.getId()) + e + "\n";
         }
         return output; 
     }
 
-    public static String getAttackEffectString(Sword sword) {
+    public static String getVictimEffectString(Sword sword) {
         String output = "";
-        for (Effect e : sword.getAttackEffects()) {
+        for (Effect e : sword.getVictimEffects()) {
             output += "effect give @s " + e + "\n";
         }
         return output;
@@ -256,18 +261,18 @@ public class SwordBuilder {
         }
     }
 
-    public static void addAttackEffects(Sword sword, ArrayList<String> list) {
+    public static void addVictimEffects(Sword sword, ArrayList<String> list) {
         for (String item : list) {
-            AttackEffect attribute = new AttackEffect(item);
-            sword.addAttackEffect(attribute);
+            VictimEffect attribute = new VictimEffect(item);
+            sword.addVictimEffect(attribute);
             sword.addUpgradeAttribute(attribute);
         }
     }
 
-    public static void addHeldEffects(Sword sword, ArrayList<String> list) {
+    public static void addWielderEffects(Sword sword, ArrayList<String> list) {
         for (String item : list) {
-            HeldEffect attribute = new HeldEffect(item);
-            sword.addHeldEffect(attribute);
+            WielderEffect attribute = new WielderEffect(item);
+            sword.addWielderEffect(attribute);
             sword.addUpgradeAttribute(attribute);
         }
     }
