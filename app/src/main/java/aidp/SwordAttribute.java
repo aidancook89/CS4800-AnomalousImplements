@@ -22,7 +22,7 @@ abstract class UpgradeAttribute extends SwordAttribute {
 }
 
 
-
+//TODO ERROR WITH APOSTROPHES
 class Name extends SwordAttribute {
     private String text = "default";
     private String color = "white";
@@ -206,7 +206,7 @@ class Sound extends SwordAttribute {
     }
 
     public String toString() {
-        return String.format("playsound %s master @a ~ ~ ~ 0.5 1", sound);
+        return String.format("playsound minecraft:%s ambient @p ~ ~ ~ 0.5 1", sound);
     }
 }
 
@@ -252,6 +252,7 @@ class AttackDamage extends Modifier {
 
     public void upgrade() {
         amount += 1;
+
         upgradeLevel += 1;
         upgradePrice += 3;
     }
@@ -269,6 +270,7 @@ class AttackSpeed extends Modifier {
 
     public void upgrade() {
         amount += 0.4;
+
         upgradeLevel += 1;
         upgradePrice += 3;
     }

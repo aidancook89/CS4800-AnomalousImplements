@@ -13,8 +13,10 @@ public class SwordBuilder {
         + "scrape,sculk_charge_pop,sculk_soul,smoke,sneeze,snowflake,sonic_boom,soul,soul_fire_flame,spit,splash,spore_blossom_air,"
         + "squid_ink,uderwater,warped_spore,wax_off,wax_on,white_ash,witch";
 
-    private static String soundList = "minecraft:block.amethyst_block.place,"
-        + "minecraft:entity.firework_rocket.launch, minecraft:block.piston.extend";
+    private static String soundList = "block.amethyst_block.place, entity.arrow.shoot,"
+        + "entity.firework_rocket.launch, block.piston.extend, block.bamboo.hit,"
+        + "block.basalt.hit, block.beehive.drip, block.calcite.break, block.chain.fall,"
+        + "firework_rocket.blast_far, block.ladder.step";
 
     private static String requestJson = String.format("{"
     + "name: <string>," 
