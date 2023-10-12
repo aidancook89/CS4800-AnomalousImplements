@@ -22,42 +22,47 @@ public class SwordBuilder {
         + "nausea, regeneration, resistances, fire_resistance, water_breathing, invisibility, blindness, night_vision, hunger, weakness,"
         + "poison, wither, health_boost, absorption, saturation, glowing, levitation, slow_falling, conduit_power, dolphins_grace,"
         + "bad_omen, hero_of_the_village";
-
-    private static String requestJson = String.format("{"
-    + "name: <string>," 
-    + "color: <hexcode>," 
-    + "lore: <string>"
-    + "enchantments: [<binding_curse,sharpness,smite,bane_of_arthropods,knockback,fire_aspect,looting,sweeping,unbreaking,mending,vanishing_curse>]"
-    + "modifiers: [<max_health,knockback_resistantce,movement_speed,armor,armor_touchness,luck,max_absorption>]"
-    + "wielder_effects: [<speed,slowness,jump_boost>]"
-    + "victim_effects: [<speed,slowness,jump_boost,levitation>]"
-    + "particles: [<%s>]"
-    + "sounds: [<%s>]"
-    + "} ",
-    particleList, soundList);
     
-    private static String restrictions = ""
-    + "enchantments: pick 2,"
-    + "modifiers: pick 2,"
-    + "wielder_effects: pick 2," 
-    + "victim_effects: pick 2," 
-    + "particles: pick 2," 
-    + "effects: pick 2,"
-    + "sounds: pick 1";
+    private static String enchantmentList = "binding_curse,sharpness,smite,bane_of_arthropods,knockback,fire_aspect,looting,sweeping,unbreaking,mending,vanishing_curse";
+    private static String modifiersList = "max_health,knockback_resistantce,movement_speed,armor,armor_touchness,luck,max_absorption";
 
+
+    private static String requestJson = "{"
+    + "name: ,"
+    + "color: ,"
+    + "lore: ,"
+    + "enchantments: [],"
+    + "modifiers: [],"
+    + "wielder_effects: [],"
+    + "victim_effects: [],"
+    + "particles: [],"
+    + "sounds: [],"
+    + "}";
+
+    
+    private static String rules = String.format("{" 
+    + "name: string,"
+    + "color: hexcode"
+    + "lore: two setneces,"
+    + "enchantments: pick 2 from [%s],"
+    + "modifiers: pick 2 from [%s],"
+    + "wielder_effects: pick 2 from [%s],"
+    + "victim_effects: pick 2 from [%s],"
+    + "particles: pick 2 from [%s],"
+    + "sounds: pick 1 from [%s],"
+    + "}",
+    enchantmentList, modifiersList, effectList, effectList, particleList, soundList);
 
     public static Sword newSword(int id, int rarity, String theme) {
-
-        /* 
         Request request = RequestHandler.makeRequest(
-            "Provide a JSON in the following format: " + requestJson + restrictions,
-            String.format("An interesting sword with themes: %s", theme), 
-            0.9
+            String.format("Provide a string in the format: %s with the rules: %s", requestJson, rules),
+            String.format("Sword with themes: %s", theme), 
+            0.9 
         );        
         System.out.println(request.getContentString());
-        */
 
         
+        /* 
         String fake = "{" 
         + "\"name\": \"Breakfast Sword\","
         + "\"color\": \"#FFFF00\","
@@ -70,6 +75,7 @@ public class SwordBuilder {
         + "\"sounds\": [\"entity.firework_rocket.blast_far\"]"
         + "}";
         Request request = new Request(fake);
+        */
 
         // Create new sword and add attributes
         Sword sword = new Sword(id, rarity);
@@ -78,7 +84,6 @@ public class SwordBuilder {
         setType(sword, new Type(0));
         addModifier(sword, new AttackDamage(3));
         addModifier(sword, new AttackSpeed(-3));
-
         addEnchantments(sword, request.getAsArrayList("enchantments"));
         addModifiers(sword, request.getAsArrayList("modifiers"));
         addWielderEffects(sword, request.getAsArrayList("wielder_effects"));
@@ -130,14 +135,6 @@ public class SwordBuilder {
                 attribute.upgrade();
                 sword.setCredit(sword.getCredit() - upgradePrice);
                 
-                /* 
-                System.out.println("UPGRADED: " + attribute);
-                System.out.println("upgradePrice: " + upgradePrice);
-                System.out.println("Credit: " + sword.getCredit());
-                System.out.println("List size: " + list.size());
-                System.out.println();
-                */
-
                 // If our upgrade gave use credit (the price of the upgrade was negative)
                 // Add all attributes back into the list (chance that we may be able to upgrade some of them)
                 if (upgradePrice < 0) list = sword.getUpgradeAttributes();

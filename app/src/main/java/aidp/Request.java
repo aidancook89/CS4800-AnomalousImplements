@@ -1,12 +1,18 @@
 package aidp;
 
 import java.util.ArrayList;
+import java.lang.reflect.Type;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.reflect.TypeToken;
 
 public class Request {
+
+    private static Type listType = new TypeToken<ArrayList<String>>() {}.getType();
 
     private Gson gson = new Gson();
 
@@ -26,40 +32,35 @@ public class Request {
         this.responseBody = responseBody;
         this.statusCode = statusCode;
 
-        contentString = JsonParser.parseString(responseBody)
-            .getAsJsonObject()
-            .getAsJsonArray("choices")
-            .get(0) 
-            .getAsJsonObject()
-            .getAsJsonObject("message")
-            .get("content")
-            .getAsString();
+        JsonObject responseJson = JsonParser.parseString(responseBody).getAsJsonObject();
+        JsonArray choicesArray = responseJson.getAsJsonArray("choices");
+        if (choicesArray != null && choicesArray.size() > 0) {
+            JsonObject choice = choicesArray.get(0).getAsJsonObject();
+            JsonObject message = choice.getAsJsonObject("message");
+            JsonPrimitive content = message.getAsJsonPrimitive("content");
 
-        contentJson = JsonParser.parseString(contentString).getAsJsonObject();
+            if (content != null) {
+                contentString = content.getAsString();
+                contentJson = JsonParser.parseString(contentString).getAsJsonObject();
+            } else {
+                System.out.println("Content is null");
+            }
+        } else {
+            System.out.println("Choices is null");
+        }
     }
 
-
-    public String getRequest() {
-        return requestBody;
-    }
-
-    public int getStatus() {
-        return statusCode;
-    }
-
-    public String getResponseString() {
-        return responseBody;
-    }
-
-    public String getContentString() {
-		return contentString;
-    }
+    public String getRequest() { return requestBody; }
+    public int getStatus() { return statusCode; }
+    public String getResponseString() { return responseBody; }
+    public String getContentString() { return contentString; }
+    public JsonObject getContentJson() { return contentJson; }
 
     public String getAsString(String key) {
         return contentJson.get(key).getAsString();
     }
     
     public ArrayList<String> getAsArrayList(String key) {
-        return gson.fromJson(contentJson.get(key), ArrayList.class);
+        return gson.fromJson(contentJson.get(key), listType);
     }
 }

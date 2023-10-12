@@ -97,7 +97,7 @@ class Lore extends SwordAttribute {
 
 class Type extends UpgradeAttribute {
     private int type = 0;
-    private String[] typeList = {"wooden_sword", "stone_sword", "iron_sword", "gold_sword", "diamond_sword"};
+    private String[] typeList = {"wooden_sword", "stone_sword", "iron_sword", "gold_sword", "diamond_sword", "netherite_sword"};
 
     public Type(int type) {
         this.type = type % typeList.length;
