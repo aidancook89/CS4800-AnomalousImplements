@@ -28,6 +28,8 @@ public class App {
 
     public static Path d_ns_tags;
     public static Path d_ns_loot_tables;
+    public static Path d_ns_loot_tables_entities;
+    public static Path f_loot_table;
 
     public static Path d_ns_functions;
     public static Path d_swords;
@@ -63,6 +65,10 @@ public class App {
         d_ns = Structure.newDir(d_data, namespace, false);
         //namespaceLootTablesDir = Structure.newDir(d_ns, "loot_tables", false);
         //namespaceTagsDir = Structure.newDir(d_ns, "tags", false);
+        d_ns_loot_tables = Structure.newDir(d_ns, "loot_tables", false);
+        d_ns_loot_tables_entities = Structure.newDir(d_ns_loot_tables, "entities", false);
+        f_loot_table = Structure.newDir(d_ns_loot_tables_entities, "creeper.json", true);
+        Structure.copyContents(template.resolve("loot_table.json"), f_loot_table);
 
         d_ns_functions = Structure.newDir(d_ns, "functions", false);
 
@@ -88,8 +94,7 @@ public class App {
         //Sword sword3 = SwordBuilder.newSword(3, 3, "");
         //Sword sword4 = SwordBuilder.newSword(4, 4, "");
         
-        //NEED TO GET PATHING RIGHT
-        //EntityBuilder entity = new EntityBuilder("skeleton", "");
+        Entity e1 = EntityBuilder.newEntity();
     }
 
     public static void main(String[] args) {

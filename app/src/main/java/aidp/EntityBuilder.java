@@ -18,7 +18,7 @@ public class EntityBuilder {
         Request request = new Request(fakeJson);
 
         
-        Entity e1 = new Entity(request.getAsString("type"), "data:minecraft/loot_tables/entities/skeleton_custom.json");
+        Entity e1 = new Entity(request.getAsString("type"), "\"aidp:entities/creeper\"");
         e1.setName(request.getAsString("name"), request.getAsString("nameColor"));
         addEntityModifiers(e1, request.getAsArrayList("modifiers"));
         addPotionEffects(e1, request.getAsArrayList("potions"));
