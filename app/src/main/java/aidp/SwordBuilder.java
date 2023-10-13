@@ -6,90 +6,20 @@ import java.util.Random;
 
 public class SwordBuilder {
 
-    private static String particleList = "ambient_entity_effect,angry_villager,ash,bubble,bubble_pop,campfire_cosy_smoke," 
-        + "campfire_signal_smoke,cherry_leaves,cloud,composter,crimson_spore,dolphin,dragon_breath,effect,egg_crack,elder_guardian,"
-        + "electric_spark,enchant,enchanted_hit,end_rod,entity_effect,firework,fishing,flame,flash,glow,glow_squid_ink,happy_villager,"
-        + "heart,instant_effect,item_slime,item_snowball,large_smoke,lava,mycelium,nautilus,note,poof,portal,rain,reverse_portal,"
-        + "scrape,sculk_charge_pop,sculk_soul,smoke,sneeze,snowflake,sonic_boom,soul,soul_fire_flame,spit,splash,spore_blossom_air,"
-        + "squid_ink,uderwater,warped_spore,wax_off,wax_on,white_ash,witch";
-
-    private static String soundList = "block.amethyst_block.place, entity.arrow.shoot,"
-        + "entity.firework_rocket.launch, block.piston.extend, block.bamboo.hit,"
-        + "block.basalt.hit, block.beehive.drip, block.calcite.break, block.chain.fall,"
-        + "firework_rocket.blast_far, block.ladder.step";
-
-    private static String effectList = "speed, slowness, haste, mining_fatigue, strength, instant_health, instant_damage, jump_boost,"
-        + "nausea, regeneration, resistances, fire_resistance, water_breathing, invisibility, blindness, night_vision, hunger, weakness,"
-        + "poison, wither, health_boost, absorption, saturation, glowing, levitation, slow_falling, conduit_power, dolphins_grace,"
-        + "bad_omen, hero_of_the_village";
-    
-    private static String enchantmentList = "binding_curse,sharpness,smite,bane_of_arthropods,knockback,fire_aspect,looting,sweeping,unbreaking,mending,vanishing_curse";
-    private static String modifiersList = "max_health,knockback_resistantce,movement_speed,armor,armor_touchness,luck,max_absorption";
-
-
-    private static String requestJson = "{"
-    + "name: ,"
-    + "color: ,"
-    + "lore: ,"
-    + "enchantments: [],"
-    + "modifiers: [],"
-    + "wielder_effects: [],"
-    + "victim_effects: [],"
-    + "particles: [],"
-    + "sounds: [],"
-    + "}";
-
-    
-    private static String rules = String.format("{" 
-    + "name: string,"
-    + "color: hexcode"
-    + "lore: two setneces,"
-    + "enchantments: pick 2 from [%s],"
-    + "modifiers: pick 2 from [%s],"
-    + "wielder_effects: pick 2 from [%s],"
-    + "victim_effects: pick 2 from [%s],"
-    + "particles: pick 2 from [%s],"
-    + "sounds: pick 1 from [%s],"
-    + "}",
-    enchantmentList, modifiersList, effectList, effectList, particleList, soundList);
-
-    public static Sword newSword(int id, int rarity, String theme) {
-        Request request = RequestHandler.makeRequest(
-            String.format("Provide a string in the format: %s with the rules: %s", requestJson, rules),
-            String.format("Sword with themes: %s", theme), 
-            0.9 
-        );        
-        System.out.println(request.getContentString());
-
-        
-        /* 
-        String fake = "{" 
-        + "\"name\": \"Breakfast Sword\","
-        + "\"color\": \"#FFFF00\","
-        + "\"lore\": \"This sword fuels your hunger for victory! This is a test that will be useful for running the codebase multiple times. Extended lore will display on newlines, hopefully.\","
-        + "\"enchantments\": [\"unbreaking\", \"looting\"],"
-        + "\"modifiers\": [\"movement_speed\"],"
-        + "\"wielder_effects\": [\"jump_boost\"],"
-        + "\"victim_effects\": [\"levitation\"],"
-        + "\"particles\": [\"cloud\", \"bubble\"],"
-        + "\"sounds\": [\"entity.firework_rocket.blast_far\"]"
-        + "}";
-        Request request = new Request(fake);
-        */
-
+    public static Sword newSword(SwordJson sj) {
         // Create new sword and add attributes
-        Sword sword = new Sword(id, rarity);
-        setName(sword, new Name(request.getAsString("name"),request.getAsString("color")));
-        setLore(sword, new Lore(request.getAsString("lore"), rarity));
+        Sword sword = new Sword(sj.id, sj.rarity);
+        setName(sword, new Name(sj.name,sj.color));
+        setLore(sword, new Lore(sj.lore, sj.rarity));
         setType(sword, new Type(0));
         addModifier(sword, new AttackDamage(3));
         addModifier(sword, new AttackSpeed(-3));
-        addEnchantments(sword, request.getAsArrayList("enchantments"));
-        addModifiers(sword, request.getAsArrayList("modifiers"));
-        addWielderEffects(sword, request.getAsArrayList("wielder_effects"));
-        addVictimEffects(sword, request.getAsArrayList("victim_effects"));
-        addParticles(sword, request.getAsArrayList("particles"));
-        addSounds(sword, request.getAsArrayList("sounds"));
+        addEnchantments(sword, sj.enchantments);
+        addModifiers(sword, sj.modifiers);
+        addWielderEffects(sword, sj.wielder_effects);
+        addVictimEffects(sword, sj.victim_effects);
+        addParticles(sword, sj.particles);
+        addSounds(sword, sj.sounds);
         balanceAttributes(sword);
 
         // Add item to deal damage
