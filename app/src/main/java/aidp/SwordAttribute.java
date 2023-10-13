@@ -52,6 +52,7 @@ class Lore extends SwordAttribute {
     private String text = "default";
     private int rarity = 0;
     private String color = "gray";
+    private ArrayList<Effect> effects;
 
     private static String[][] rarityLookup = new String[][] {
         {"COMMON", "white"},
@@ -61,9 +62,10 @@ class Lore extends SwordAttribute {
         {"LEGENDARY", "gold"}
     };
 
-    public Lore(String text, int rarity) {
+    public Lore(String text, int rarity, ArrayList<Effect> effects) {
         this.text = text;
         this.rarity = rarity;
+        this.effects = effects;
     }
 
     public String toString() {
@@ -78,7 +80,13 @@ class Lore extends SwordAttribute {
                 part.replaceAll("'", "\'"), color);
         }
 
-        return output + ",'{\"text\":\"\"}']";
+        output += ",'{\"text\":\"\"}'";
+        output += String.format(",'{\"text\":\"Victim Effects:\",\"color\":\"%s\",\"italic\":\"false\",\"underlined\":\"true\"}'", color);
+        for (int i = 0; i < effects.size(); i++) {
+            output += String.format(",'{\"text\":\"* %s\",\"color\":\"%s\",\"italic\":\"true\"}'", effects.get(i).pretty(), color);
+        }
+
+        return output + "]";
     }
 
     public ArrayList<String> breakUp(String text, int count) {
@@ -248,6 +256,17 @@ abstract class Effect extends UpgradeAttribute {
     public String toString() {
         return String.format("minecraft:%s %d %d %b",
             effect, length, amount, hideParticles);
+    }
+
+    public String pretty() {
+        String name = effect;
+        String[] words = name.split("_");
+        name = "";
+        for (String word : words) {
+            name += word.substring(0,1).toUpperCase() 
+                + word.substring(1).toLowerCase() + " ";
+        }
+        return String.format("%s %s", name, amount+1);
     }
 
     public static ArrayList<String> list = new ArrayList<String>(List.of(

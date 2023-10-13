@@ -10,7 +10,6 @@ public class SwordBuilder {
         // Create new sword and add attributes
         Sword sword = new Sword(sj.id, sj.rarity);
         setName(sword, new Name(sj.name,sj.color));
-        setLore(sword, new Lore(sj.lore, sj.rarity));
         setType(sword, new Type(0));
         addModifier(sword, new AttackDamage(3));
         addModifier(sword, new AttackSpeed(-3));
@@ -21,6 +20,7 @@ public class SwordBuilder {
         addParticles(sword, sj.particles);
         addSounds(sword, sj.sounds);
         balanceAttributes(sword);
+        setLore(sword, new Lore(sj.lore, sj.rarity, sword.getVictimEffects()));
 
         // Add item to deal damage
         Structure.writeToLine(App.f_deal_damagemcfunction, buildDealDamageString(sword), 2);

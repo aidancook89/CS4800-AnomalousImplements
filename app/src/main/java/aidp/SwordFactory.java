@@ -65,7 +65,7 @@ public class SwordFactory {
 
             Random rand = new Random();
             SwordJson sj = new SwordJson(
-                rand.nextInt(4), "Red Sword", "Red", "This is test lore", 
+                rand.nextInt(4), "Red Sword", "Red", "This is test lore. The sword is very red. I want to get an idea of how longer lore is displayed.", 
                 randomList(Enchantment.list, 2),
                 randomList(Modifier.list, 2),
                 randomList(Effect.list, 2),
