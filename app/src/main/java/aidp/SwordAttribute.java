@@ -52,7 +52,8 @@ class Lore extends SwordAttribute {
     private String text = "default";
     private int rarity = 0;
     private String color = "gray";
-    private ArrayList<Effect> effects;
+    private ArrayList<Effect> wielderEffects;
+    private ArrayList<Effect> victimEffects;
 
     private static String[][] rarityLookup = new String[][] {
         {"COMMON", "white"},
@@ -62,31 +63,60 @@ class Lore extends SwordAttribute {
         {"LEGENDARY", "gold"}
     };
 
-    public Lore(String text, int rarity, ArrayList<Effect> effects) {
+    public Lore(String text, int rarity, ArrayList<Effect> wielderEffects, ArrayList<Effect> victimEffects) {
         this.text = text;
         this.rarity = rarity;
-        this.effects = effects;
+        this.wielderEffects = wielderEffects;
+        this.victimEffects = victimEffects;
     }
 
     public String toString() {
+        // RARITY
         String output = "Lore:[";
         output += "'{\"text\":\"\"}'";
         output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"true\",\"underlined\":\"true\"}'", rarityLookup[rarity][0], rarityLookup[rarity][1]);
         output += ",'{\"text\":\"\"}'";
 
+        // LORE
         ArrayList<String> parts = breakUp(text, 40); 
         for (String part : parts) {
             output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"false\"}'", 
                 part.replaceAll("'", "\'"), color);
         }
-
         output += ",'{\"text\":\"\"}'";
-        output += String.format(",'{\"text\":\"Victim Effects:\",\"color\":\"%s\",\"italic\":\"false\",\"underlined\":\"true\"}'", color);
-        for (int i = 0; i < effects.size(); i++) {
-            output += String.format(",'{\"text\":\"* %s\",\"color\":\"%s\",\"italic\":\"true\"}'", effects.get(i).pretty(), color);
+
+        // EFFECTS
+        String wielderTitle = "Wielder Effects:";
+        String victimTitle = "Victim Effects:";
+        int padLength = wielderEffects.get(0).toPretty().length();
+        for (int i = 0; i < wielderEffects.size(); i++) {
+            padLength = Math.max(padLength, wielderEffects.get(i).toPretty().length());
+        }
+        padLength = Math.max(padLength, wielderTitle.length()) + 3;
+        String title = padString(wielderTitle, padLength) + victimTitle;
+        output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"false\"}'", title, color);
+
+        int wielderSize = wielderEffects.size();
+        int victimSize = victimEffects.size();
+        int loopCount = Math.max(wielderSize, victimSize);
+        for (int i = 0; i < loopCount; i++) {
+            String wielderPretty = "";
+            String victimPretty = "";
+            if (i < wielderSize) wielderPretty = wielderEffects.get(i).toPretty();
+            if (i < victimSize) victimPretty = victimEffects.get(i).toPretty();
+            System.out.println(padLength);
+            String str = padString(wielderPretty, padLength) + victimPretty;
+            System.out.println(str);
+            output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"true\"}'", str, color);
         }
 
         return output + "]";
+    }
+
+    public String padString(String source, int padLength) {
+        int add = padLength - source.length(); 
+        for (int i = 0; i < add; i++) source += " ";
+        return source;
     }
 
     public ArrayList<String> breakUp(String text, int count) {
@@ -258,7 +288,7 @@ abstract class Effect extends UpgradeAttribute {
             effect, length, amount, hideParticles);
     }
 
-    public String pretty() {
+    public String toPretty() {
         String name = effect;
         String[] words = name.split("_");
         name = "";
@@ -266,7 +296,7 @@ abstract class Effect extends UpgradeAttribute {
             name += word.substring(0,1).toUpperCase() 
                 + word.substring(1).toLowerCase() + " ";
         }
-        return String.format("%s %s", name, amount+1);
+        return String.format("* %s %s", name, amount+1);
     }
 
     public static ArrayList<String> list = new ArrayList<String>(List.of(

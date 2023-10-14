@@ -20,7 +20,7 @@ public class SwordBuilder {
         addParticles(sword, sj.particles);
         addSounds(sword, sj.sounds);
         balanceAttributes(sword);
-        setLore(sword, new Lore(sj.lore, sj.rarity, sword.getVictimEffects()));
+        setLore(sword, new Lore(sj.lore, sj.rarity, sword.getWielderEffects(), sword.getVictimEffects()));
 
         // Add item to deal damage
         Structure.writeToLine(App.f_deal_damagemcfunction, buildDealDamageString(sword), 2);
@@ -82,9 +82,9 @@ public class SwordBuilder {
 	} 
 
 	public static String buildTag(Sword sword) {
-        return String.format("{display:{%s,%s}%s%s,CustomID:%d}",
+        return String.format("{display:{%s,%s}%s%s,RepairCost:%d,CustomID:%d}",
             getNameString(sword), getLoreString(sword), getEnchantmentsString(sword), 
-            getModifierString(sword), sword.getId());
+            getModifierString(sword), sword.getRarity() * 3, sword.getId());
 	}
 
     public static String buildDealDamageString(Sword sword) {
