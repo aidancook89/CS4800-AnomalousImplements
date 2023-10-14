@@ -18,27 +18,13 @@ public class SwordFactory {
     + "sounds: [],"
     + "}";
 
-    private static String rules = String.format("{" 
-    + "name: string,"
-    + "color: hexcode"
-    + "lore: two sentences,"
-    + "enchantments: pick 2 from [%s],"
-    + "modifiers: pick 2 from [%s],"
-    + "wielder_effects: pick 2 from [%s],"
-    + "victim_effects: pick 2 from [%s],"
-    + "particles: pick 2 from [%s],"
-    + "sounds: pick 1 from [%s],"
-    + "}",
-    Enchantment.list.toString(), 
-    Modifier.list.toString(), 
-    Effect.list.toString(), 
-    Effect.list.toString(), 
-    Particle.list.toString(), 
-    Sound.list.toString()
-    );
+    
 
     public static ArrayList<Sword> list = new ArrayList<Sword>();
     public static ArrayList<String> themesList;
+
+    private static Random rand = new Random();
+
 
     public static void create(int count) {
         boolean makeRequests = false;
@@ -51,15 +37,38 @@ public class SwordFactory {
         }
 
         for (int i = 0; i < count; i++) {
-            if (makeRequests) createJsonAI(i, themesList); 
+            int enchantmentsCount = rand.nextInt(3);
+            int modifierCount = rand.nextInt(3);
+            int wielderEffectsCount = rand.nextInt(3);
+            int victimEffectsCount = rand.nextInt(3);
+
+            String rules = String.format("{" 
+                + "name: string,"
+                + "color: hexcode"
+                + "lore: two sentences,"
+                + "enchantments: pick %d from [%s],"
+                + "modifiers: pick %d from [%s],"
+                + "wielder_effects: pick %d from [%s],"
+                + "victim_effects: pick %d from [%s],"
+                + "particles: pick %d from [%s],"
+                + "sounds: pick %d from [%s],"
+                + "}",
+                enchantmentsCount, Enchantment.list.toString(), 
+                modifierCount, Modifier.list.toString(), 
+                wielderEffectsCount, Effect.list.toString(), 
+                victimEffectsCount, Effect.list.toString(), 
+                2, Particle.list.toString(), 
+                1, Sound.list.toString()
+                );
+
+            if (makeRequests) createJsonAI(i, requestJson, rules, themesList); 
             else createJsonRandom(i);
         }
     }
 
     public static void createJsonRandom(int id) {
-        Random rand = new Random();
         SwordJson sj = new SwordJson(
-            rand.nextInt(4), "Red Sword", "Red", "This is test lore. The sword is very red. I want to get an idea of how longer lore is displayed.", 
+            rand.nextInt(5), "Red Sword", "Red", "This is test lore. The sword is very red. I want to get an idea of how longer lore is displayed.", 
             randomList(Enchantment.list, 2),
             randomList(Modifier.list, 2),
             randomList(Effect.list, 2),
@@ -72,7 +81,7 @@ public class SwordFactory {
         list.add(sword);
     }
 
-    public static void createJsonAI(int id, ArrayList<String> themesList) {
+    public static void createJsonAI(int id, String requestJson, String rules, ArrayList<String> themesList) {
         Gson gson = new Gson();
         Request request = RequestHandler.makeRequest(
             String.format("Provide a JSON in the format: %s with the rules: %s", requestJson, rules),

@@ -11,7 +11,10 @@ abstract class UpgradeAttribute extends SwordAttribute {
     protected int upgradeMaxLevel;
     protected int upgradeLevel = 0;
 
-    public abstract void upgrade();
+    public void upgrade() {
+        upgradeLevel += 1;
+        upgradePrice += Math.ceil(upgradePrice/2);
+    }
 
     // Checks if a upgrade can be made to this attribute
     // If it can, return the price of the upgrade, otherwise return 0
@@ -52,7 +55,6 @@ class Lore extends SwordAttribute {
     private String text = "default";
     private int rarity = 0;
     private String color = "gray";
-    private ArrayList<Effect> wielderEffects;
     private ArrayList<Effect> victimEffects;
 
     private static String[][] rarityLookup = new String[][] {
@@ -63,11 +65,10 @@ class Lore extends SwordAttribute {
         {"LEGENDARY", "gold"}
     };
 
-    public Lore(String text, int rarity, ArrayList<Effect> wielderEffects, ArrayList<Effect> victimEffects) {
+    public Lore(String text, int rarity, ArrayList<Effect> victimEffects) {
         this.text = text;
         this.rarity = rarity;
-        this.wielderEffects = wielderEffects;
-        this.victimEffects = victimEffects;
+        this.victimEffects =  victimEffects;
     }
 
     public String toString() {
@@ -85,31 +86,17 @@ class Lore extends SwordAttribute {
         }
         output += ",'{\"text\":\"\"}'";
 
-        // EFFECTS
-        String wielderTitle = "Wielder Effects:";
-        String victimTitle = "Victim Effects:";
-        int padLength = wielderEffects.get(0).toPretty().length();
-        for (int i = 0; i < wielderEffects.size(); i++) {
-            padLength = Math.max(padLength, wielderEffects.get(i).toPretty().length());
+        // VICTIM EFFECTS
+        if (victimEffects != null) {
+            int size = victimEffects.size(); 
+            String title = "Victim Effects: ";
+            output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"false\"}'", title, color);
+            for (int i = 0; i < size; i++) {
+                output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"true\"}'", 
+                    victimEffects.get(i).toPretty(), color);
+            }
         }
-        padLength = Math.max(padLength, wielderTitle.length()) + 3;
-        String title = padString(wielderTitle, padLength) + victimTitle;
-        output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"false\"}'", title, color);
-
-        int wielderSize = wielderEffects.size();
-        int victimSize = victimEffects.size();
-        int loopCount = Math.max(wielderSize, victimSize);
-        for (int i = 0; i < loopCount; i++) {
-            String wielderPretty = "";
-            String victimPretty = "";
-            if (i < wielderSize) wielderPretty = wielderEffects.get(i).toPretty();
-            if (i < victimSize) victimPretty = victimEffects.get(i).toPretty();
-            System.out.println(padLength);
-            String str = padString(wielderPretty, padLength) + victimPretty;
-            System.out.println(str);
-            output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"true\"}'", str, color);
-        }
-
+ 
         return output + "]";
     }
 
@@ -157,10 +144,8 @@ class Type extends UpgradeAttribute {
     }
 
     public void upgrade() {
+        super.upgrade();
         type += 1;
-
-        upgradeLevel += 1;
-        upgradePrice += 10;
     }
 
     public String toString() {
@@ -179,25 +164,26 @@ class Enchantment extends UpgradeAttribute {
 
     public Enchantment(String enchant) {
         this.enchant = enchant;
-        upgradeMaxLevel = 5;
-        upgradePrice = 2;
+        upgradeMaxLevel = maxLevel[list.indexOf(enchant)];
+        upgradePrice = 3;
     }
 
-    public void upgrade() {
-        level += 1;
 
-        upgradeLevel += 1;
-        upgradePrice += 2;
+    public void upgrade() {
+        super.upgrade();
+        level += 1;
     }
 
     public String toString() {
         return String.format("{id:\"minecraft:%s\",lvl:%ds}", enchant, level);
     }
 
-
     public static ArrayList<String> list = new ArrayList<String>(List.of(
-        "binding_curse","sharpness","smite","bane_of_arthropods","knockback","fire_aspect","looting","sweeping","unbreaking","mending","vanishing_curse"
+        "binding_curse","sharpness","smite","bane_of_arthropods",
+        "knockback","fire_aspect","looting","sweeping","unbreaking","mending","vanishing_curse"
     ));
+
+    public static int[] maxLevel = {1, 5, 5, 5, 5, 2, 3, 3, 3, 1, 1};
 }
 
 
@@ -206,7 +192,7 @@ class Enchantment extends UpgradeAttribute {
 //////////////////////////////////////////////////
 class Modifier extends UpgradeAttribute {
     protected String name;
-    protected double amount = 0.1;
+    protected double amount = 0.0;
     protected int operation = 1;
     protected String slot = "mainhand";
     protected long uuid;
@@ -219,10 +205,8 @@ class Modifier extends UpgradeAttribute {
     }
 
     public void upgrade() {
-        amount += 0.1;
-
-        upgradeLevel += 1;
-        upgradePrice += 3;
+        super.upgrade();
+        amount += 0.05;
     }
 
     public String toString() {
@@ -247,10 +231,8 @@ class AttackDamage extends Modifier {
     }
 
     public void upgrade() {
+        super.upgrade();
         amount += 1;
-
-        upgradeLevel += 1;
-        upgradePrice += 3;
     }
 }
 
@@ -260,15 +242,13 @@ class AttackSpeed extends Modifier {
         super("attack_speed");
         this.amount = amount;
         operation = 0;
-        upgradePrice = 3;
+        upgradePrice = 2;
         upgradeMaxLevel = 10;
     }
 
     public void upgrade() {
-        amount += 0.4;
-
-        upgradeLevel += 1;
-        upgradePrice += 3;
+        super.upgrade();
+        amount += 0.5;
     }
 }
 
@@ -316,10 +296,8 @@ class WielderEffect extends Effect {
     }
 
     public void upgrade() {
+        super.upgrade();
         amount += 1;
-
-        upgradeLevel += 1;
-        upgradePrice += 3;
     }
 }
 
@@ -331,10 +309,8 @@ class VictimEffect extends Effect {
     }
 
     public void upgrade() {
+        super.upgrade();
         amount += 1;
-
-        upgradeLevel += 1;
-        upgradePrice += 3;
     }
 }
 
