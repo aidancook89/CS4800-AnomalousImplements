@@ -59,7 +59,7 @@ public class SwordFactory {
                 victimEffectsCount, Effect.list.toString(), 
                 2, Particle.list.toString(), 
                 1, Sound.list.toString()
-                );
+            );
 
             if (makeRequests) createJsonAI(i, requestJson, rules, themesList); 
             else createJsonRandom(i);
@@ -69,12 +69,12 @@ public class SwordFactory {
     public static void createJsonRandom(int id) {
         SwordJson sj = new SwordJson(
             rand.nextInt(5), "Red Sword", "Red", "This is test lore. The sword is very red. I want to get an idea of how longer lore is displayed.", 
-            randomList(Enchantment.list, 2),
+            randomList(Enchantment.list, 3),
             randomList(Modifier.list, 2),
             randomList(Effect.list, 2),
             randomList(Effect.list, 2),
             randomList(Particle.list, 2),
-            randomList(Sound.list, 1)
+            randomList(Sound.list, 2)
         );
         sj.id = id;
         Sword sword = SwordBuilder.newSword(sj);

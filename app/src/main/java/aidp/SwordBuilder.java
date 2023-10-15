@@ -9,19 +9,24 @@ public class SwordBuilder {
     public static Sword newSword(SwordJson sj) {
         // Create new sword and add attributes
         Sword sword = new Sword(sj.id, sj.rarity);
-        setType(sword, new Type(0));
-        addModifier(sword, new AttackDamage(3));
-        addModifier(sword, new AttackSpeed(-3));
-        addEnchantments(sword, sj.enchantments);
-        addModifiers(sword, sj.modifiers);
-        addWielderEffects(sword, sj.wielder_effects);
-        addVictimEffects(sword, sj.victim_effects);
+        ArrayList<UpgradeAttribute> upgradeAttributes = new ArrayList<UpgradeAttribute>();
+
+        upgradeAttributes.add(new Type());
+        upgradeAttributes.add(new AttackDamage(3));
+        upgradeAttributes.add(new AttackSpeed(-3));
+        addEnchantments(upgradeAttributes, sj.enchantments);
+        addModifiers(upgradeAttributes, sj.modifiers);
+        addWielderEffects(upgradeAttributes, sj.wielder_effects);
+        addVictimEffects(upgradeAttributes, sj.victim_effects);
+
+        int credit = 35 + (sj.rarity * 35);
+        upgradeAttributes = balanceAttributes(upgradeAttributes, credit);
+        transferAttributes(sword, upgradeAttributes);
+
+        sword.setName(new Name(sj.name,sj.color));
+        sword.setLore(new Lore(sj.lore, sj.rarity, sword.getWielderEffects(), sword.getVictimEffects()));
         addParticles(sword, sj.particles);
         addSounds(sword, sj.sounds);
-        balanceAttributes(sword);
-        
-        setName(sword, new Name(sj.name,sj.color));
-        setLore(sword, new Lore(sj.lore, sj.rarity, sword.getVictimEffects()));
 
         // Add item to deal damage
         Structure.writeToLine(App.f_deal_damagemcfunction, buildDealDamageString(sword), 2);
@@ -44,19 +49,19 @@ public class SwordBuilder {
     //////////////////////////////////////////////////
     // BALANCE
     //////////////////////////////////////////////////
-    public static void balanceAttributes(Sword sword) { 
+    public static ArrayList<UpgradeAttribute> balanceAttributes(ArrayList<UpgradeAttribute> all, int credit) { 
         // Create a random object for getting indecies
         Random random = new Random();
 
-        // Copy our attribute list
-        ArrayList<UpgradeAttribute> list = sword.getUpgradeAttributes(); 
+        // Copy our list
+        ArrayList<UpgradeAttribute> list = new ArrayList<>(all);
 
         // While our list is not empty (i.e. we can upgrade an attribute)
         while (list.size() > 0) {
             // Get a random attribute and get the price
             int randomIndex = random.nextInt(list.size());
             UpgradeAttribute attribute = list.get(randomIndex);
-            int upgradePrice = attribute.canUpgrade(sword.getCredit());
+            int upgradePrice = attribute.canUpgrade(credit);
 
             // If we cannot upgrade the attribute, remove it from our list
             if (upgradePrice == 0) list.remove(randomIndex);
@@ -64,12 +69,31 @@ public class SwordBuilder {
             // If we can upgrade the attribute, upgrade an update our credit
             if (upgradePrice != 0) {
                 attribute.upgrade();
-                sword.setCredit(sword.getCredit() - upgradePrice);
+                credit -= upgradePrice;
                 
                 // If our upgrade gave use credit (the price of the upgrade was negative)
                 // Add all attributes back into the list (chance that we may be able to upgrade some of them)
-                if (upgradePrice < 0) list = sword.getUpgradeAttributes();
+                if (upgradePrice < 0) list = new ArrayList<UpgradeAttribute>(all);
             }
+        }
+
+        // Remove attributes that were not "purchased"
+        list = new ArrayList<UpgradeAttribute>(all);
+        for (UpgradeAttribute attribute : list) {
+            if (attribute.upgradeLevel == -1) all.remove(attribute);
+        }
+
+        // Return the balanced attributes list
+        return all;
+    }
+
+    public static void transferAttributes(Sword sword, ArrayList<UpgradeAttribute> list) {
+        for (UpgradeAttribute attribute : list) {
+            if (attribute instanceof Type) sword.setType((Type) attribute);
+            else if (attribute instanceof Modifier) sword.addModifier((Modifier) attribute);
+            else if (attribute instanceof Enchantment) sword.addEnchantment((Enchantment) attribute);
+            else if (attribute instanceof WielderEffect) sword.addWielderEffect((WielderEffect) attribute);
+            else if (attribute instanceof VictimEffect) sword.addVictimEffect((VictimEffect) attribute);
         }
     }
 
@@ -124,7 +148,7 @@ public class SwordBuilder {
     public static String getWielderEffectString(Sword sword) {
         if (sword.getWielderEffects().size() == 0) return "";
         String output = String.format("############ %s (%s), id: %d ############\n", 
-            sword.getName(), sword.getType(), sword.getId());
+            sword.getName().text, sword.getType(), sword.getId());
         for (Effect e : sword.getWielderEffects()) {
             output += String.format("execute as @a[nbt={SelectedItem:{tag:{CustomID:%d}}}] run effect give @s ", 
                 sword.getId()) + e + "\n";
@@ -161,61 +185,27 @@ public class SwordBuilder {
     //////////////////////////////////////////////////
     // ADDING ATTRIBUTES
     //////////////////////////////////////////////////
-    public static void setName(Sword sword, Name name) { sword.setName(name); }
-    public static void setLore(Sword sword, Lore lore) { sword.setLore(lore); }
-    public static void setType(Sword sword, Type type) { 
-        sword.setType(type); 
-        sword.getUpgradeAttributes().add(type);
-    }
-    public static void setCredit(Sword sword, int credit) { sword.setCredit(credit); }
-    public static void addModifier(Sword sword, Modifier modifier) { 
-        sword.getModifiers().add(modifier); 
-        sword.getUpgradeAttributes().add(modifier);
-    }
-
-    public static void addEnchantments(Sword sword, ArrayList<String> list) {
-        for (String item : list) {
-            Enchantment attribute = new Enchantment(item);
-            sword.addEnchantment(attribute);
-            sword.addUpgradeAttribute(attribute);
-        }
-    }
-
-    public static void addModifiers(Sword sword, ArrayList<String> list) {
-        for (String item : list) {
-            Modifier attribute = new Modifier(item);
-            sword.addModifier(attribute);
-            sword.addUpgradeAttribute(attribute);
-        }
-    }
-
-    public static void addVictimEffects(Sword sword, ArrayList<String> list) {
-        for (String item : list) {
-            VictimEffect attribute = new VictimEffect(item);
-            sword.addVictimEffect(attribute);
-            sword.addUpgradeAttribute(attribute);
-        }
-    }
-
-    public static void addWielderEffects(Sword sword, ArrayList<String> list) {
-        for (String item : list) {
-            WielderEffect attribute = new WielderEffect(item);
-            sword.addWielderEffect(attribute);
-            sword.addUpgradeAttribute(attribute);
-        }
-    }
-
     public static void addParticles(Sword sword, ArrayList<String> list) {
-        for (String item : list) {
-            Particle attribute = new Particle(item);
-            sword.addParticle(attribute);
-        }
+        for (String item : list) sword.addParticle(new Particle(item));
     }
 
     public static void addSounds(Sword sword, ArrayList<String> list) {
-        for (String item : list) {
-            Sound attribute = new Sound(item);
-            sword.addSound(attribute);
-        }
+        for (String item : list) sword.addSound(new Sound(item));
+    }
+
+    public static void addModifiers(ArrayList<UpgradeAttribute> upgrades, ArrayList<String> list) {
+        for (String item : list) upgrades.add(new Modifier(item));
+    }
+
+    public static void addEnchantments(ArrayList<UpgradeAttribute> upgrades, ArrayList<String> list) {
+        for (String item : list) upgrades.add(new Enchantment(item));
+    }
+
+    public static void addVictimEffects(ArrayList<UpgradeAttribute> upgrades, ArrayList<String> list) {
+        for (String item : list) upgrades.add(new VictimEffect(item));
+    }
+
+    public static void addWielderEffects(ArrayList<UpgradeAttribute> upgrades, ArrayList<String> list) {
+        for (String item : list) upgrades.add(new WielderEffect(item));
     }
 }

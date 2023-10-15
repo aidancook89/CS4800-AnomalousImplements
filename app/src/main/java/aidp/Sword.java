@@ -5,7 +5,6 @@ import java.util.ArrayList;
 public class Sword {
     private int id;
     private int rarity;
-    private int credit;
     private Name name;
     private Lore lore;
     private Type type;
@@ -15,19 +14,14 @@ public class Sword {
     private ArrayList<Effect> victimEffects = new ArrayList<>();
     private ArrayList<Particle> particles = new ArrayList<>();
     private ArrayList<Sound> sounds = new ArrayList<>();
-    private ArrayList<UpgradeAttribute> upgradeAttributes = new ArrayList<UpgradeAttribute>();
 
     public Sword(int id, int rarity) { 
         this.id = id; 
         this.rarity = rarity;
-        credit = 20 + (rarity * 20);
     }
 
     public int getId() { return id; }
     public int getRarity() { return rarity; }
-
-    public int getCredit() { return credit; }
-    public void setCredit(int credit) { this.credit = credit; }
 
     public Name getName() { return name; }
     public void setName(Name name) { this.name = name; }
@@ -38,14 +32,11 @@ public class Sword {
     public Type getType() { return type; }
     public void setType(Type type) { this.type = type; }
 
-    public ArrayList<UpgradeAttribute> getUpgradeAttributes() { return upgradeAttributes; }
-    public void addUpgradeAttribute(UpgradeAttribute attribute) { upgradeAttributes.add(attribute); }
+    public ArrayList<Modifier> getModifiers() { return modifiers; }
+    public void addModifier(Modifier attribute) { modifiers.add(attribute); }
 
     public ArrayList<Enchantment> getEnchantments() { return enchantments; }
     public void addEnchantment(Enchantment attribute) { enchantments.add(attribute); }
-
-    public ArrayList<Modifier> getModifiers() { return modifiers; }
-    public void addModifier(Modifier attribute) { modifiers.add(attribute); }
 
     public ArrayList<Effect> getWielderEffects() { return wielderEffects; }
     public void addWielderEffect(WielderEffect attribute) { wielderEffects.add(attribute); }
