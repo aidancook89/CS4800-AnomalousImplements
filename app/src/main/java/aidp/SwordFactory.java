@@ -55,8 +55,8 @@ public class SwordFactory {
                 + "}",
                 enchantmentsCount, Enchantment.list.toString(), 
                 modifierCount, Modifier.list.toString(), 
-                wielderEffectsCount, Effect.list.toString(), 
-                victimEffectsCount, Effect.list.toString(), 
+                wielderEffectsCount, Effect.wielderOptions.toString(), 
+                victimEffectsCount, Effect.victimOptions.toString(), 
                 2, Particle.list.toString(), 
                 1, Sound.list.toString()
             );
@@ -71,8 +71,8 @@ public class SwordFactory {
             rand.nextInt(5), "Red Sword", "Red", "This is test lore. The sword is very red. I want to get an idea of how longer lore is displayed.", 
             randomList(Enchantment.list, 3),
             randomList(Modifier.list, 2),
-            randomList(Effect.list, 2),
-            randomList(Effect.list, 2),
+            randomList(Effect.wielderOptions, 2),
+            randomList(Effect.victimOptions, 2),
             randomList(Particle.list, 2),
             randomList(Sound.list, 2)
         );

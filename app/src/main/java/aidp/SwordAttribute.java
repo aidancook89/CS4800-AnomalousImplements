@@ -35,8 +35,8 @@ class Lore extends SwordAttribute {
     public String color = "gray";
     private int lineLength = 70;
     private int rarity = 0;
-    private ArrayList<Effect> wielderEffects;
-    private ArrayList<Effect> victimEffects;
+    private ArrayList<WielderEffect> wielderEffects;
+    private ArrayList<VictimEffect> victimEffects;
 
     private static String[][] rarityLookup = new String[][] {
         {"COMMON", "white"},
@@ -46,7 +46,7 @@ class Lore extends SwordAttribute {
         {"LEGENDARY", "gold"}
     };
 
-    public Lore(String text, int rarity, ArrayList<Effect> wielderEffects, ArrayList<Effect> victimEffects) {
+    public Lore(String text, int rarity, ArrayList<WielderEffect> wielderEffects, ArrayList<VictimEffect> victimEffects) {
         this.text = text;
         this.rarity = rarity;
         this.wielderEffects = wielderEffects;
@@ -214,6 +214,12 @@ class Type extends UpgradeAttribute {
         upgradeLevel = 0;
     }
 
+
+    public void upgrade() {
+        upgradeLevel += 1;
+        upgradePrice += 15;
+    }
+
     public String toString() {
         return typeList[upgradeLevel];
     }
@@ -324,17 +330,15 @@ class Enchantment extends UpgradeAttribute {
 // EFFECT
 //////////////////////////////////////////////////
 abstract class Effect extends UpgradeAttribute {
-    protected String effect;
-    protected int length = 1;
-    protected boolean hideParticles = true;
+    protected EffectInstance effect;
 
     public String toString() {
         return String.format("minecraft:%s %d %d %b",
-            effect, length, upgradeLevel, hideParticles);
+            effect.name, effect.length, upgradeLevel, true);
     }
 
     public String toPretty() {
-        String name = effect;
+        String name = effect.name;
         String[] words = name.split("_");
         name = "";
         for (String word : words) {
@@ -344,27 +348,107 @@ abstract class Effect extends UpgradeAttribute {
         return String.format("* %s %d", name, upgradeLevel+1);
     }
 
-    public static ArrayList<String> list = new ArrayList<String>(List.of(
-        "speed","slowness","haste","mining_fatigue","strength","instant_health","instant_damage", 
-        "jump_boost","nausea","regeneration","resistance","fire_resistance","water_breathing", 
-        "invisibility","blindness","night_vision","hunger","weakness","poison","wither","health_boost",
-        "absorption","saturation","glowing","levitation","slow_falling","conduit_power","dolphins_grace",
-        "bad_omen","hero_of_the_village"
+    protected EffectInstance lookUp(String effectName, ArrayList<EffectInstance> list) {
+        for (EffectInstance effect : list) {
+            if (effect.name == effectName) return effect;
+        }
+        return null;
+    }
+
+
+
+    private static ArrayList<String> getOptions(ArrayList<EffectInstance> list) {
+        ArrayList<String> output = new ArrayList<String>();
+        for (EffectInstance effect : list) output.add(effect.name);
+        return output;
+    }
+
+    public static ArrayList<EffectInstance> victimList = new ArrayList<EffectInstance>(List.of(
+        new EffectInstance("speed", 3, -5, 3),
+        new EffectInstance("slowness", 3, 5, 3),
+        new EffectInstance("strenth", 2, -10, 3),
+        new EffectInstance("instant_health", 2, -5, 1),
+        new EffectInstance("instant_damage", 2, 5, 1),
+        new EffectInstance("jump_boost", 3, -1, 3),
+        new EffectInstance("regeneration", 1, -15, 3),
+        new EffectInstance("resistance", 2, -10, 3),
+        new EffectInstance("fire_risistance", 2, -5, 3),
+        new EffectInstance("invisibility", 1, -20, 2),
+        new EffectInstance("weakness", 3, 5, 3),
+        new EffectInstance("poison", 1, 10, 3),
+        new EffectInstance("wither", 1, 10, 3),
+        new EffectInstance("glowing", 1, 3, 3),
+        new EffectInstance("levitation", 5, 2, 1),
+        new EffectInstance("slow_falling", 1, 2, 3)
     ));
+
+    public static ArrayList<EffectInstance> wielderList = new ArrayList<EffectInstance>(List.of(
+        new EffectInstance("speed", 4, 5, 1),
+        new EffectInstance("slowness", 4, -5, 1),
+        new EffectInstance("haste", 3, 3, 1),
+        new EffectInstance("mining_fatigue", 5, 5, 2),
+        new EffectInstance("strenth", 5, 5, 1),
+        new EffectInstance("instant_health", 5, 5, 1),
+        new EffectInstance("instant_damage", 5, 5, 1),
+        new EffectInstance("jump_boost", 5, 5, 1),
+        new EffectInstance("nausea", 5, 5, 1),
+        new EffectInstance("regeneration", 1, 10, 1),
+        new EffectInstance("resistance", 2, 8, 1),
+        new EffectInstance("fire_risistance", 2, 5, 1),
+        new EffectInstance("water_breathing", 1, 5, 1),
+        new EffectInstance("invisibility", 1, 10, 1),
+        new EffectInstance("blindness", 1, -10, 2),
+        new EffectInstance("night_vision", 2, 5, 1),
+        new EffectInstance("hunger", 2, -10, 1),
+        new EffectInstance("weakness", 2, -10, 1),
+        new EffectInstance("poison", 1, -30, 1),
+        new EffectInstance("wither", 1, -20, 1),
+        new EffectInstance("health_boost", 3, 8, 1),
+        new EffectInstance("absorption", 2, 5, 1),
+        new EffectInstance("saturation", 2, 5, 1),
+        new EffectInstance("glowing", 1, -10, 1),
+        new EffectInstance("levitation", 5, 2, 1),
+        new EffectInstance("slow_falling", 1, 5, 1),
+        new EffectInstance("conduit_power", 1, 10, 1),
+        new EffectInstance("dolphins_grace", 3, 5, 1)
+    ));
+    
+    public static ArrayList<String> wielderOptions = getOptions(wielderList);
+    public static ArrayList<String> victimOptions = getOptions(victimList);
+}
+
+class EffectInstance {
+    String name;
+    int maxLevel;
+    int price;
+    int length;
+
+    public EffectInstance(String name, int maxLevel, int price, int length) {
+        this.name = name;
+        this.maxLevel = maxLevel;
+        this.price = price;
+        this.length = length;
+    }
 }
 
 class WielderEffect extends Effect {
-    public WielderEffect(String effect) {
-        this.effect = effect;
-        upgradeMaxLevel = 5;
-        upgradePrice = 3;
+    public WielderEffect(String effectName) {
+        // If we passed an improper name, add a null effect
+        effect = lookUp(effectName, wielderList); 
+        if (effect == null) effect = new EffectInstance("speed", 0, 0, 0);
+
+        upgradePrice = effect.price;
+        upgradeMaxLevel = effect.maxLevel;
     }
 }
 
 class VictimEffect extends Effect {
-    public VictimEffect(String effect) {
-        this.effect = effect;
-        upgradeMaxLevel = 5;
-        upgradePrice = 3;
+    public VictimEffect(String effectName) {
+        // If we passed an improper name, add a null effect
+        effect = lookUp(effectName, victimList); 
+        if (effect == null) effect = new EffectInstance("speed", 0, 0, 0);
+
+        upgradePrice = effect.price;
+        upgradeMaxLevel = effect.maxLevel;
     }
 }
