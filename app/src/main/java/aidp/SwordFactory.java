@@ -53,12 +53,12 @@ public class SwordFactory {
                 + "particles: pick %d from [%s],"
                 + "sounds: pick %d from [%s],"
                 + "}",
-                enchantmentsCount, Enchantment.list.toString(), 
-                modifierCount, Modifier.list.toString(), 
-                wielderEffectsCount, Effect.wielderOptions.toString(), 
-                victimEffectsCount, Effect.victimOptions.toString(), 
-                2, Particle.list.toString(), 
-                1, Sound.list.toString()
+                enchantmentsCount, Enchantment.optionList.toString(), 
+                modifierCount, Modifier.optionList.toString(), 
+                wielderEffectsCount, WielderEffect.optionList.toString(), 
+                victimEffectsCount, VictimEffect.optionList.toString(), 
+                2, Particle.optionList.toString(), 
+                1, Sound.optionList.toString()
             );
 
             if (makeRequests) createJsonAI(i, requestJson, rules, themesList); 
@@ -69,12 +69,12 @@ public class SwordFactory {
     public static void createJsonRandom(int id) {
         SwordJson sj = new SwordJson(
             rand.nextInt(5), "Red Sword", "Red", "This is test lore. The sword is very red. I want to get an idea of how longer lore is displayed.", 
-            randomList(Enchantment.list, 3),
-            randomList(Modifier.list, 2),
-            randomList(Effect.wielderOptions, 2),
-            randomList(Effect.victimOptions, 2),
-            randomList(Particle.list, 2),
-            randomList(Sound.list, 2)
+            randomList(Enchantment.optionList, 3),
+            randomList(Modifier.optionList, 2),
+            randomList(WielderEffect.optionList, 2),
+            randomList(VictimEffect.optionList, 2),
+            randomList(Particle.optionList, 2),
+            randomList(Sound.optionList, 2)
         );
         sj.id = id;
         Sword sword = SwordBuilder.newSword(sj);

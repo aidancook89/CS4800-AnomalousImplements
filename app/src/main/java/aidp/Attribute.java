@@ -4,12 +4,61 @@ import java.util.Random;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class SwordAttribute {}
+public abstract class Attribute {}
+
+abstract class UpgradeAttribute extends Attribute {
+    protected int upgradePrice;
+    protected int upgradeMaxLevel;
+    protected int upgradeLevel = -1;
+
+    public void upgrade() {
+        upgradeLevel += 1;
+        upgradePrice += Math.ceil(upgradePrice/2);
+    }
+
+    // Checks if a upgrade can be made to this attribute
+    // If it can, return the price of the upgrade, otherwise return 0
+    // Keep in mind that an "upgrade" can be bad, and return a negative price
+    public int canUpgrade(int credit) {
+        if ((credit >= upgradePrice) && (upgradeLevel < upgradeMaxLevel)) return upgradePrice;
+        else return 0;
+    }
+
+
+    public static ArrayList<AttributeInstance> instanceList;
+    public static ArrayList<String> optionList;
+
+    protected static AttributeInstance instanceLookUp(String name, ArrayList<AttributeInstance> list) {
+        for (AttributeInstance inst : list) {
+            if (inst.name == name) return inst;
+        }
+        return null;
+    }
+
+    protected static ArrayList<String> getOptionsList(ArrayList<AttributeInstance> list) {
+        ArrayList<String> output = new ArrayList<String>();
+        for (AttributeInstance inst : list) output.add(inst.name);
+        return output;
+    }
+}
+
+abstract class AttributeInstance {
+    public String name;
+    public int price;
+    public int upgradeMaxLevel;
+
+    public AttributeInstance(String name, int upgradeMaxLevel, int price) {
+        this.name = name;
+        this.upgradeMaxLevel = upgradeMaxLevel;
+        this.price = price;
+    }
+}
+
 
 //////////////////////////////////////////////////
 // NAME
 //////////////////////////////////////////////////
-class Name extends SwordAttribute {
+class Name extends Attribute {
     public String text = "default";
     public String color = "white";
 
@@ -30,7 +79,7 @@ class Name extends SwordAttribute {
 //////////////////////////////////////////////////
 // LORE
 //////////////////////////////////////////////////
-class Lore extends SwordAttribute {
+class Lore extends Attribute {
     public String text = "default";
     public String color = "gray";
     private int lineLength = 70;
@@ -130,7 +179,7 @@ class Lore extends SwordAttribute {
 //////////////////////////////////////////////////
 // PARTICLE
 //////////////////////////////////////////////////
-class Particle extends SwordAttribute {
+class Particle extends Attribute {
     private String particle;
 
     public Particle(String particle) {
@@ -141,7 +190,7 @@ class Particle extends SwordAttribute {
         return String.format("execute as @s at @s run particle %s ~ ~1 ~ 0 0 0 0.3 20 force", particle);
     }
 
-    public static ArrayList<String> list = new ArrayList<String>(List.of(
+    public static ArrayList<String> optionList = new ArrayList<String>(List.of(
         "ambient_entity_effect","angry_villager","ash","bubble","bubble_pop","campfire_cosy_smoke", 
         "campfire_signal_smoke","cherry_leaves","cloud","composter","crimson_spore","dolphin",
         "dragon_breath","effect","egg_crack","elder_guardian","electric_spark","enchant","enchanted_hit",
@@ -158,7 +207,7 @@ class Particle extends SwordAttribute {
 //////////////////////////////////////////////////
 // SOUND
 //////////////////////////////////////////////////
-class Sound extends SwordAttribute {
+class Sound extends Attribute {
     private String sound;
 
     public Sound(String sound) {
@@ -169,35 +218,11 @@ class Sound extends SwordAttribute {
         return String.format("playsound minecraft:%s ambient @p ~ ~ ~ 0.5 1", sound);
     }
 
-    public static ArrayList<String> list = new ArrayList<String>(List.of(
+    public static ArrayList<String> optionList = new ArrayList<String>(List.of(
         "block.amethyst_block.place","entity.arrow.shoot","entity.firework_rocket.launch", 
         "block.piston.extend", "block.bamboo.hit","block.basalt.hit", "block.beehive.drip",
         "block.calcite.break", "block.chain.fall","firework_rocket.blast_far","block.ladder.step"
     ));
-}
-
-
-
-//////////////////////////////////////////////////
-// UPGRADE ATTRIBUTE
-//////////////////////////////////////////////////
-abstract class UpgradeAttribute extends SwordAttribute {
-    protected int upgradePrice;
-    protected int upgradeMaxLevel;
-    protected int upgradeLevel = -1;
-
-    public void upgrade() {
-        upgradeLevel += 1;
-        upgradePrice += Math.ceil(upgradePrice/2);
-    }
-
-    // Checks if a upgrade can be made to this attribute
-    // If it can, return the price of the upgrade, otherwise return 0
-    // Keep in mind that an "upgrade" can be bad, and return a negative price
-    public int canUpgrade(int credit) {
-        if ((credit >= upgradePrice) && (upgradeLevel < upgradeMaxLevel)) return upgradePrice;
-        else return 0;
-    }
 }
 
 
@@ -255,7 +280,7 @@ class Modifier extends UpgradeAttribute {
             name, name, amount, operation, uuid, slot);
     }
 
-    public static ArrayList<String> list = new ArrayList<String>(List.of(
+    public static ArrayList<String> optionList = new ArrayList<String>(List.of(
         "max_health","knockback_resistance","movement_speed","armor","armor_touchness","luck","max_absorption"
     ));
 }
@@ -301,28 +326,45 @@ class AttackSpeed extends Modifier {
 //////////////////////////////////////////////////
 // ENCHANTMENT
 //////////////////////////////////////////////////
-class Enchantment extends UpgradeAttribute {
-    private String enchant;
 
-    public Enchantment(String enchant) {
-        this.enchant = enchant;
-        int index = list.indexOf(enchant);
-        upgradeMaxLevel = maxLevelLookup[index];
-        upgradePrice = upgradePriceLookup[index];
+
+class Enchantment extends UpgradeAttribute {
+    private EnchantmentInstance enchant;
+
+    public Enchantment(String name) {
+        enchant = (EnchantmentInstance) instanceLookUp(name, instanceList); 
+        if (enchant == null) enchant = new EnchantmentInstance("unbreaking", 0, 0);
+
+        upgradePrice = enchant.price;
+        upgradeMaxLevel = enchant.upgradeMaxLevel;
     }
 
     public String toString() {
         return String.format("{id:\"minecraft:%s\",lvl:%ds}", enchant, upgradeLevel+1);
     }
 
-    public static ArrayList<String> list = new ArrayList<String>(List.of(
-        "binding_curse","sharpness","smite","bane_of_arthropods","knockback",
-        "fire_aspect","looting","sweeping","unbreaking","mending","vanishing_curse"
+    public static ArrayList<AttributeInstance> instanceList = new ArrayList<AttributeInstance>(List.of(
+        new EnchantmentInstance("binding_curse",1,-6),
+        new EnchantmentInstance("sharpness",5,4),
+        new EnchantmentInstance("smite",5,3),
+        new EnchantmentInstance("bane_of_arthropods",5,2),
+        new EnchantmentInstance("knockback",5,3),
+        new EnchantmentInstance("fire_aspect",2,2),
+        new EnchantmentInstance("looting",3,4),
+        new EnchantmentInstance("sweeping",3,3),
+        new EnchantmentInstance("unbreaking",3,4),
+        new EnchantmentInstance("mending",1,6),
+        new EnchantmentInstance("vanishing_curse",1,-6)
     ));
 
-    public int[] maxLevelLookup     = { 1,5,5,5,5,2,3,3,3,1, 0};
-    public int[] upgradePriceLookup = {-6,4,3,2,3,2,4,3,4,6,-6};
+    public static ArrayList<String> optionList = getOptionsList(instanceList);
 }
+
+class EnchantmentInstance extends AttributeInstance {
+    public EnchantmentInstance(String name, int upgradeMaxLevel, int price) {
+        super(name, upgradeMaxLevel, price);
+    }
+} 
 
 
 
@@ -348,41 +390,31 @@ abstract class Effect extends UpgradeAttribute {
         return String.format("* %s %d", name, upgradeLevel+1);
     }
 
-    protected EffectInstance lookUp(String effectName, ArrayList<EffectInstance> list) {
-        for (EffectInstance effect : list) {
-            if (effect.name == effectName) return effect;
-        }
-        return null;
+    
+}
+
+class EffectInstance extends AttributeInstance {
+    int length;
+
+    public EffectInstance(String name, int upgradeMaxLevel, int price, int length) {
+        super(name, upgradeMaxLevel, price);
+        this.length = length;
     }
 
 
+}
 
-    private static ArrayList<String> getOptions(ArrayList<EffectInstance> list) {
-        ArrayList<String> output = new ArrayList<String>();
-        for (EffectInstance effect : list) output.add(effect.name);
-        return output;
+class WielderEffect extends Effect {
+    public WielderEffect(String name) {
+        // If we passed an improper name, add a null effect
+        effect = (EffectInstance) instanceLookUp(name, instanceList); 
+        if (effect == null) effect = new EffectInstance("speed", 0, 0, 0);
+
+        upgradePrice = effect.price;
+        upgradeMaxLevel = effect.upgradeMaxLevel;
     }
 
-    public static ArrayList<EffectInstance> victimList = new ArrayList<EffectInstance>(List.of(
-        new EffectInstance("speed", 3, -5, 3),
-        new EffectInstance("slowness", 3, 5, 3),
-        new EffectInstance("strenth", 2, -10, 3),
-        new EffectInstance("instant_health", 2, -5, 1),
-        new EffectInstance("instant_damage", 2, 5, 1),
-        new EffectInstance("jump_boost", 3, -1, 3),
-        new EffectInstance("regeneration", 1, -15, 3),
-        new EffectInstance("resistance", 2, -10, 3),
-        new EffectInstance("fire_risistance", 2, -5, 3),
-        new EffectInstance("invisibility", 1, -20, 2),
-        new EffectInstance("weakness", 3, 5, 3),
-        new EffectInstance("poison", 1, 10, 3),
-        new EffectInstance("wither", 1, 10, 3),
-        new EffectInstance("glowing", 1, 3, 3),
-        new EffectInstance("levitation", 5, 2, 1),
-        new EffectInstance("slow_falling", 1, 2, 3)
-    ));
-
-    public static ArrayList<EffectInstance> wielderList = new ArrayList<EffectInstance>(List.of(
+    public static ArrayList<AttributeInstance> instanceList = new ArrayList<AttributeInstance>(List.of(
         new EffectInstance("speed", 4, 5, 1),
         new EffectInstance("slowness", 4, -5, 1),
         new EffectInstance("haste", 3, 3, 1),
@@ -413,42 +445,37 @@ abstract class Effect extends UpgradeAttribute {
         new EffectInstance("dolphins_grace", 3, 5, 1)
     ));
     
-    public static ArrayList<String> wielderOptions = getOptions(wielderList);
-    public static ArrayList<String> victimOptions = getOptions(victimList);
-}
-
-class EffectInstance {
-    String name;
-    int maxLevel;
-    int price;
-    int length;
-
-    public EffectInstance(String name, int maxLevel, int price, int length) {
-        this.name = name;
-        this.maxLevel = maxLevel;
-        this.price = price;
-        this.length = length;
-    }
-}
-
-class WielderEffect extends Effect {
-    public WielderEffect(String effectName) {
-        // If we passed an improper name, add a null effect
-        effect = lookUp(effectName, wielderList); 
-        if (effect == null) effect = new EffectInstance("speed", 0, 0, 0);
-
-        upgradePrice = effect.price;
-        upgradeMaxLevel = effect.maxLevel;
-    }
+    public static ArrayList<String> optionList = getOptionsList(instanceList);
 }
 
 class VictimEffect extends Effect {
-    public VictimEffect(String effectName) {
+    public VictimEffect(String name) {
         // If we passed an improper name, add a null effect
-        effect = lookUp(effectName, victimList); 
+        effect = (EffectInstance) instanceLookUp(name, instanceList); 
         if (effect == null) effect = new EffectInstance("speed", 0, 0, 0);
 
         upgradePrice = effect.price;
-        upgradeMaxLevel = effect.maxLevel;
+        upgradeMaxLevel = effect.upgradeMaxLevel;
     }
+
+    public static ArrayList<AttributeInstance> instanceList = new ArrayList<AttributeInstance>(List.of(
+        new EffectInstance("speed", 3, -5, 3),
+        new EffectInstance("slowness", 3, 5, 3),
+        new EffectInstance("strenth", 2, -10, 3),
+        new EffectInstance("instant_health", 2, -5, 1),
+        new EffectInstance("instant_damage", 2, 5, 1),
+        new EffectInstance("jump_boost", 3, -1, 3),
+        new EffectInstance("regeneration", 1, -15, 3),
+        new EffectInstance("resistance", 2, -10, 3),
+        new EffectInstance("fire_risistance", 2, -5, 3),
+        new EffectInstance("invisibility", 1, -20, 2),
+        new EffectInstance("weakness", 3, 5, 3),
+        new EffectInstance("poison", 1, 10, 3),
+        new EffectInstance("wither", 1, 10, 3),
+        new EffectInstance("glowing", 1, 3, 3),
+        new EffectInstance("levitation", 5, 2, 1),
+        new EffectInstance("slow_falling", 1, 2, 3)
+    ));
+    
+    public static ArrayList<String> optionList = getOptionsList(instanceList);
 }
