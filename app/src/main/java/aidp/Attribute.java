@@ -326,8 +326,6 @@ class AttackSpeed extends Modifier {
 //////////////////////////////////////////////////
 // ENCHANTMENT
 //////////////////////////////////////////////////
-
-
 class Enchantment extends UpgradeAttribute {
     private EnchantmentInstance enchant;
 
@@ -340,11 +338,10 @@ class Enchantment extends UpgradeAttribute {
     }
 
     public String toString() {
-        return String.format("{id:\"minecraft:%s\",lvl:%ds}", enchant, upgradeLevel+1);
+        return String.format("{id:\"minecraft:%s\",lvl:%ds}", enchant.name, upgradeLevel+1);
     }
 
     public static ArrayList<AttributeInstance> instanceList = new ArrayList<AttributeInstance>(List.of(
-        new EnchantmentInstance("binding_curse",1,-6),
         new EnchantmentInstance("sharpness",5,4),
         new EnchantmentInstance("smite",5,3),
         new EnchantmentInstance("bane_of_arthropods",5,2),
@@ -415,27 +412,24 @@ class WielderEffect extends Effect {
     }
 
     public static ArrayList<AttributeInstance> instanceList = new ArrayList<AttributeInstance>(List.of(
-        new EffectInstance("speed", 4, 5, 1),
-        new EffectInstance("slowness", 4, -5, 1),
-        new EffectInstance("haste", 3, 3, 1),
-        new EffectInstance("mining_fatigue", 5, 5, 2),
-        new EffectInstance("strenth", 5, 5, 1),
-        new EffectInstance("instant_health", 5, 5, 1),
-        new EffectInstance("instant_damage", 5, 5, 1),
-        new EffectInstance("jump_boost", 5, 5, 1),
-        new EffectInstance("nausea", 5, 5, 1),
-        new EffectInstance("regeneration", 1, 10, 1),
+        new EffectInstance("speed", 3, 5, 1),
+        new EffectInstance("slowness", 3, -5, 1),
+        new EffectInstance("haste", 2, 3, 1),
+        new EffectInstance("mining_fatigue", 2, 5, 2),
+        new EffectInstance("strength", 2, 5, 1),
+        new EffectInstance("jump_boost", 3, 5, 1),
+        new EffectInstance("nausea", 1, 5, 1),
         new EffectInstance("resistance", 2, 8, 1),
-        new EffectInstance("fire_risistance", 2, 5, 1),
+        new EffectInstance("fire_resistance", 1, 5, 1),
         new EffectInstance("water_breathing", 1, 5, 1),
         new EffectInstance("invisibility", 1, 10, 1),
         new EffectInstance("blindness", 1, -10, 2),
-        new EffectInstance("night_vision", 2, 5, 1),
+        new EffectInstance("night_vision", 3, 5, 1),
         new EffectInstance("hunger", 2, -10, 1),
         new EffectInstance("weakness", 2, -10, 1),
         new EffectInstance("poison", 1, -30, 1),
         new EffectInstance("wither", 1, -20, 1),
-        new EffectInstance("health_boost", 3, 8, 1),
+        new EffectInstance("health_boost", 3, 10, 1),
         new EffectInstance("absorption", 2, 5, 1),
         new EffectInstance("saturation", 2, 5, 1),
         new EffectInstance("glowing", 1, -10, 1),
@@ -459,21 +453,21 @@ class VictimEffect extends Effect {
     }
 
     public static ArrayList<AttributeInstance> instanceList = new ArrayList<AttributeInstance>(List.of(
-        new EffectInstance("speed", 3, -5, 3),
-        new EffectInstance("slowness", 3, 5, 3),
-        new EffectInstance("strenth", 2, -10, 3),
-        new EffectInstance("instant_health", 2, -5, 1),
-        new EffectInstance("instant_damage", 2, 5, 1),
+        new EffectInstance("speed", 2, -5, 3),
+        new EffectInstance("slowness", 2, 5, 3),
+        new EffectInstance("strength", 1, -10, 3),
+        new EffectInstance("instant_health", 1, -10, 1),
+        new EffectInstance("instant_damage", 1, 20, 1),
         new EffectInstance("jump_boost", 3, -1, 3),
         new EffectInstance("regeneration", 1, -15, 3),
         new EffectInstance("resistance", 2, -10, 3),
-        new EffectInstance("fire_risistance", 2, -5, 3),
+        new EffectInstance("fire_resistance", 2, -5, 3),
         new EffectInstance("invisibility", 1, -20, 2),
-        new EffectInstance("weakness", 3, 5, 3),
+        new EffectInstance("weakness", 2, 5, 3),
         new EffectInstance("poison", 1, 10, 3),
         new EffectInstance("wither", 1, 10, 3),
         new EffectInstance("glowing", 1, 3, 3),
-        new EffectInstance("levitation", 5, 2, 1),
+        new EffectInstance("levitation", 3, 2, 1),
         new EffectInstance("slow_falling", 1, 2, 3)
     ));
     

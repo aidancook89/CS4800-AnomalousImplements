@@ -28,6 +28,7 @@ public class SwordBuilder {
         addParticles(sword, sj.particles);
         addSounds(sword, sj.sounds);
 
+
         // Add item to deal damage
         Structure.writeToLine(App.f_deal_damagemcfunction, buildDealDamageString(sword), 2);
          
@@ -62,9 +63,10 @@ public class SwordBuilder {
             int randomIndex = random.nextInt(list.size());
             UpgradeAttribute attribute = list.get(randomIndex);
             int upgradePrice = attribute.canUpgrade(credit);
+            //if (attribute instanceof Enchantment) System.out.println(upgradePrice);
 
             // If we cannot upgrade the attribute, remove it from our list
-            if (upgradePrice == 0) list.remove(randomIndex);
+            if (upgradePrice <= 0) list.remove(randomIndex);
 
             // If we can upgrade the attribute, upgrade an update our credit
             if (upgradePrice != 0) {
