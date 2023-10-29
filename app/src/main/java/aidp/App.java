@@ -2,6 +2,7 @@ package aidp;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class App {
     public static String namespace = "aidp";
@@ -67,8 +68,8 @@ public class App {
         //namespaceTagsDir = Structure.newDir(d_ns, "tags", false);
         d_ns_loot_tables = Structure.newDir(d_ns, "loot_tables", false);
         d_ns_loot_tables_entities = Structure.newDir(d_ns_loot_tables, "entities", false);
-        f_loot_table = Structure.newDir(d_ns_loot_tables_entities, "creeper.json", true);
-        Structure.copyContents(template.resolve("loot_table.json"), f_loot_table);
+        //f_loot_table = Structure.newDir(d_ns_loot_tables_entities, "creeper.json", true);
+        //Structure.copyContents(template.resolve("loot_table.json"), f_loot_table);
 
         d_ns_functions = Structure.newDir(d_ns, "functions", false);
 
@@ -90,7 +91,30 @@ public class App {
 
         SwordFactory.create(5);
         
-        Entity e1 = EntityBuilder.newEntity();
+        EntityFactory.create(5);
+
+        LootTableBuilder build = new LootTableBuilder();
+
+        ArrayList<Path> lootTables = new ArrayList<Path>();
+
+        Path newTable;
+
+        String fileName;
+
+        for (int i = 0; i < EntityFactory.list.size(); i++) {
+           fileName = EntityFactory.list.get(i).getType();
+           newTable = Structure.newDir(d_ns_loot_tables_entities, fileName, true);
+           lootTables.add(newTable);
+        }
+
+        int listLen = EntityFactory.list.size();
+        Entity e1;
+
+        for (int i = 0; i < listLen; i++) {
+            e1 = EntityFactory.list.get(i);
+            build.buildTable(SwordFactory.list.get(i), e1, lootTables.get(i));
+            e1.setLootTable("aidp:entities/" + e1.getType());
+        }
     }
 
     public static void main(String[] args) {

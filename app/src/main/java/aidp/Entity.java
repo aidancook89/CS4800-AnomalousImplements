@@ -34,9 +34,8 @@ public class Entity {
      */
     private ArrayList<GenericModifiers> generic = new ArrayList<GenericModifiers>();
 
-    public Entity(String type, String lootTable) {
+    public Entity(String type) {
         this.type = type;
-        entityDeathLootTable += lootTable;
     }
 
     public String getType() { return type;}

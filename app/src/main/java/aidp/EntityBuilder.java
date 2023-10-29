@@ -17,17 +17,17 @@ public class EntityBuilder {
         + "}";
         Request request = new Request(fakeJson);
 
-        
-        Entity e1 = new Entity(request.getAsString("type"), "\"aidp:entities/creeper\"");
+        Entity e1 = new Entity(request.getAsString("type"));
         e1.setName(request.getAsString("name"), request.getAsString("nameColor"));
         addEntityModifiers(e1, request.getAsArrayList("modifiers"));
         addPotionEffects(e1, request.getAsArrayList("potions"));
         addGenEffects(e1, request.getAsArrayList("generic"), request.getAsArrayList("genValues"));
         buildTag(e1);
-
-        Structure.writeTo(App.f_loadmcfunction, "\n" + getSpawnCommand(e1), true);
-
         return e1;
+    }
+
+    public void writeToFunc(Entity e1) {
+        Structure.writeTo(App.f_loadmcfunction, "\n" + getSpawnCommand(e1), true);
     }
 
     public static String getSpawnCommand(Entity e1) {
