@@ -35,12 +35,19 @@ public class SwordFactory {
                 "", 
                 0.1).getAsArrayList("themes");
         }
-
+        
+        
+        int enchantmentsCount = 0;
+        int modifiersCount = 0;
+        int wielderEffectsCount = 0;
+        int victimEffectsCount = 0;
+        int particlesCount = 2;
+        int soundsCount = 1;
         for (int i = 0; i < count; i++) {
-            int enchantmentsCount = rand.nextInt(3);
-            int modifierCount = rand.nextInt(3);
-            int wielderEffectsCount = rand.nextInt(3);
-            int victimEffectsCount = rand.nextInt(3);
+            enchantmentsCount = rand.nextInt(3);
+            modifiersCount = rand.nextInt(3);
+            wielderEffectsCount = rand.nextInt(3);
+            victimEffectsCount = rand.nextInt(3);
 
             String rules = String.format("{" 
                 + "name: string,"
@@ -54,11 +61,11 @@ public class SwordFactory {
                 + "sounds: pick %d from [%s],"
                 + "}",
                 enchantmentsCount, Enchantment.optionList.toString(), 
-                modifierCount, Modifier.optionList.toString(), 
+                modifiersCount, Modifier.optionList.toString(), 
                 wielderEffectsCount, WielderEffect.optionList.toString(), 
                 victimEffectsCount, VictimEffect.optionList.toString(), 
-                2, Particle.optionList.toString(), 
-                1, Sound.optionList.toString()
+                particlesCount, Particle.optionList.toString(), 
+                soundsCount, Sound.optionList.toString()
             );
 
             if (makeRequests) createJsonAI(i, requestJson, rules, themesList); 

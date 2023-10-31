@@ -19,7 +19,11 @@ public class SwordBuilder {
         addWielderEffects(upgradeAttributes, sj.wielder_effects);
         addVictimEffects(upgradeAttributes, sj.victim_effects);
 
-        int credit = 35 + (sj.rarity * 35);
+        int credit = 20 + (int) Math.floor(Math.pow((double) sj.rarity, 1.4) * 15);
+
+        for (int i = 0; i <= 4; i++) {
+            System.out.println(25 + (int) Math.floor(Math.pow((double) i, 1.5) * 16));
+        }
         upgradeAttributes = balanceAttributes(upgradeAttributes, credit);
         transferAttributes(sword, upgradeAttributes);
 
@@ -63,7 +67,6 @@ public class SwordBuilder {
             int randomIndex = random.nextInt(list.size());
             UpgradeAttribute attribute = list.get(randomIndex);
             int upgradePrice = attribute.canUpgrade(credit);
-            //if (attribute instanceof Enchantment) System.out.println(upgradePrice);
 
             // If we cannot upgrade the attribute, remove it from our list
             if (upgradePrice <= 0) list.remove(randomIndex);
