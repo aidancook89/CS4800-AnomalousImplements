@@ -1,6 +1,7 @@
 package aidp;
 
 import java.util.ArrayList;
+import java.nio.file.Path;
 
 public class EntityBuilder {
 
@@ -26,8 +27,8 @@ public class EntityBuilder {
         return e1;
     }
 
-    public void writeToFunc(Entity e1) {
-        Structure.writeTo(App.f_loadmcfunction, "\n" + getSpawnCommand(e1), true);
+    public void writeToFunc(Entity e1, Path file) {
+        Structure.writeTo(file, "\n" + getSpawnCommand(e1), true);
     }
 
     public static String getSpawnCommand(Entity e1) {
