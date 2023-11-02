@@ -74,8 +74,9 @@ public class SwordFactory {
     }
 
     public static void createJsonRandom(int id) {
+        int rarity = rand.nextInt(5);
         SwordJson sj = new SwordJson(
-            rand.nextInt(5), "Red Sword", "Red", "This is test lore. The sword is very red. I want to get an idea of how longer lore is displayed.", 
+            rarity, "Red Sword", "Red", "This is test lore. The sword is very red. I want to get an idea of how longer lore is displayed.", 
             randomList(Enchantment.optionList, 3),
             randomList(Modifier.optionList, 2),
             randomList(WielderEffect.optionList, 2),

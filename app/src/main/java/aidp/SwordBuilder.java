@@ -19,11 +19,8 @@ public class SwordBuilder {
         addWielderEffects(upgradeAttributes, sj.wielder_effects);
         addVictimEffects(upgradeAttributes, sj.victim_effects);
 
-        int credit = 20 + (int) Math.floor(Math.pow((double) sj.rarity, 1.4) * 15);
-
-        for (int i = 0; i <= 4; i++) {
-            System.out.println(25 + (int) Math.floor(Math.pow((double) i, 1.5) * 16));
-        }
+        // Generate credit and balance attributes
+        int credit = 10 + (int) Math.floor(Math.pow((double) sj.rarity, 1.6) * 15);
         upgradeAttributes = balanceAttributes(upgradeAttributes, credit);
         transferAttributes(sword, upgradeAttributes);
 
@@ -73,6 +70,8 @@ public class SwordBuilder {
 
             // If we can upgrade the attribute, upgrade an update our credit
             if (upgradePrice != 0) {
+                //System.out.println("PURCHASE: Attribute: " + attribute.toPretty() + " Price: " + upgradePrice);
+                //System.out.println("Currernt Credit: " + credit);
                 attribute.upgrade();
                 credit -= upgradePrice;
                 

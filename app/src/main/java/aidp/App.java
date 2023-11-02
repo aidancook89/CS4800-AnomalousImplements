@@ -88,7 +88,7 @@ public class App {
         d_ns_advancements_deal_damage = Structure.newDir(d_ns_advancements, "deal_damage.json", true);
         Structure.copyContents(template.resolve("deal_damage.json"), d_ns_advancements_deal_damage); 
 
-        SwordFactory.create(5);
+        SwordFactory.create(7);
         
         Entity e1 = EntityBuilder.newEntity();
     }

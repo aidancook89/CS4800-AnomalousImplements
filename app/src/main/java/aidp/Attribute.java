@@ -4,7 +4,53 @@ import java.util.Random;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Attribute {}
+public abstract class Attribute {
+    public abstract String toPretty(); 
+    public abstract String toString();
+
+
+    // HELPERS
+    public String toTitleCase(String input) {
+        String[] words = input.split(" ");
+        String output = "";
+
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            output += word.substring(0,1).toUpperCase();
+            output += word.substring(1,word.length()).toLowerCase();
+            output += " ";
+        }
+
+        return output;
+    }
+
+    public String padString(String source, int padLength) {
+        int add = padLength - source.length(); 
+        for (int i = -1; i < add; i++) source += " ";
+        return source;
+    }
+
+    public ArrayList<String> breakUpString(String text, int count) {
+        int startIndex = 0;
+        int length = text.length();
+        ArrayList<String> parts = new ArrayList<>();
+
+        while (startIndex < length) {
+            int endIndex = startIndex + count;
+            if (endIndex > length) endIndex = length;
+            while (endIndex < length && endIndex > startIndex && text.charAt(endIndex - 0) != ' ') {
+                endIndex--;
+            }
+            parts.add(text.substring(startIndex, endIndex));
+            if (endIndex < length && text.charAt(endIndex) == ' ') {
+                endIndex++;
+            }
+            startIndex = endIndex; 
+        }
+        
+        return parts;
+    }
+}
 
 abstract class UpgradeAttribute extends Attribute {
     protected int upgradePrice;
@@ -72,6 +118,10 @@ class Name extends Attribute {
         return String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":\"true\",\"italic\":\"false\"}'", 
             text.replaceAll("'", "\'"), color);
     }
+
+    public String toPretty() {
+        return text;
+    }
 }
 
 
@@ -110,7 +160,7 @@ class Lore extends Attribute {
         output += ",'{\"text\":\"\"}'";
 
         // LORE
-        ArrayList<String> parts = breakUp(text, lineLength); 
+        ArrayList<String> parts = breakUpString(text, lineLength); 
         for (String part : parts) {
             output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"false\"}'", 
                 part.replaceAll("'", "\'"), color);
@@ -126,7 +176,7 @@ class Lore extends Attribute {
             output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"false\"}'", title, "white");
             for (int i = 0; i < size; i++) {
                 output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"true\"}'", 
-                    wielderEffects.get(i).toPretty(), color);
+                    " * " + wielderEffects.get(i).toPretty(), color);
             }
         }
 
@@ -139,38 +189,15 @@ class Lore extends Attribute {
             output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"false\"}'", title, "white");
             for (int i = 0; i < size; i++) {
                 output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"true\"}'", 
-                    victimEffects.get(i).toPretty(), color);
+                    " * " + victimEffects.get(i).toPretty(), color);
             }
         }
          
         return output + "]";
     }
 
-    public String padString(String source, int padLength) {
-        int add = padLength - source.length(); 
-        for (int i = 0; i < add; i++) source += " ";
-        return source;
-    }
-
-    public ArrayList<String> breakUp(String text, int count) {
-        int startIndex = 0;
-        int length = text.length();
-        ArrayList<String> parts = new ArrayList<>();
-
-        while (startIndex < length) {
-            int endIndex = startIndex + count;
-            if (endIndex > length) endIndex = length;
-            while (endIndex < length && endIndex > startIndex && text.charAt(endIndex - 1) != ' ') {
-                endIndex--;
-            }
-            parts.add(text.substring(startIndex, endIndex));
-            if (endIndex < length && text.charAt(endIndex) == ' ') {
-                endIndex++;
-            }
-            startIndex = endIndex; 
-        }
-        
-        return parts;
+    public String toPretty() {
+        return String.format("Rarity: %s\nLore: %s", rarity, text);
     }
 }
 
@@ -188,6 +215,10 @@ class Particle extends Attribute {
 
     public String toString() {
         return String.format("execute as @s at @s run particle %s ~ ~1 ~ 0 0 0 0.3 20 force", particle);
+    }
+
+    public String toPretty() {
+        return toTitleCase(particle.replaceAll("_", " ")); 
     }
 
     public static ArrayList<String> optionList = new ArrayList<String>(List.of(
@@ -218,6 +249,10 @@ class Sound extends Attribute {
         return String.format("playsound minecraft:%s ambient @p ~ ~ ~ 0.5 1", sound);
     }
 
+    public String toPretty() {
+        return toTitleCase(sound);
+    }
+
     public static ArrayList<String> optionList = new ArrayList<String>(List.of(
         "block.amethyst_block.place","entity.arrow.shoot","entity.firework_rocket.launch", 
         "block.piston.extend", "block.bamboo.hit","block.basalt.hit", "block.beehive.drip",
@@ -239,7 +274,6 @@ class Type extends UpgradeAttribute {
         upgradeLevel = 0;
     }
 
-
     public void upgrade() {
         upgradeLevel += 1;
         upgradePrice += 15;
@@ -247,6 +281,10 @@ class Type extends UpgradeAttribute {
 
     public String toString() {
         return typeList[upgradeLevel];
+    }
+
+    public String toPretty() {
+        return toTitleCase(typeList[upgradeLevel].replaceAll("_", " "));
     }
 }
 
@@ -278,6 +316,11 @@ class Modifier extends UpgradeAttribute {
         return String.format("{AttributeName:\"generic.%s\",Name:\"generic.%s\",Amount:%f,Operation:%d,"
         + "UUID:[I;%d,2081703129,-1522820555,-530514328],Slot:\"%s\"}", 
             name, name, amount, operation, uuid, slot);
+    }
+
+    public String toPretty() {
+        String attributeName = toTitleCase(name.replaceAll("_", " "));
+        return String.format("%s %f ", attributeName, amount);
     }
 
     public static ArrayList<String> optionList = new ArrayList<String>(List.of(
@@ -341,6 +384,11 @@ class Enchantment extends UpgradeAttribute {
         return String.format("{id:\"minecraft:%s\",lvl:%ds}", enchant.name, upgradeLevel+1);
     }
 
+    public String toPretty() {
+        String enchantmentName = toTitleCase(enchant.name.replaceAll("_", " "));
+        return String.format("%s %d", enchantmentName, upgradeLevel);
+    }
+
     public static ArrayList<AttributeInstance> instanceList = new ArrayList<AttributeInstance>(List.of(
         new EnchantmentInstance("sharpness",5,4),
         new EnchantmentInstance("smite",5,3),
@@ -384,10 +432,8 @@ abstract class Effect extends UpgradeAttribute {
             name += word.substring(0,1).toUpperCase() 
                 + word.substring(1).toLowerCase() + " ";
         }
-        return String.format("* %s %d", name, upgradeLevel+1);
+        return String.format("%s %d", name, upgradeLevel + 1);
     }
-
-    
 }
 
 class EffectInstance extends AttributeInstance {
@@ -397,8 +443,6 @@ class EffectInstance extends AttributeInstance {
         super(name, upgradeMaxLevel, price);
         this.length = length;
     }
-
-
 }
 
 class WielderEffect extends Effect {
@@ -417,23 +461,22 @@ class WielderEffect extends Effect {
         new EffectInstance("haste", 2, 3, 1),
         new EffectInstance("mining_fatigue", 2, 5, 2),
         new EffectInstance("strength", 2, 5, 1),
-        new EffectInstance("jump_boost", 3, 5, 1),
+        new EffectInstance("jump_boost", 4, 5, 1),
         new EffectInstance("resistance", 2, 8, 1),
-        new EffectInstance("fire_resistance", 1, 5, 1),
-        new EffectInstance("water_breathing", 1, 5, 1),
-        new EffectInstance("invisibility", 1, 10, 1),
-        new EffectInstance("blindness", 1, -10, 2),
-        new EffectInstance("night_vision", 3, 5, 1),
-        new EffectInstance("hunger", 1, -10, 1),
-        new EffectInstance("weakness", 2, -10, 1),
-        new EffectInstance("health_boost", 3, 10, 1),
+        new EffectInstance("fire_resistance", 2, 5, 1),
+        new EffectInstance("water_breathing", 0, 5, 1),
+        new EffectInstance("invisibility", 0, 10, 1),
+        new EffectInstance("blindness", 0, -15, 2),
+        new EffectInstance("night_vision", 2, 5, 1),
+        new EffectInstance("weakness", 1, -7, 1),
+        new EffectInstance("health_boost", 2, 10, 1),
         new EffectInstance("absorption", 2, 5, 1),
         new EffectInstance("saturation", 2, 5, 1),
-        new EffectInstance("glowing", 1, -5, 1),
-        new EffectInstance("levitation", 5, 2, 1),
-        new EffectInstance("slow_falling", 1, 5, 1),
-        new EffectInstance("conduit_power", 1, 10, 1),
-        new EffectInstance("dolphins_grace", 3, 5, 1)
+        new EffectInstance("glowing", 0, -5, 1),
+        new EffectInstance("levitation", 3, 2, 1),
+        new EffectInstance("slow_falling", 0, 5, 1),
+        new EffectInstance("conduit_power", 2, 10, 1),
+        new EffectInstance("dolphins_grace", 2, 5, 1)
     ));
     
     public static ArrayList<String> optionList = getOptionsList(instanceList);
@@ -453,17 +496,16 @@ class VictimEffect extends Effect {
         new EffectInstance("speed", 2, -5, 3),
         new EffectInstance("slowness", 2, 5, 3),
         new EffectInstance("strength", 1, -5, 3),
-        new EffectInstance("jump_boost", 3, -2, 3),
+        new EffectInstance("jump_boost", 2, -2, 3),
         new EffectInstance("regeneration", 1, -5, 3),
         new EffectInstance("resistance", 1, -5, 3),
         new EffectInstance("fire_resistance", 1, -5, 3),
-        new EffectInstance("invisibility", 1, -5, 2),
+        new EffectInstance("invisibility", 0, -5, 2),
         new EffectInstance("weakness", 2, 5, 3),
-        new EffectInstance("poison", 1, 10, 3),
-        new EffectInstance("wither", 1, 10, 3),
-        new EffectInstance("glowing", 1, 3, 3),
-        new EffectInstance("levitation", 3, 2, 1),
-        new EffectInstance("slow_falling", 1, 2, 3)
+        new EffectInstance("poison", 0, 10, 3),
+        new EffectInstance("glowing", 0, 3, 3),
+        new EffectInstance("levitation", 4, 2, 1),
+        new EffectInstance("slow_falling", 0, 2, 3)
     ));
     
     public static ArrayList<String> optionList = getOptionsList(instanceList);
