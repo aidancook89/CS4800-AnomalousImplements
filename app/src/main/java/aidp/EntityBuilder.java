@@ -27,7 +27,7 @@ public class EntityBuilder {
         return e1;
     }
 
-    public void writeToFunc(Entity e1, Path file) {
+    public static void writeToFunc(Entity e1, Path file) {
         Structure.writeTo(file, "\n" + getSpawnCommand(e1), true);
     }
 

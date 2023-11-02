@@ -113,7 +113,8 @@ public class App {
         for (int i = 0; i < listLen; i++) {
             e1 = EntityFactory.list.get(i);
             build.buildTable(SwordFactory.list.get(i), e1, lootTables.get(i));
-            e1.setLootTable("aidp:entities/" + e1.getType());
+            e1.setLootTable("\"aidp:entities/" + e1.getType() + "\"");
+            EntityBuilder.writeToFunc(e1, f_loadmcfunction);
         }
     }
 
