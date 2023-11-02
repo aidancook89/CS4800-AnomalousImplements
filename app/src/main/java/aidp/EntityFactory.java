@@ -11,7 +11,7 @@ public class EntityFactory {
 
         Entity newEnt = null;
         for (int i = 0; i < count; i++) {
-            newEnt = EntityBuilder.newEntity();
+            newEnt = EntityBuilder.newEntity(i);
             list.add(newEnt);
         }
     }

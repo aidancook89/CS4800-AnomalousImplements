@@ -90,9 +90,8 @@ public class App {
         Structure.copyContents(template.resolve("deal_damage.json"), d_ns_advancements_deal_damage); 
 
         SwordFactory.create(7);
-        
-        /* 
-        EntityFactory.create(5);
+         
+        EntityFactory.create(7);
 
         LootTableBuilder build = new LootTableBuilder();
 
@@ -103,7 +102,7 @@ public class App {
         String fileName;
 
         for (int i = 0; i < EntityFactory.list.size(); i++) {
-           fileName = EntityFactory.list.get(i).getType() + ".json";
+           fileName = EntityFactory.list.get(i).getType()+ i + ".json";
            newTable = Structure.newDir(d_ns_loot_tables_entities, fileName, true);
            lootTables.add(newTable);
         }
@@ -114,10 +113,9 @@ public class App {
         for (int i = 0; i < listLen; i++) {
             e1 = EntityFactory.list.get(i);
             build.buildTable(SwordFactory.list.get(i), e1, lootTables.get(i));
-            e1.setLootTable("\"aidp:entities/" + e1.getType() + "\"");
             EntityBuilder.writeToFunc(e1, f_loadmcfunction);
         }
-        */
+        
     }
 
     public static void main(String[] args) {

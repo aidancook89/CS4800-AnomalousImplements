@@ -6,7 +6,7 @@ import java.nio.file.Path;
 public class EntityBuilder {
 
     
-    public static Entity newEntity() {
+    public static Entity newEntity(int entityNumber) {
         String fakeJson = "{" 
         + "\"type\": \"creeper\","
         + "\"name\": \"Legendary Creeper\","
@@ -20,6 +20,7 @@ public class EntityBuilder {
 
         Entity e1 = new Entity(request.getAsString("type"));
         e1.setName(request.getAsString("name"), request.getAsString("nameColor"));
+        e1.setLootTable("\"aidp:entities/" + e1.getType() + entityNumber + "\"");
         addEntityModifiers(e1, request.getAsArrayList("modifiers"));
         addPotionEffects(e1, request.getAsArrayList("potions"));
         addGenEffects(e1, request.getAsArrayList("generic"), request.getAsArrayList("genValues"));
