@@ -20,9 +20,13 @@ public class SwordBuilder {
         addVictimEffects(upgradeAttributes, sj.victim_effects);
 
         // Generate credit and balance attributes
-        int credit = 10 + (int) Math.floor(Math.pow((double) sj.rarity, 1.6) * 15);
+        //System.out.println("Pre all: " + upgradeAttributes);
+        int credit = 15 + (int) Math.floor(Math.pow((double) sj.rarity, 1.7) * 16);
+        //System.out.println("Creidt: " + credit);
         upgradeAttributes = balanceAttributes(upgradeAttributes, credit);
+        //System.out.println("Post balance: " + upgradeAttributes);
         transferAttributes(sword, upgradeAttributes);
+        //System.out.println("Post transfer: " + upgradeAttributes);
 
         sword.setName(new Name(sj.name,sj.color));
         sword.setLore(new Lore(sj.lore, sj.rarity, sword.getWielderEffects(), sword.getVictimEffects()));
@@ -64,16 +68,17 @@ public class SwordBuilder {
             int randomIndex = random.nextInt(list.size());
             UpgradeAttribute attribute = list.get(randomIndex);
             int upgradePrice = attribute.canUpgrade(credit);
+            System.out.println("Attribute: " + attribute.toPretty() + " Price: " + upgradePrice);
 
             // If we cannot upgrade the attribute, remove it from our list
             if (upgradePrice <= 0) list.remove(randomIndex);
 
             // If we can upgrade the attribute, upgrade an update our credit
             if (upgradePrice != 0) {
-                //System.out.println("PURCHASE: Attribute: " + attribute.toPretty() + " Price: " + upgradePrice);
-                //System.out.println("Currernt Credit: " + credit);
                 attribute.upgrade();
                 credit -= upgradePrice;
+
+                System.out.println("PURCHASED: " + attribute.toPretty() + "\nCurrent Credit: " + credit);
                 
                 // If our upgrade gave use credit (the price of the upgrade was negative)
                 // Add all attributes back into the list (chance that we may be able to upgrade some of them)

@@ -76,7 +76,7 @@ abstract class UpgradeAttribute extends Attribute {
 
     protected static AttributeInstance instanceLookUp(String name, ArrayList<AttributeInstance> list) {
         for (AttributeInstance inst : list) {
-            if (inst.name == name) return inst;
+            if (inst.name.equals(name)) return inst;
         }
         return null;
     }
@@ -113,10 +113,9 @@ class Name extends Attribute {
         this.color = color;
     }
 
-    //TODO ERROR WITH APOSTROPHES
     public String toString() {
         return String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":\"true\",\"italic\":\"false\"}'", 
-            text.replaceAll("'", "\'"), color);
+            text.replaceAll("'", "\\" + "\'"), color);
     }
 
     public String toPretty() {
