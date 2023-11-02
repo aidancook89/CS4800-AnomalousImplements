@@ -102,7 +102,7 @@ public class App {
         String fileName;
 
         for (int i = 0; i < EntityFactory.list.size(); i++) {
-           fileName = EntityFactory.list.get(i).getType();
+           fileName = EntityFactory.list.get(i).getType() + ".json";
            newTable = Structure.newDir(d_ns_loot_tables_entities, fileName, true);
            lootTables.add(newTable);
         }
