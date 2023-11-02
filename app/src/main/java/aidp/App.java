@@ -91,6 +91,7 @@ public class App {
 
         SwordFactory.create(7);
         
+        /* 
         EntityFactory.create(5);
 
         LootTableBuilder build = new LootTableBuilder();
@@ -116,6 +117,7 @@ public class App {
             e1.setLootTable("\"aidp:entities/" + e1.getType() + "\"");
             EntityBuilder.writeToFunc(e1, f_loadmcfunction);
         }
+        */
     }
 
     public static void main(String[] args) {
