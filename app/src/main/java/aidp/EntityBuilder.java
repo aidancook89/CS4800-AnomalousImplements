@@ -3,10 +3,19 @@ package aidp;
 import java.util.ArrayList;
 import java.util.Random;
 import java.nio.file.Path;
-
+/**
+ * Class EntityBuilder
+ */
 public class EntityBuilder {
 
-    
+    /**
+     * newEntity
+     * @param entityNumber - Similar to an ID, used in loot table creation.
+     * @param ej - Entity JSON Object
+     * @return e1 - New Entity Object
+     * 
+     * Wrapper to create a new Entity with no user interaction with Entity constructor.
+     */
     public static Entity newEntity(int entityNumber, EntityJson ej) {
         
         if (ej == null) {
@@ -45,6 +54,13 @@ public class EntityBuilder {
         return e1;
     }
 
+    /**
+     * writeToFunc
+     * @param e1 - Entity Object
+     * @param file - mcfunction file
+     * 
+     * Writes e1 spawn command to the given mcfunction file.
+     */
     public static void writeToFunc(Entity e1, Path file) {
         Structure.writeTo(file, "\n" + getSpawnCommand(e1), true);
     }
@@ -69,16 +85,37 @@ public class EntityBuilder {
      * ENTITY NAME AND MODIFIERS
      */
 
+    /**
+     * getEntityNameString
+     * @param e1 - Entity Object
+     * @return e1 custom name String
+     * 
+     * Creates and returns the String representation of e1's custom name
+     */
     public static String getEntityNameString(Entity e1) {
         return String.format("CustomName:'{\"text\":\"%s\",\"color\":\"%s\"," +
             "\"bold\":true,\"italic\":true,\"underline\":true}',", e1.getName(), e1.getColor());
     }
 
+    /**
+     * addEntityModifiers
+     * @param e1 - Entity Object
+     * @param modList - ArrayList of entity modifiers as Strings
+     * 
+     * Adds entity modifiers to e1 Modifier ArrayList.
+     */
     public static void addEntityModifiers(Entity e1, ArrayList<String> modList) {
         for (String item : modList)
             e1.getModifiers().add(new EntityModifiers(item, 1));
     }
 
+    /**
+     * getEntityModifiers
+     * @param list - ArrayList of EntityModifiers
+     * @return String representation of ArrayList of EntityModifiers
+     * 
+     * Creates an mcfunction friendly String representation of the EntityModifiers ArrayList passed in.
+     */
     public static String getEntityModifiers(ArrayList<EntityModifiers> list) {
         if (list.isEmpty() || list == null) {
             return "";
@@ -95,6 +132,13 @@ public class EntityBuilder {
      * POTION AND GENERIC EFFECTS
      */
 
+     /**
+      * addPotionEffects
+      * @param e1 - Entity Object
+      * @param effectList - ArrayList of Minecraft potion effects in String format.
+      * 
+      * Adds all potions from effectList to e1's PotionEffect ArrayList.
+      */
      public static void addPotionEffects(Entity e1, ArrayList<String> effectList) {
 
         for (String item : effectList)
@@ -104,6 +148,13 @@ public class EntityBuilder {
         //e1.getEffects().add(output);
     }
 
+    /**
+     * getPotionEffects
+     * @param potionList - ArrayList of PotionEffects
+     * @return String representation of PotionEffects ArrayList
+     * 
+     * Creates an mcfunction friendly String representation of potionList.
+     */
     public static String getPotionEffects(ArrayList<PotionEffect> potionList) {
         if (potionList.isEmpty() || potionList == null) {
             return "";
@@ -116,11 +167,27 @@ public class EntityBuilder {
         return output += potionList.get(size-1) + "],";
     }
 
+    /**
+     * addGenEffects
+     * @param e1 - Entity Object
+     * @param genList - ArrayList of Minecraft generic effects in String format.
+     * @param genValues - ArrayList of values to be used with the contents of genList.
+     * 
+     * Adds and combines the contents of genList and genValues into a GenericModifier Object and adds that
+     * to e1's GenericMods ArrayList.
+     */
     public static void addGenEffects(Entity e1, ArrayList<String> genList, ArrayList<String> genValues) {
         for (int i = 0; i < genList.size(); i++)
             e1.getGenericMods().add(new GenericModifiers(genList.get(i), genValues.get(i)));
     }
 
+    /**
+     * getGenEffects
+     * @param list - ArrayList of GenericModifiers
+     * @return String representation of GenericModifiers ArrayList
+     * 
+     * Creates an mcfunction friendly String representation of list.
+     */
     public static String getGenEffects(ArrayList<GenericModifiers> list) {
         if (list.isEmpty() || list == null) {
             return "";
@@ -135,29 +202,53 @@ public class EntityBuilder {
     }
 }
 
+/**
+ * Class EntityModifiers
+ */
 class EntityModifiers {
     private String effect;
     private int active;
 
+    /**
+     * EntityModifiers
+     * @param effect - Minecraft entity modifier
+     * @param active - activation switch, either 1 or 0
+     */
     public EntityModifiers(String effect, int active) {
         this.effect = effect;
         this.active = active;
     }
 
+    /**
+     * toString
+     * @return String representation of this EntityModifiers Object
+     */
     public String toString() {
         return String.format("%s:%db", effect, active);
     }
 }
 
+/**
+ * Class GenericModifiers
+ */
 class GenericModifiers {
     private String mod;
     private String base;
 
+    /**
+     * GenericModifiers
+     * @param mod - generic modification for Minecraft entity
+     * @param base - value to be used with this generic modification
+     */
     public GenericModifiers(String mod, String base) {
         this.mod = "generic." + mod;
         this.base = base;
     }
 
+    /**
+     * toString
+     * @return String representation of this GenericModifiers Object
+     */
     public String toString() {
         if (mod.equals("generic.knockback_resistance")) {
             float fBase = Float.parseFloat(base);
@@ -171,12 +262,21 @@ class GenericModifiers {
     }
 }
 
+/**
+ * Class PotionEffect
+ */
 class PotionEffect {
     private String effect;
     private int length;
     private int amount;
     private boolean hideParticles;
 
+    /**
+     * PotionEffect
+     * @param effect - Minecraft potion effect to be applied
+     * @param length - Time duration of potion effect (-1 is infinite time)
+     * @param amount - Potion effect level
+     */
     public PotionEffect(String effect, int length, int amount) {
         this.effect = effect;
         this.length = length;
@@ -184,6 +284,10 @@ class PotionEffect {
         hideParticles = true;
     }
 
+    /**
+     * toString
+     * @return String representation of this PotionEffect Object
+     */
     public String toString() {
         return String.format("{id:\"minecraft:%s\",amplifier:%d,duration:%d,show_particles:%b}",
             effect, amount, length, hideParticles);
