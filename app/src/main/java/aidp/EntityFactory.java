@@ -7,7 +7,9 @@ import java.util.Random;
 
 import com.google.gson.Gson;
 
-
+/**
+ * Class EntityFactory
+ */
 public class EntityFactory {
 
     private static String requestJson = "{"
@@ -27,6 +29,7 @@ public class EntityFactory {
         "Glowing"
     ));
 
+    //ArrayList of desired Minecraft potion effects
     public static ArrayList<String> potionEff = new ArrayList<String>(List.of(
         "speed",
         "slowness",
@@ -58,6 +61,7 @@ public class EntityFactory {
         "slow_falling"
     ));
 
+    //ArrayList of desired Minecraft entity generic modifications
     public static ArrayList <String> genericList = new ArrayList<String>(List.of(
         "generic.knockback_resistance",
         "generic.movement_speed",
@@ -67,6 +71,7 @@ public class EntityFactory {
         "generic.attack_knockback"
     ));
 
+    //ArrayList of acceptable entity types, i.e. ones that fight back against player
     public static ArrayList <String> validTypes = new ArrayList<String>(List.of(
         "blaze",
         "cave_spider",
@@ -91,6 +96,14 @@ public class EntityFactory {
 
     public static Random rand = new Random();
 
+    /**
+     * create
+     * @param count - Number of Entity Objects to be created and stored
+     * 
+     * Creates AI enhanced Entities, number determined by count parameter.
+     * Once Entity is created, loot table is generated and assigned, then spawn command is 
+     * written to mcfunction file.
+     */
     public static void create(int count) {
         boolean requestsEnabled = true;
 

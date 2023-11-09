@@ -2,7 +2,9 @@ package aidp;
 
 import java.util.ArrayList;
 
-
+/**
+ * Class EntityJson
+ */
 public class EntityJson {
     public String type;
     public String name;
@@ -11,6 +13,15 @@ public class EntityJson {
     public ArrayList<String> potion_effects;
     public ArrayList<String> generic_effects;
 
+    /**
+     * EntityJson
+     * @param type - Entity Type
+     * @param name - Entity Name
+     * @param color - Name color
+     * @param potion_effects - ArrayList of potion effects to be applied to entity
+     * @param modifiers - ArrayList of entity modifiers to be applied
+     * @param generic_effects - ArrayList of generic entity effects to be applied
+     */
     public EntityJson (
         String type, 
         String name, 
