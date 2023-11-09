@@ -162,7 +162,7 @@ class Lore extends Attribute {
         ArrayList<String> parts = breakUpString(text, lineLength); 
         for (String part : parts) {
             output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"false\"}'", 
-                part.replaceAll("'", "\'"), color);
+                part.replaceAll("'", "\\\\'"), color);
         }
         output += ",'{\"text\":\"\"}'";
 
