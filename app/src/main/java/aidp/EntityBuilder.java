@@ -1,29 +1,46 @@
 package aidp;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.nio.file.Path;
 
 public class EntityBuilder {
 
     
-    public static Entity newEntity(int entityNumber) {
-        String fakeJson = "{" 
-        + "\"type\": \"creeper\","
-        + "\"name\": \"Legendary Creeper\","
-        + "\"nameColor\": \"#FFFF00\","
-        + "\"modifiers\": [\"Glowing\", \"Silent\"],"
-        + "\"potions\": [\"regeneration\", \"fire_resistance\"],"
-        + "\"generic\": [\"knockback_resistance\", \"movement_speed\"],"
-        + "\"genValues\": [\"1\", \"2\"]"
-        + "}";
-        Request request = new Request(fakeJson);
+    public static Entity newEntity(int entityNumber, EntityJson ej) {
+        
+        if (ej == null) {
+            String fakeJson = "{" 
+            + "\"type\": \"creeper\","
+            + "\"name\": \"Legendary Creeper\","
+            + "\"nameColor\": \"#FFFF00\","
+            + "\"modifiers\": [\"Glowing\", \"Silent\"],"
+            + "\"potions\": [\"regeneration\", \"fire_resistance\"],"
+            + "\"generic\": [\"knockback_resistance\", \"movement_speed\"],"
+            + "\"genValues\": [\"1\", \"2\"]"
+            + "}";
+            Request request = new Request(fakeJson);
+            Entity e1 = new Entity(request.getAsString("type"));
+            e1.setName(request.getAsString("name"), request.getAsString("nameColor"));
+            e1.setLootTable("\"aidp:entities/" + e1.getType() + entityNumber + "\"");
+            addEntityModifiers(e1, request.getAsArrayList("modifiers"));
+            addPotionEffects(e1, request.getAsArrayList("potions"));
+            addGenEffects(e1, request.getAsArrayList("generic"), request.getAsArrayList("genValues"));
+            buildTag(e1);
+            return e1;
+        }
+        Random rand = new Random();
+        ArrayList<String> genValues = new ArrayList<String>();
+        for (int i = 0; i < ej.generic.size(); i++) {
+            genValues.add(Integer.toString(rand.nextInt(ej.generic.size() + 1)));
+        }
 
-        Entity e1 = new Entity(request.getAsString("type"));
-        e1.setName(request.getAsString("name"), request.getAsString("nameColor"));
+        Entity e1 = new Entity(ej.type);
+        e1.setName(ej.name, ej.color);
         e1.setLootTable("\"aidp:entities/" + e1.getType() + entityNumber + "\"");
-        addEntityModifiers(e1, request.getAsArrayList("modifiers"));
-        addPotionEffects(e1, request.getAsArrayList("potions"));
-        addGenEffects(e1, request.getAsArrayList("generic"), request.getAsArrayList("genValues"));
+        addEntityModifiers(e1, ej.modifiers);
+        addPotionEffects(e1, ej.potionList);
+        addGenEffects(e1, ej.generic, genValues);
         buildTag(e1);
         return e1;
     }

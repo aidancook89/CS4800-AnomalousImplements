@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.google.gson.Gson;
+
 
 public class EntityFactory {
 
@@ -102,7 +104,7 @@ public class EntityFactory {
         int potionEffectCount = 0;
         int genEffectCount = 0;
 
-        for (int i = 0; i < count; i++) {
+        for (int j = 0; j < count; j++) {
             modifiersCount = rand.nextInt(2);
             potionEffectCount = rand.nextInt(3);
             genEffectCount = rand.nextInt(3);
@@ -118,16 +120,26 @@ public class EntityFactory {
             potionEffectCount, potionEff.toString(),
             genEffectCount, genericList.toString());
 
-            if (requestsEnabled) createAiJson(i, requestJson, rules, themes);
-            else createRandomJson(i);
+            if (requestsEnabled) {
+                 Gson gson = new Gson();
+                 Request request = RequestHandler.makeRequest(
+                String.format("Provide a JSON in the format: %s with the rules: %s", requestJson, rules),
+                String.format("Sword with themes: %s", SwordFactory.randomList(themes, 3).toString()), 
+                0.1);        
+                System.out.println(request.getContentString());
+                String JsonString = request.getContentString();
+                EntityJson ej = gson.fromJson(JsonString, EntityJson.class);
+                Entity e1 = EntityBuilder.newEntity(j, ej);
+                list.add(e1);
+            }
+            else {
+                Entity e1 = EntityBuilder.newEntity(j, null);
+                list.add(e1);
+            }
 
         }
 
-        Entity newEnt = null;
-        for (int i = 0; i < count; i++) {
-            newEnt = EntityBuilder.newEntity(i);
-            list.add(newEnt);
-        }
+        
 
         LootTableBuilder build = new LootTableBuilder();
 
