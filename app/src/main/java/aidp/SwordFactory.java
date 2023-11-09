@@ -6,10 +6,14 @@ import com.google.gson.Gson;
 
 public class SwordFactory {
 
-    private static Random rand = new Random();
-
-    public static ArrayList<Sword> list = new ArrayList<Sword>();
+    // Total count of all swords
     private static int swordCount = 0;
+
+    // An array list where each index corresponds to a rarity (0: Common, 1: Uncommon, ...)
+    // Each index stores an ArrayList containing swords of that rarity
+    public static ArrayList<ArrayList<Sword>> swordList = new ArrayList<ArrayList<Sword>>();
+
+    // Hardcoded values for sword generation
     private static int enchantmentsCount = 2;
     private static int modifiersCount = 1;
     private static int wielderEffectsCount = 2;
@@ -17,6 +21,7 @@ public class SwordFactory {
     private static int particlesCount = 2;
     private static int soundsCount = 1;
 
+    // Global reference values for the API request
     private static String enchantmentOptions = Enchantment.optionList.toString();
     private static String modifierOptions = Modifier.optionList.toString();
     private static String wielderEffectOptions = WielderEffect.optionList.toString();
@@ -24,6 +29,7 @@ public class SwordFactory {
     private static String particleOptions = Particle.optionList.toString();
     private static String soundOptions = Sound.optionList.toString();
 
+    // Request JSON that we want OpenAI API to complete 
     private static String requestJson = "{"
     + "name: ,"
     + "color: ,"
@@ -36,6 +42,7 @@ public class SwordFactory {
     + "sounds: [],"
     + "}";
 
+    // The rules that we pass to OpenAI API for filling above JSON
     private static String rules = String.format("{" 
     + "name: string with ',"
     + "color: hexcode"
@@ -55,33 +62,56 @@ public class SwordFactory {
     soundsCount, soundOptions
     );
     
-    public static String[] themesList = {"Adventure", "Enigma", "Euphoria", "Serenity", "Intrigue", "Rendezvous", "Ecstasy", 
-        "Radiance", "Whimsy", "Harmony", "Mystique", "Bewilderment", "Symphony", "Reverie", "Enchantment", 
-        "Pinnacle", "Cascade", "Reverence", "Fascination", "Odyssey", "Vivid", "Infinity", "Whisper", 
-        "Luminosity", "Labyrinth", "Synchronicity", "Elixir", "Melody", "Aurora", "Perseverance", 
-        "Ethereal", "Euphoria", "Resonance", "Zeitgeist", "Rhapsody", "Cacophony", "Solace", 
-        "Empyrean", "Panorama", "Serendipity", "Vortex", "Tranquility", "Infinitesimal", "Utopia", 
-        "Pandemonium", "Epiphany", "Spectacle", "Benevolence", "Quixotic", "Elysium", "Veracity", 
-        "Apotheosis", "Symbiosis", "Gossamer", "Luminous", "Ephemeral", "Phenomenon", "Mellifluous", 
-        "Paradox", "Eclipse", "Paragon", "Halcyon", "Whimsical", "Resplendent", "Surreal", "Ethereal", 
-        "Cascade", "Panacea", "Nebula", "Abyss", "Vorfreude", "Sonnet", "Ineffable", "Luminescence", 
-        "Peregrination", "Eudaimonia", "Nirvana", "Obelisk", "Palimpsest", "Sempiternal", "Quasar", 
-        "Xanadu", "Nostalgia", "Empyrean", "Pinnacle", "Breathtaking", "Felicity", "Enthralling", 
-        "Sovereign", "Awe-inspiring", "Resonant", "Majestic", "Ebullient", "Exquisite", "Astonishing", 
-        "Vivid", "Enigmatic", "Radiant", "Jubilant", "Captivating", "Harmonious", "Spellbinding", 
-        "Ineffable", "Phenomenal", "Transcendent"};
+    // List of hardcoded themes that we randomly select per sword
+    private static String[] themesList = {"Adventure", "Enigma", "Euphoria", "Serenity", "Intrigue", "Rendezvous", "Ecstasy", 
+    "Radiance", "Whimsy", "Harmony", "Mystique", "Bewilderment", "Symphony", "Reverie", "Enchantment", 
+    "Pinnacle", "Cascade", "Reverence", "Fascination", "Odyssey", "Vivid", "Infinity", "Whisper", 
+    "Luminosity", "Labyrinth", "Synchronicity", "Elixir", "Melody", "Aurora", "Perseverance", 
+    "Ethereal", "Euphoria", "Resonance", "Zeitgeist", "Rhapsody", "Cacophony", "Solace", 
+    "Empyrean", "Panorama", "Serendipity", "Vortex", "Tranquility", "Infinitesimal", "Utopia", 
+    "Pandemonium", "Epiphany", "Spectacle", "Benevolence", "Quixotic", "Elysium", "Veracity", 
+    "Apotheosis", "Symbiosis", "Gossamer", "Luminous", "Ephemeral", "Phenomenon", "Mellifluous", 
+    "Paradox", "Eclipse", "Paragon", "Halcyon", "Whimsical", "Resplendent", "Surreal", "Ethereal", 
+    "Cascade", "Panacea", "Nebula", "Abyss", "Vorfreude", "Sonnet", "Ineffable", "Luminescence", 
+    "Peregrination", "Eudaimonia", "Nirvana", "Obelisk", "Palimpsest", "Sempiternal", "Quasar", 
+    "Xanadu", "Nostalgia", "Empyrean", "Pinnacle", "Breathtaking", "Felicity", "Enthralling", 
+    "Sovereign", "Awe-inspiring", "Resonant", "Majestic", "Ebullient", "Exquisite", "Astonishing", 
+    "Vivid", "Enigmatic", "Radiant", "Jubilant", "Captivating", "Harmonious", "Spellbinding", 
+    "Ineffable", "Phenomenal", "Transcendent"};
 
 
    
+    /*
+     * create() 
+     *      Creates requests*count  swords
+     *      Requests refers to the amount of reqeusts we make (the number of JSON objects we want)
+     *      Count refers to the number of swords we generate per JSON object (max of 5 because we have 5 rarities)
+     */
     public static void create(int requests, int count) {
+        // Clamp requests and count
+        if (requests < 1) requests = 1;
+        if (requests > 10) requests = 10;
+        if (count < 1) count = 1;
+        if (count > 5) count = 5;
+
+        // Initialize swordList
+        for (int i = 0; i < 5; i++) {
+            swordList.add(new ArrayList<Sword>());
+        }
+
+        // Create our swords
         for (int i = 0; i < requests; i++) {
             createJson(requestJson, rules, themesList, count); 
         }
     }
     
 
-
-    public static void createJson(String requestJson, String rules, String[] themesList, int count) {
+    /*
+     * createJson()
+     *      Makes request to OpenAI API, parses JSON into Java class 
+     *      and uses the SwordBuilder to construct Sword object
+     */
+    private static void createJson(String requestJson, String rules, String[] themesList, int count) {
         // Generate AI JSON
         Request request = RequestHandler.makeRequest(
             String.format("Provide a JSON in the format: %s with the rules: %s", requestJson, rules),
@@ -97,17 +127,22 @@ public class SwordFactory {
         // Create multiple rarities of the same sword, without duplicates
         int[] rarityList = getIntegerList(count, 0, 4);
         for (int i = 0; i < rarityList.length; i++) {
+            // Update id to count and then update count
             sj.id = swordCount++;
+
+            // Update rarity and create sword with sword builder
             sj.rarity = rarityList[i];
             Sword sword = SwordBuilder.newSword(sj);
-            list.add(sword);
+        
+            // Add sword to specific rarity list
+            swordList.get(sj.rarity).add(sword);
         }
     }
 
 
 
-    //  Returns a random list of unique integers between the range min and max (both inclusive)
-    public static int[] getIntegerList(int size, int min, int max) {
+    //  Helper method that returns a random list of unique integers between the range min and max (both inclusive)
+    private static int[] getIntegerList(int size, int min, int max) {
         int[] output = new int[size];
         ArrayList<Integer> options = new ArrayList<Integer>();
         Random rand = new Random();
@@ -122,7 +157,8 @@ public class SwordFactory {
 
 
 
-    public static ArrayList<String> randomList(ArrayList<String> source, int count) {
+    // Helper method for getting a random list of size count from a source array list
+    private static ArrayList<String> randomList(ArrayList<String> source, int count) {
         ArrayList<String> list = new ArrayList<String>();
         Random rand = new Random();
         int size = source.size();
@@ -134,7 +170,8 @@ public class SwordFactory {
 
 
 
-    public static ArrayList<String> randomList(String[] source, int count) {
+    // Helper method for getting a random list of size count from a source array
+    private static ArrayList<String> randomList(String[] source, int count) {
         ArrayList<String> list = new ArrayList<String>();
         Random rand = new Random();
         int size = source.length;
@@ -144,7 +181,11 @@ public class SwordFactory {
         return list;
     }
 
-    public static void createJsonRandom() {
+
+
+    // Test method for creating Sword JSONs without the OpenAI API
+    private static void createJsonRandom() {
+        Random rand = new Random();
         int rarity = rand.nextInt(5);
         SwordJson sj = new SwordJson(
             rarity, "Red Sword", "Red", "This is test lore. The sword is very red. I want to get an idea of how longer lore is displayed.", 
@@ -156,7 +197,8 @@ public class SwordFactory {
             randomList(Sound.optionList, 1)
         );
         sj.id = swordCount++;
+        sj.rarity = rarity;
         Sword sword = SwordBuilder.newSword(sj);
-        list.add(sword);
+        swordList.get(sj.rarity).add(sword);
     }
 }

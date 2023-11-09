@@ -393,7 +393,7 @@ class Enchantment extends UpgradeAttribute {
         new EnchantmentInstance("smite",5,3),
         new EnchantmentInstance("bane_of_arthropods",5,2),
         new EnchantmentInstance("knockback",5,3),
-        new EnchantmentInstance("fire_aspect",2,2),
+        new EnchantmentInstance("fire_aspect",1,2),
         new EnchantmentInstance("looting",3,4),
         new EnchantmentInstance("sweeping",3,3),
         new EnchantmentInstance("unbreaking",3,4),
