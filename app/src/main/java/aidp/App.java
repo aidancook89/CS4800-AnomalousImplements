@@ -50,15 +50,14 @@ public class App {
     public App() {
         createDirectories();
         
-        int swordCount = 2;
-        int variationsPerSword = 3;
+        int swordCount = 3;
+        int variationsPerSword = 2;
         SwordFactory.create(swordCount, variationsPerSword);
 
-
         for (int i = 0; i < SwordFactory.swordList.size(); i++) {
-            System.out.println("Rarity " + i);
             for (int j = 0; j < SwordFactory.swordList.get(i).size(); j++) {
-                System.out.println("   " + SwordFactory.swordList.get(i).get(j));
+                System.out.println(SwordFactory.swordList.get(i).get(j));
+                System.out.println();
             }
         }
 

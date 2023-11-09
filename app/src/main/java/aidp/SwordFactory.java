@@ -88,12 +88,6 @@ public class SwordFactory {
      *      Count refers to the number of swords we generate per JSON object (max of 5 because we have 5 rarities)
      */
     public static void create(int requests, int count) {
-        // Clamp requests and count
-        if (requests < 1) requests = 1;
-        if (requests > 10) requests = 10;
-        if (count < 1) count = 1;
-        if (count > 5) count = 5;
-
         // Initialize swordList
         for (int i = 0; i < 5; i++) {
             swordList.add(new ArrayList<Sword>());
@@ -118,7 +112,6 @@ public class SwordFactory {
             String.format("Sword with themes: %s", randomList(themesList, 3).toString()), 
             0.1);        
         String jsonString = request.getContentString(); 
-        System.out.println(jsonString);
 
         // Parse json string from api into Java class
         Gson gson = new Gson();

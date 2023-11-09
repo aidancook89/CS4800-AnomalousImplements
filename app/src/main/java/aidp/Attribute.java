@@ -196,7 +196,7 @@ class Lore extends Attribute {
     }
 
     public String toPretty() {
-        return String.format("Rarity: %s\nLore: %s", rarity, text);
+        return String.format("Rarity: %s\nLore: %s", rarityLookup[rarity][0], text);
     }
 }
 
@@ -319,7 +319,7 @@ class Modifier extends UpgradeAttribute {
 
     public String toPretty() {
         String attributeName = toTitleCase(name.replaceAll("_", " "));
-        return String.format("%s %f ", attributeName, amount);
+        return String.format("%s: %f ", attributeName, amount);
     }
 
     public static ArrayList<String> optionList = new ArrayList<String>(List.of(
