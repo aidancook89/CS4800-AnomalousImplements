@@ -65,6 +65,28 @@ public class EntityFactory {
         "generic.attack_knockback"
     ));
 
+    public static ArrayList <String> validTypes = new ArrayList<String>(List.of(
+        "blaze",
+        "cave_spider",
+        "creeper",
+        "enderman",
+        "endermite",
+        "evoker",
+        "hoglin",
+        "iron_golem",
+        "llama",
+        "magma_cube",
+        "pillager",
+        "piglin",
+        "ravager",
+        "shulker",
+        "spider",
+        "skeleton",
+        "zombie",
+        "witch",
+        "wither_skeleton"
+    ));
+
     public static Random rand = new Random();
 
     public static void create(int count) {
@@ -86,17 +108,19 @@ public class EntityFactory {
             genEffectCount = rand.nextInt(3);
 
             String rules = String.format("{"
+            + "type: pick 1 from [%s]"
             + "name: string,"
             + "color: hexcode,"
             + "modifiers: pick %d from [%s],"
             + "potion_effects: pick %d from [%s],"
             + "generic_effects: pick %d from [%s]"
-            + "}", modifiersCount, modifiers.toString(),
+            + "}", validTypes.toString(), modifiersCount, modifiers.toString(),
             potionEffectCount, potionEff.toString(),
             genEffectCount, genericList.toString());
 
-            if (requestsEnabled) createJsonAI(i, requestJson, rules, themes);
-            
+            if (requestsEnabled) createAiJson(i, requestJson, rules, themes);
+            else createRandomJson(i);
+
         }
 
         Entity newEnt = null;
