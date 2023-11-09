@@ -105,8 +105,12 @@ public class EntityFactory {
      * written to mcfunction file.
      */
     public static void create(int count) {
+
+        //flag variable for using OpenAI API requests
+        //true = use API, false = use default "dummy" JSONS built in
         boolean requestsEnabled = true;
 
+       
         if (requestsEnabled) {
             themes = RequestHandler.makeRequest("Provide a JSON in the format: {themes: []} where themes has 100 interesting words", 
             "", 
@@ -117,6 +121,7 @@ public class EntityFactory {
         int potionEffectCount = 0;
         int genEffectCount = 0;
 
+        //For loop to generate count-many Entity Objects
         for (int j = 0; j < count; j++) {
             modifiersCount = rand.nextInt(2);
             potionEffectCount = rand.nextInt(3);

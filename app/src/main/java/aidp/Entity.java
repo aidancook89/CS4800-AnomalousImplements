@@ -3,7 +3,9 @@ package aidp;
 import java.util.ArrayList;
 
 
-//To do: Gather identifiers that are variable in spawn command.
+/**
+ * Class Entity
+ */
 public class Entity {
     private String type;
     private String tag;
