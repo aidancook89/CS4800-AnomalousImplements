@@ -9,6 +9,13 @@ public class SwordFactory {
     private static Random rand = new Random();
 
     public static ArrayList<Sword> list = new ArrayList<Sword>();
+    private static int swordCount = 0;
+    private static int enchantmentsCount = 2;
+    private static int modifiersCount = 1;
+    private static int wielderEffectsCount = 2;
+    private static int victimEffectsCount = 2;
+    private static int particlesCount = 2;
+    private static int soundsCount = 1;
 
     private static String enchantmentOptions = Enchantment.optionList.toString();
     private static String modifierOptions = Modifier.optionList.toString();
@@ -29,17 +36,24 @@ public class SwordFactory {
     + "sounds: [],"
     + "}";
 
-    private static String rulesJson = "{" 
-    + "name: string,"
+    private static String rules = String.format("{" 
+    + "name: string with ',"
     + "color: hexcode"
-    + "lore: two sentences,"
+    + "lore: string with at least 140 characters,"
     + "enchantments: pick %d from [%s],"
     + "modifiers: pick %d from [%s],"
     + "wielder_effects: pick %d from [%s],"
     + "victim_effects: pick %d from [%s],"
     + "particles: pick %d from [%s],"
     + "sounds: pick %d from [%s],"
-    + "}";
+    + "}",
+    enchantmentsCount, enchantmentOptions, 
+    modifiersCount, modifierOptions,
+    wielderEffectsCount, wielderEffectOptions,
+    victimEffectsCount, victimEffectOptions,
+    particlesCount, particleOptions,
+    soundsCount, soundOptions
+    );
     
     public static String[] themesList = {"Adventure", "Enigma", "Euphoria", "Serenity", "Intrigue", "Rendezvous", "Ecstasy", 
         "Radiance", "Whimsy", "Harmony", "Mystique", "Bewilderment", "Symphony", "Reverie", "Enchantment", 
@@ -57,51 +71,17 @@ public class SwordFactory {
         "Vivid", "Enigmatic", "Radiant", "Jubilant", "Captivating", "Harmonious", "Spellbinding", 
         "Ineffable", "Phenomenal", "Transcendent"};
 
+
    
-    public static void create(int count) {
-        int enchantmentsCount = 0;
-        int modifiersCount = 2;
-        int wielderEffectsCount = 0;
-        int victimEffectsCount = 0;
-        int particlesCount = 2;
-        int soundsCount = 1;
-
-        for (int i = 0; i < count; i++) {
-            enchantmentsCount = 1 + rand.nextInt(2);
-            wielderEffectsCount = 1 + rand.nextInt(2);
-            victimEffectsCount = 1 + rand.nextInt(2);
-            
-
-            String rules = String.format(rulesJson,
-                enchantmentsCount, enchantmentOptions, 
-                modifiersCount, modifierOptions,
-                wielderEffectsCount, wielderEffectOptions,
-                victimEffectsCount, victimEffectOptions,
-                particlesCount, particleOptions,
-                soundsCount, soundOptions
-            );
-
-            createJson(i, requestJson, rules, themesList); 
+    public static void create(int requests, int count) {
+        for (int i = 0; i < requests; i++) {
+            createJson(requestJson, rules, themesList, count); 
         }
     }
+    
 
-    public static void createJsonRandom(int id) {
-        int rarity = rand.nextInt(5);
-        SwordJson sj = new SwordJson(
-            rarity, "Red Sword", "Red", "This is test lore. The sword is very red. I want to get an idea of how longer lore is displayed.", 
-            randomList(Enchantment.optionList, 3),
-            randomList(Modifier.optionList, 2),
-            randomList(WielderEffect.optionList, 2),
-            randomList(VictimEffect.optionList, 2),
-            randomList(Particle.optionList, 2),
-            randomList(Sound.optionList, 1)
-        );
-        sj.id = id;
-        Sword sword = SwordBuilder.newSword(sj);
-        list.add(sword);
-    }
 
-    public static void createJson(int id, String requestJson, String rules, String[] themesList) {
+    public static void createJson(String requestJson, String rules, String[] themesList, int count) {
         // Generate AI JSON
         Request request = RequestHandler.makeRequest(
             String.format("Provide a JSON in the format: %s with the rules: %s", requestJson, rules),
@@ -114,13 +94,33 @@ public class SwordFactory {
         Gson gson = new Gson();
         SwordJson sj = gson.fromJson(jsonString, SwordJson.class);
 
-        for (int i = 0; i < 3; i++) {
-            sj.id = id + i;
-            sj.rarity = rand.nextInt(5);
+        // Create multiple rarities of the same sword, without duplicates
+        int[] rarityList = getIntegerList(count, 0, 4);
+        for (int i = 0; i < rarityList.length; i++) {
+            sj.id = swordCount++;
+            sj.rarity = rarityList[i];
             Sword sword = SwordBuilder.newSword(sj);
             list.add(sword);
         }
     }
+
+
+
+    //  Returns a random list of unique integers between the range min and max (both inclusive)
+    public static int[] getIntegerList(int size, int min, int max) {
+        int[] output = new int[size];
+        ArrayList<Integer> options = new ArrayList<Integer>();
+        Random rand = new Random();
+        for (int i = min; i <= max; i++) options.add(i);
+        for (int i = 0; i < size; i++) {
+            int index = rand.nextInt(options.size());
+            output[i] = options.get(index);
+            options.remove(index);
+        }
+        return output;
+    }
+
+
 
     public static ArrayList<String> randomList(ArrayList<String> source, int count) {
         ArrayList<String> list = new ArrayList<String>();
@@ -132,6 +132,8 @@ public class SwordFactory {
         return list;
     }
 
+
+
     public static ArrayList<String> randomList(String[] source, int count) {
         ArrayList<String> list = new ArrayList<String>();
         Random rand = new Random();
@@ -140,5 +142,21 @@ public class SwordFactory {
             list.add(source[rand.nextInt(size)]);
         }
         return list;
+    }
+
+    public static void createJsonRandom() {
+        int rarity = rand.nextInt(5);
+        SwordJson sj = new SwordJson(
+            rarity, "Red Sword", "Red", "This is test lore. The sword is very red. I want to get an idea of how longer lore is displayed.", 
+            randomList(Enchantment.optionList, 3),
+            randomList(Modifier.optionList, 2),
+            randomList(WielderEffect.optionList, 2),
+            randomList(VictimEffect.optionList, 2),
+            randomList(Particle.optionList, 2),
+            randomList(Sound.optionList, 1)
+        );
+        sj.id = swordCount++;
+        Sword sword = SwordBuilder.newSword(sj);
+        list.add(sword);
     }
 }

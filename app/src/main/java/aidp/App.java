@@ -2,7 +2,6 @@ package aidp;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 public class App {
     public static String namespace = "aidp";
@@ -42,7 +41,50 @@ public class App {
     public static Path f_sword0mcfunction;
     public static Path f_deal_damagemcfunction;
 
+
+    public static void main(String[] args) {
+        App test = new App();
+    }
+
+
     public App() {
+        createDirectories();
+        
+        int swordCount = 2;
+        int variationsPerSword = 3;
+        SwordFactory.create(swordCount, variationsPerSword);
+
+        /* 
+        EntityFactory.create(5);
+
+        LootTableBuilder build = new LootTableBuilder();
+
+        ArrayList<Path> lootTables = new ArrayList<Path>();
+
+        Path newTable;
+
+        String fileName;
+
+        for (int i = 0; i < EntityFactory.list.size(); i++) {
+           fileName = EntityFactory.list.get(i).getType() + ".json";
+           newTable = Structure.newDir(d_ns_loot_tables_entities, fileName, true);
+           lootTables.add(newTable);
+        }
+
+        int listLen = EntityFactory.list.size();
+        Entity e1;
+
+        for (int i = 0; i < listLen; i++) {
+            e1 = EntityFactory.list.get(i);
+            build.buildTable(SwordFactory.list.get(i), e1, lootTables.get(i));
+            e1.setLootTable("\"aidp:entities/" + e1.getType() + "\"");
+            EntityBuilder.writeToFunc(e1, f_loadmcfunction);
+        }
+        */
+    }
+
+
+    public static void createDirectories() {
         Path userHome = Paths.get(System.getProperty("user.home"));
         d_download = userHome.resolve("Downloads"); 
 
@@ -88,39 +130,5 @@ public class App {
         d_ns_advancements = Structure.newDir(d_ns, "advancements", false);
         d_ns_advancements_deal_damage = Structure.newDir(d_ns_advancements, "deal_damage.json", true);
         Structure.copyContents(template.resolve("deal_damage.json"), d_ns_advancements_deal_damage); 
-
-        SwordFactory.create(1);
-        
-        /* 
-        EntityFactory.create(5);
-
-        LootTableBuilder build = new LootTableBuilder();
-
-        ArrayList<Path> lootTables = new ArrayList<Path>();
-
-        Path newTable;
-
-        String fileName;
-
-        for (int i = 0; i < EntityFactory.list.size(); i++) {
-           fileName = EntityFactory.list.get(i).getType() + ".json";
-           newTable = Structure.newDir(d_ns_loot_tables_entities, fileName, true);
-           lootTables.add(newTable);
-        }
-
-        int listLen = EntityFactory.list.size();
-        Entity e1;
-
-        for (int i = 0; i < listLen; i++) {
-            e1 = EntityFactory.list.get(i);
-            build.buildTable(SwordFactory.list.get(i), e1, lootTables.get(i));
-            e1.setLootTable("\"aidp:entities/" + e1.getType() + "\"");
-            EntityBuilder.writeToFunc(e1, f_loadmcfunction);
-        }
-        */
-    }
-
-    public static void main(String[] args) {
-        App test = new App();
     }
 }

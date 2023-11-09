@@ -115,7 +115,7 @@ class Name extends Attribute {
 
     public String toString() {
         return String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":\"true\",\"italic\":\"false\"}'", 
-            text.replaceAll("'", "\\" + "\'"), color);
+            text.replaceAll("'", "\\\\'"), color);
     }
 
     public String toPretty() {
