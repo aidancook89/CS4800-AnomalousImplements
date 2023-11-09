@@ -92,7 +92,7 @@ public class EntityFactory {
     public static Random rand = new Random();
 
     public static void create(int count) {
-        boolean requestsEnabled = false;
+        boolean requestsEnabled = true;
 
         if (requestsEnabled) {
             themes = RequestHandler.makeRequest("Provide a JSON in the format: {themes: []} where themes has 100 interesting words", 
@@ -121,10 +121,10 @@ public class EntityFactory {
             genEffectCount, genericList.toString());
 
             if (requestsEnabled) {
-                 Gson gson = new Gson();
-                 Request request = RequestHandler.makeRequest(
+                Gson gson = new Gson();
+                Request request = RequestHandler.makeRequest(
                 String.format("Provide a JSON in the format: %s with the rules: %s", requestJson, rules),
-                String.format("Sword with themes: %s", SwordFactory.randomList(themes, 3).toString()), 
+                String.format("Monster with themes: %s", SwordFactory.randomList(themes, 3).toString()), 
                 0.1);        
                 System.out.println(request.getContentString());
                 String JsonString = request.getContentString();

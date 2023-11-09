@@ -31,16 +31,16 @@ public class EntityBuilder {
         }
         Random rand = new Random();
         ArrayList<String> genValues = new ArrayList<String>();
-        for (int i = 0; i < ej.generic.size(); i++) {
-            genValues.add(Integer.toString(rand.nextInt(ej.generic.size() + 1)));
+        for (int i = 0; i < ej.generic_effects.size(); i++) {
+            genValues.add(Integer.toString(rand.nextInt(ej.generic_effects.size() + 1)));
         }
 
         Entity e1 = new Entity(ej.type);
         e1.setName(ej.name, ej.color);
         e1.setLootTable("\"aidp:entities/" + e1.getType() + entityNumber + "\"");
         addEntityModifiers(e1, ej.modifiers);
-        addPotionEffects(e1, ej.potionList);
-        addGenEffects(e1, ej.generic, genValues);
+        addPotionEffects(e1, ej.potion_effects);
+        addGenEffects(e1, ej.generic_effects, genValues);
         buildTag(e1);
         return e1;
     }
@@ -80,6 +80,9 @@ public class EntityBuilder {
     }
 
     public static String getEntityModifiers(ArrayList<EntityModifiers> list) {
+        if (list.isEmpty() || list == null) {
+            return "";
+        }
         String output = "";
         int size = list.size();
         for (int i = 0; i < size - 1; i++)
@@ -102,6 +105,9 @@ public class EntityBuilder {
     }
 
     public static String getPotionEffects(ArrayList<PotionEffect> potionList) {
+        if (potionList.isEmpty() || potionList == null) {
+            return "";
+        }
         String output="active_effects:[";
         int size = potionList.size();
         for (int i = 0; i < size-1; i++) {
@@ -116,6 +122,9 @@ public class EntityBuilder {
     }
 
     public static String getGenEffects(ArrayList<GenericModifiers> list) {
+        if (list.isEmpty() || list == null) {
+            return "";
+        }
         String output = "Attributes:[";
         int size = list.size();
         for (int i = 0; i < size - 1; i++) {
