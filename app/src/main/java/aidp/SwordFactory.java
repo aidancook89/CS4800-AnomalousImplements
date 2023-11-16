@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 public class SwordFactory {
 
     // Total count of all swords
-    private static int swordCount = 0;
+    public static int swordCount = 0;
 
     // An array list where each index corresponds to a rarity (0: Common, 1: Uncommon, ...)
     // Each index stores an ArrayList containing swords of that rarity
@@ -135,7 +135,7 @@ public class SwordFactory {
 
 
     //  Helper method that returns a random list of unique integers between the range min and max (both inclusive)
-    private static int[] getIntegerList(int size, int min, int max) {
+    public static int[] getIntegerList(int size, int min, int max) {
         int[] output = new int[size];
         ArrayList<Integer> options = new ArrayList<Integer>();
         Random rand = new Random();
@@ -151,7 +151,7 @@ public class SwordFactory {
 
 
     // Helper method for getting a random list of size count from a source array list
-    private static ArrayList<String> randomList(ArrayList<String> source, int count) {
+    public static ArrayList<String> randomList(ArrayList<String> source, int count) {
         ArrayList<String> list = new ArrayList<String>();
         Random rand = new Random();
         int size = source.size();
@@ -164,7 +164,7 @@ public class SwordFactory {
 
 
     // Helper method for getting a random list of size count from a source array
-    private static ArrayList<String> randomList(String[] source, int count) {
+    public static ArrayList<String> randomList(String[] source, int count) {
         ArrayList<String> list = new ArrayList<String>();
         Random rand = new Random();
         int size = source.length;
