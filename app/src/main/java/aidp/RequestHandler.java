@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 public class RequestHandler {
 	private static String apiKey = "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";
   	private static String apiUrl = "https://api.openai.com/v1/chat/completions";
-    private static String model = "gpt-3.5-turbo";
+	private static String model = "gpt-3.5-turbo";
     private static HttpClient httpClient = HttpClient.newHttpClient();
 
 	private static int statusCode = 0;	
