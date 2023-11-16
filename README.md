@@ -1,13 +1,14 @@
 # Anomalous Implements 
-## Minecraft Datapack Generator Using OpenAI API
+## AI Enhanced Minecraft Datapack Generator
 
-Generates the a randomized, themed, Minecraft datapack directory in the downloads folder. 
+Generates a randomized Minecraft datapack containing custom Swords and Entities using the OpenAI API. 
 
-Steps for use:
+How to use:
 1. Download project and move to root directory
-2. Run"./gradlew build"
+2. Run "./gradlew build"
 3. Run "./gradlew run" 
 4. Locate the newly generated datapack folder in the current user's Downloads folder
-5. Copy/Move this folder into the "C:\Users\{CURRENT_USER}\AppData\Roaming\.minecraft\saves\{DESIRED_WORLD}\datapacks" folder
+5. Copy or Move this folder into "C:\Users\{CURRENT_USER}\AppData\Roaming\.minecraft\saves\{DESIRED_WORLD}\datapacks"
 6. Open the world in Minecraft
-7. In the Minecraft chat, run "/reload"
+7. Type "/" to open the command console in Minecraft, then type "reload" and press enter
+8. The console should respond with "Reloading" followed by "Data Pack Loaded" if load is successful

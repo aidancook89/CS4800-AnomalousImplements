@@ -76,7 +76,7 @@ abstract class UpgradeAttribute extends Attribute {
 
     protected static AttributeInstance instanceLookUp(String name, ArrayList<AttributeInstance> list) {
         for (AttributeInstance inst : list) {
-            if (inst.name == name) return inst;
+            if (inst.name.equals(name)) return inst;
         }
         return null;
     }
@@ -113,10 +113,9 @@ class Name extends Attribute {
         this.color = color;
     }
 
-    //TODO ERROR WITH APOSTROPHES
     public String toString() {
         return String.format("Name:'{\"text\":\"%s\",\"color\":\"%s\",\"bold\":\"true\",\"italic\":\"false\"}'", 
-            text.replaceAll("'", "\'"), color);
+            text.replaceAll("'", "\\\\'"), color);
     }
 
     public String toPretty() {
@@ -163,7 +162,7 @@ class Lore extends Attribute {
         ArrayList<String> parts = breakUpString(text, lineLength); 
         for (String part : parts) {
             output += String.format(",'{\"text\":\"%s\",\"color\":\"%s\",\"italic\":\"false\"}'", 
-                part.replaceAll("'", "\'"), color);
+                part.replaceAll("'", "\\\\'"), color);
         }
         output += ",'{\"text\":\"\"}'";
 
@@ -197,7 +196,7 @@ class Lore extends Attribute {
     }
 
     public String toPretty() {
-        return String.format("Rarity: %s\nLore: %s", rarity, text);
+        return String.format("Rarity: %s\nLore: %s", rarityLookup[rarity][0], text);
     }
 }
 
@@ -320,7 +319,7 @@ class Modifier extends UpgradeAttribute {
 
     public String toPretty() {
         String attributeName = toTitleCase(name.replaceAll("_", " "));
-        return String.format("%s %f ", attributeName, amount);
+        return String.format("%s: %f ", attributeName, amount);
     }
 
     public static ArrayList<String> optionList = new ArrayList<String>(List.of(
@@ -394,7 +393,7 @@ class Enchantment extends UpgradeAttribute {
         new EnchantmentInstance("smite",5,3),
         new EnchantmentInstance("bane_of_arthropods",5,2),
         new EnchantmentInstance("knockback",5,3),
-        new EnchantmentInstance("fire_aspect",2,2),
+        new EnchantmentInstance("fire_aspect",1,2),
         new EnchantmentInstance("looting",3,4),
         new EnchantmentInstance("sweeping",3,3),
         new EnchantmentInstance("unbreaking",3,4),

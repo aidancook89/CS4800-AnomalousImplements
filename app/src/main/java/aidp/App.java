@@ -2,7 +2,6 @@ package aidp;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 public class App {
     public static String namespace = "aidp";
@@ -42,7 +41,31 @@ public class App {
     public static Path f_sword0mcfunction;
     public static Path f_deal_damagemcfunction;
 
+
+    public static void main(String[] args) {
+        App test = new App();
+    }
+
+
     public App() {
+        createDirectories();
+        
+        int swordCount = 3;
+        int variationsPerSword = 2;
+        SwordFactory.create(swordCount, variationsPerSword);
+
+        for (int i = 0; i < SwordFactory.swordList.size(); i++) {
+            for (int j = 0; j < SwordFactory.swordList.get(i).size(); j++) {
+                System.out.println(SwordFactory.swordList.get(i).get(j));
+                System.out.println();
+            }
+        }
+         
+        EntityFactory.create(7);
+    }
+
+
+    public static void createDirectories() {
         Path userHome = Paths.get(System.getProperty("user.home"));
         d_download = userHome.resolve("Downloads"); 
 
@@ -88,11 +111,6 @@ public class App {
         d_ns_advancements = Structure.newDir(d_ns, "advancements", false);
         d_ns_advancements_deal_damage = Structure.newDir(d_ns_advancements, "deal_damage.json", true);
         Structure.copyContents(template.resolve("deal_damage.json"), d_ns_advancements_deal_damage); 
-
-        SwordFactory.create(7);
-         
-        EntityFactory.create(7);
-        
     }
 
     public static void main(String[] args) {

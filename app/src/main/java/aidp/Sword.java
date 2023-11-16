@@ -49,4 +49,48 @@ public class Sword {
 
     public ArrayList<Sound> getSounds() { return sounds; }
     public void addSound(Sound attribute) { sounds.add(attribute); }
+
+    public String toString() {
+        String output = String.format(
+        "%s (id: %s)\n"
+        + "Type: %s\n"
+        + "%s"
+        + "\n",
+        name.toPretty(), id, 
+        type.toPretty(),
+        lore.toPretty()
+        );
+
+        output += "Modifiers: \n";
+        for (Modifier m : modifiers) {
+            output += String.format(" * %s\n", m.toPretty());
+        }
+
+        output += "Enchantments: \n";
+        for (Enchantment m : enchantments) {
+            output += String.format(" * %s\n", m.toPretty());
+        }
+
+        output += "Wielder Effects: \n";
+        for (WielderEffect m : wielderEffects) {
+            output += String.format(" * %s\n", m.toPretty());
+        }
+
+        output += "Victim Effects: \n";
+        for (WielderEffect m : wielderEffects) {
+            output += String.format(" * %s\n", m.toPretty());
+        }
+
+        output += "Particle Effects: \n";
+        for (Particle m : particles) {
+            output += String.format(" * %s\n", m.toPretty());
+        }
+
+        output += "Sounds: \n";
+        for (Sound m : sounds) {
+            output += String.format(" * %s\n", m.toPretty());
+        }
+
+        return output;
+    }
 }

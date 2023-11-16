@@ -20,7 +20,7 @@ public class SwordBuilder {
         addVictimEffects(upgradeAttributes, sj.victim_effects);
 
         // Generate credit and balance attributes
-        int credit = 10 + (int) Math.floor(Math.pow((double) sj.rarity, 1.6) * 15);
+        int credit = 15 + (int) Math.floor(Math.pow((double) sj.rarity, 1.7) * 15);
         upgradeAttributes = balanceAttributes(upgradeAttributes, credit);
         transferAttributes(sword, upgradeAttributes);
 
@@ -28,7 +28,6 @@ public class SwordBuilder {
         sword.setLore(new Lore(sj.lore, sj.rarity, sword.getWielderEffects(), sword.getVictimEffects()));
         addParticles(sword, sj.particles);
         addSounds(sword, sj.sounds);
-
 
         // Add item to deal damage
         Structure.writeToLine(App.f_deal_damagemcfunction, buildDealDamageString(sword), 2);
@@ -64,16 +63,16 @@ public class SwordBuilder {
             int randomIndex = random.nextInt(list.size());
             UpgradeAttribute attribute = list.get(randomIndex);
             int upgradePrice = attribute.canUpgrade(credit);
+            //System.out.println("Attribute: " + attribute.toPretty() + " Price: " + upgradePrice);
 
             // If we cannot upgrade the attribute, remove it from our list
             if (upgradePrice <= 0) list.remove(randomIndex);
 
             // If we can upgrade the attribute, upgrade an update our credit
             if (upgradePrice != 0) {
-                //System.out.println("PURCHASE: Attribute: " + attribute.toPretty() + " Price: " + upgradePrice);
-                //System.out.println("Currernt Credit: " + credit);
                 attribute.upgrade();
                 credit -= upgradePrice;
+                //System.out.println("PURCHASED: " + attribute.toPretty() + "\nCurrent Credit: " + credit);
                 
                 // If our upgrade gave use credit (the price of the upgrade was negative)
                 // Add all attributes back into the list (chance that we may be able to upgrade some of them)
@@ -113,7 +112,7 @@ public class SwordBuilder {
 	public static String buildTag(Sword sword) {
         return String.format("{display:{%s,%s}%s%s,RepairCost:%d,CustomID:%d}",
             getNameString(sword), getLoreString(sword), getEnchantmentsString(sword), 
-            getModifierString(sword), sword.getRarity() * 3, sword.getId());
+            getModifierString(sword), 3 + (sword.getRarity() * 4), sword.getId());
 	}
 
     public static String buildDealDamageString(Sword sword) {
