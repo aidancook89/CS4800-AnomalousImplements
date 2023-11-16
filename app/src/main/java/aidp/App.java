@@ -60,34 +60,8 @@ public class App {
                 System.out.println();
             }
         }
-
-        /* 
-        EntityFactory.create(5);
-
-        LootTableBuilder build = new LootTableBuilder();
-
-        ArrayList<Path> lootTables = new ArrayList<Path>();
-
-        Path newTable;
-
-        String fileName;
-
-        for (int i = 0; i < EntityFactory.list.size(); i++) {
-           fileName = EntityFactory.list.get(i).getType() + ".json";
-           newTable = Structure.newDir(d_ns_loot_tables_entities, fileName, true);
-           lootTables.add(newTable);
-        }
-
-        int listLen = EntityFactory.list.size();
-        Entity e1;
-
-        for (int i = 0; i < listLen; i++) {
-            e1 = EntityFactory.list.get(i);
-            build.buildTable(SwordFactory.list.get(i), e1, lootTables.get(i));
-            e1.setLootTable("\"aidp:entities/" + e1.getType() + "\"");
-            EntityBuilder.writeToFunc(e1, f_loadmcfunction);
-        }
-        */
+         
+        EntityFactory.create(7);
     }
 
 
@@ -137,5 +111,9 @@ public class App {
         d_ns_advancements = Structure.newDir(d_ns, "advancements", false);
         d_ns_advancements_deal_damage = Structure.newDir(d_ns_advancements, "deal_damage.json", true);
         Structure.copyContents(template.resolve("deal_damage.json"), d_ns_advancements_deal_damage); 
+    }
+
+    public static void main(String[] args) {
+        App test = new App();
     }
 }
