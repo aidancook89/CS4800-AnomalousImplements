@@ -5,6 +5,10 @@
  * For more details on building Java & JVM projects, please refer to https://docs.gradle.org/8.3/userguide/building_java_projects.html in the Gradle documentation.
  */
 
+val apiKey: String by project.extra
+val apiKeyValue = project.properties.getOrDefault("apiKey", "default_api_key") as String
+
+
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
@@ -38,6 +42,9 @@ java {
 application {
     // Define the main class for the application.
     mainClass.set("aidp.App")
+
+    // Pass the apiKey property to the application
+    applicationDefaultJvmArgs = listOf("-DapiKey=$apiKeyValue")
 }
 
 tasks.named<Test>("test") {

@@ -138,7 +138,6 @@ public class EntityFactory {
             potionEffectCount, potionEff.toString(),
             genEffectCount, genericList.toString());
 
-            System.out.println("Making request");
             if (requestsEnabled) {
                 Gson gson = new Gson();
                 Request request = RequestHandler.makeRequest(
@@ -186,7 +185,6 @@ public class EntityFactory {
     }
 
     private static ArrayList<Sword> getRandomSwordListHelper(int count) {
-        System.out.println("Creating sword list");
         ArrayList<Sword> full = new ArrayList<Sword>();
         Random rand = new Random();
         for (int i = 0; i < SwordFactory.swordList.size(); i++) {
