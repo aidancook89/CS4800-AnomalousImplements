@@ -6,7 +6,7 @@ Generates a randomized Minecraft datapack containing custom Swords and Entities 
 How to use:
 1. Download project and move to root directory
 2. Run "./gradlew build"
-3. Run "./gradlew run -PapiKey=<YOUR OPEN AI API KEY>"
+3. Run "./gradlew run -PapiKey={YOUR OPEN AI API KEY}"
 4. Locate the newly generated datapack folder in the current user's Downloads folder
 5. Copy or Move this folder into "C:\Users\{CURRENT_USER}\AppData\Roaming\.minecraft\saves\{DESIRED_WORLD}\datapacks"
 6. Open the world in Minecraft
