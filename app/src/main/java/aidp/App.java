@@ -52,7 +52,7 @@ public class App {
         createDirectories();
         
         // Create and print swords
-        int swordCount = 2;
+        int swordCount = 3;
         int variationsPerSword = 2;
         SwordFactory.create(swordCount, variationsPerSword);
 
@@ -64,7 +64,7 @@ public class App {
         }
          
         // Create entities
-        EntityFactory.create(2);
+        EntityFactory.create(3);
     }
 
 
