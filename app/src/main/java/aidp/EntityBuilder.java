@@ -241,7 +241,7 @@ class GenericModifiers {
      * @param base - value to be used with this generic modification
      */
     public GenericModifiers(String mod, String base) {
-        this.mod = "generic." + mod;
+        this.mod = mod;
         this.base = base;
     }
 
