@@ -176,11 +176,32 @@ public class EntityFactory {
         int listLen = EntityFactory.list.size();
         Entity e1;
 
+        ArrayList<Sword> swordList = getRandomSwordListHelper(listLen);
         for (int i = 0; i < listLen; i++) {
             e1 = EntityFactory.list.get(i);
-            build.buildTable(SwordFactory.list.get(i), e1, lootTables.get(i));
+            build.buildTable(swordList.get(i), e1, lootTables.get(i));
             EntityBuilder.writeToFunc(e1, App.f_loadmcfunction);
         }
+    }
+
+    private static ArrayList<Sword> getRandomSwordListHelper(int count) {
+        ArrayList<Sword> full = new ArrayList<Sword>();
+        Random rand = new Random();
+        for (int i = 0; i < SwordFactory.swordList.size(); i++) {
+            ArrayList<Sword> curList = SwordFactory.swordList.get(i);
+            for (int j = 0; j < curList.size(); j++) {
+                full.add(curList.get(j));
+            }
+        }
+       
+        ArrayList<Sword> out = new ArrayList<Sword>();
+        for (int i = 0; i < count; i++) {
+            int index = rand.nextInt(full.size());
+            out.add(full.get(index));
+            full.remove(index);
+        }
+
+        return out;
     }
 
 }

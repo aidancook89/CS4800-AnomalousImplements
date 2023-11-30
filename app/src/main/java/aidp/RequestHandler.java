@@ -7,7 +7,7 @@ import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
 public class RequestHandler {
-	private static String apiKey = "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";
+	private static String apiKey = System.getProperty("apiKey");
   	private static String apiUrl = "https://api.openai.com/v1/chat/completions";
 	private static String model = "gpt-3.5-turbo";
     private static HttpClient httpClient = HttpClient.newHttpClient();
@@ -16,6 +16,10 @@ public class RequestHandler {
 	private static String responseBody = "";
 
 	public static Request makeRequest(String system, String user, double temperature) {
+		if (apiKey == null || apiKey == "") {
+			throw new RuntimeException("API key not found. Please set the apiKey property.");
+		}
+
 		String messagesArray = "[";
 		if (system != "") messagesArray += String.format("{\"role\": \"system\", \"content\": \"%s\"}", system);
 		if (user != "") messagesArray += String.format(",{\"role\": \"user\", \"content\": \"%s\"}", user); 
@@ -39,6 +43,10 @@ public class RequestHandler {
 	    responseFuture.thenAccept(response -> {
 	        statusCode = response.statusCode();
 	        responseBody = response.body();
+
+			if (statusCode == 401 || statusCode == 403) {
+   		        throw new RuntimeException("API key rejected or unauthorized. Please check your API key.");
+			}
 	    }).join();
 
 		return new Request(requestBody, responseBody, statusCode);

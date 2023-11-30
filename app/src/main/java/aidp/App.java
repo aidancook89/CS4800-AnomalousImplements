@@ -48,8 +48,10 @@ public class App {
 
 
     public App() {
+        // Create directory structure
         createDirectories();
         
+        // Create and print swords
         int swordCount = 3;
         int variationsPerSword = 2;
         SwordFactory.create(swordCount, variationsPerSword);
@@ -61,7 +63,8 @@ public class App {
             }
         }
          
-        EntityFactory.create(7);
+        // Create entities
+        EntityFactory.create(3);
     }
 
 
@@ -111,9 +114,5 @@ public class App {
         d_ns_advancements = Structure.newDir(d_ns, "advancements", false);
         d_ns_advancements_deal_damage = Structure.newDir(d_ns_advancements, "deal_damage.json", true);
         Structure.copyContents(template.resolve("deal_damage.json"), d_ns_advancements_deal_damage); 
-    }
-
-    public static void main(String[] args) {
-        App test = new App();
     }
 }
