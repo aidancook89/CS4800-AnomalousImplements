@@ -41,7 +41,7 @@ public class LootTableBuilder {
      * @return LootTable pool containing s1 tag
      */
     public String createPools(Sword s1) {
-        return "\t\"pools\": \t\t{\n\t\t\t\"rolls\" : 1,\n\t\t\t\"entries\" : [\n\t\t\t\t{"
+        return "\t\"pools\": \t\t[{\n\t\t\t\"rolls\" : 1,\n\t\t\t\"entries\" : [\n\t\t\t\t{"
         + "\n\t\t\t\t\t\"type\" : \"item\", \n\t\t\t\t\t\"name\" : \"" + s1.getType() + "\",\n\t\t\t\t\t\"functions\" : ["
         + "\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\"function\" : \"set_nbt\",\n\t\t\t\t\t\t\t\"tag\" : \"" + formatSwordString(s1) 
         + "\"\n\t\t\t\t\t\t}\n\t\t\t\t\t]\n\t\t\t\t\n\t\t\t}\n\t\t\t],";
@@ -53,7 +53,7 @@ public class LootTableBuilder {
      */
     public String createConditions() {
         return "\n\t\t\t\"conditions\" : [\n\t\t\t\t{\n\t\t\t\t\t\"condition\" : "
-        + "\"minecraft:random_chance\",\n\t\t\t\t\t\"chance\" : 1\n\t\t\t\t}\n\t\t\t]\n\t}\n}";
+        + "\"minecraft:random_chance\",\n\t\t\t\t\t\"chance\" : 1\n\t\t\t\t}\n\t\t\t]\n\t}\n]}";
     }
 
     /**
